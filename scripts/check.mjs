@@ -153,7 +153,8 @@ export const STAGES = [
     name: "protected-paths",
     summary: "no file that judges a change is edited by the change under review",
     run(ctx) {
-      const { base, head, nothingToCompare } = resolveProtectedRange(ctx);
+      const { base, head, nothingToCompare, error } = resolveProtectedRange(ctx);
+      if (error) throw new Error(error);
       if (nothingToCompare) {
         ctx.log(`protected-paths: nothing to compare — ${nothingToCompare}; the check needs a pull request.`);
         return;
@@ -190,8 +191,10 @@ export const FILTERED_STAGES = ["install", "build", "code"];
  * `--base` and `--head` are what CI passes, from the pull request event's own
  * payload. Without them the range is the merge base with `origin/main` and the
  * commit at HEAD, which is what a contributor's branch means by "this change".
- * On `main`, or where there is no merge base, there is no change under review
- * and the check has nothing to say.
+ * On `main` there is no change under review and the check has nothing to say.
+ * A checkout with no merge base — `origin/main` not fetched, or a shallow
+ * clone — is a gate that cannot run, and the stage fails naming the fetch
+ * rather than passing a change it never looked at.
  */
 export function resolveProtectedRange(ctx) {
   const { base, head } = ctx.options;
@@ -203,11 +206,15 @@ export function resolveProtectedRange(ctx) {
   }
   const mergeBase = ctx.capture(["git", "merge-base", "origin/main", "HEAD"]);
   if (mergeBase.status !== 0 || !mergeBase.stdout.trim()) {
-    return { nothingToCompare: "no merge base with origin/main" };
+    return {
+      error:
+        "no merge base between origin/main and HEAD, so the protected-paths check cannot run; " +
+        "fetch it first: git fetch origin main",
+    };
   }
   const headSha = ctx.capture(["git", "rev-parse", "HEAD"]);
   if (headSha.status !== 0 || !headSha.stdout.trim()) {
-    return { nothingToCompare: "no commit at HEAD" };
+    return { error: "no commit at HEAD, so the protected-paths check cannot run" };
   }
   return { base: mergeBase.stdout.trim(), head: headSha.stdout.trim(), nothingToCompare: null };
 }

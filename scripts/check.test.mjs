@@ -203,7 +203,7 @@ test("protected-paths has nothing to compare on main", () => {
   assert.equal(runner.runs().length, 0);
 });
 
-test("protected-paths has nothing to compare without a merge base", () => {
+test("protected-paths fails without a merge base, naming the fetch, and runs no check", () => {
   const runner = fakeRunner({
     capture: (argv) => {
       if (argv.includes("--abbrev-ref")) return { status: 0, stdout: "detached\n", stderr: "" };
@@ -211,9 +211,10 @@ test("protected-paths has nothing to compare without a merge base", () => {
       return { status: 0, stdout: SHA, stderr: "" };
     },
   });
-  const { code, out } = gate(["protected-paths"], { runner });
-  assert.equal(code, 0);
-  assert.match(out, /nothing to compare — no merge base with origin\/main/);
+  const { code, err } = gate(["protected-paths"], { runner });
+  assert.equal(code, 1);
+  assert.match(err, /no merge base between origin\/main and HEAD/);
+  assert.match(err, /git fetch origin main/);
   assert.equal(runner.runs().length, 0);
 });
 
