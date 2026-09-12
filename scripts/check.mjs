@@ -26,7 +26,7 @@ export const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SHA_RE = /^[0-9a-f]{7,40}$/i;
 
 /** Where stage 8 keeps its clone of the pinned corpus. Ignored by git. */
-export const PINNED_CORPUS_DIR = ".local/corpus";
+export const PINNED_CORPUS_DIR = ".local/plantedbugs";
 
 /** A command exited non-zero. The driver turns this into the gate's exit code. */
 export class CommandFailed extends Error {
@@ -230,7 +230,7 @@ export function readCorpusPin(repo) {
 }
 
 /**
- * `.local/corpus` as a clone of the pinned repository at the pinned commit,
+ * `.local/plantedbugs` as a clone of the pinned repository at the pinned commit,
  * and the fixtures directory inside it. Fetches only when the pinned commit is
  * not already in the clone, so a second run of this stage touches no network.
  */

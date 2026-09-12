@@ -49,20 +49,11 @@ import { buildCli, REPO_ROOT, removeStagedBundles, spawnBuilt } from "./open-bui
  * fails here too.
  */
 
-/**
- * The open README, wherever it is: this repository authors it at
- * `tooling/package/OPEN-README.md` and the assembly publishes it as the public
- * tree's own `README.md`. The authored copy is looked for first, because in
- * this repository the root README.md is the private one and is a different
- * document; in the published tree the authored path is absent and the root one
- * is the file this test is about.
- */
+/** The repository's README, whose quick start this file checks against the CLI. */
 function openReadmePath(): string {
-  const authored = join(REPO_ROOT, "tooling", "package", "OPEN-README.md");
-  if (existsSync(authored)) return authored;
-  const published = join(REPO_ROOT, "README.md");
-  if (existsSync(published)) return published;
-  throw new Error(`no open README at ${authored} and none at ${published}`);
+  const readme = join(REPO_ROOT, "README.md");
+  if (existsSync(readme)) return readme;
+  throw new Error(`no README at ${readme}`);
 }
 
 const QUICK_START_HEADING = "## Quick start";
