@@ -1207,17 +1207,15 @@
     },
     {
       "id": "SCP-342",
-      "title": "Release Focrux publicly as lianmatsuo/focrux",
+      "title": "Ship the first release from lianmatsuo/focrux",
       "milestone": "Release",
       "labels": [
         "type:operations",
         "priority:p0",
-        "area:platform",
-        "status:done"
+        "area:platform"
       ],
-      "outcome": "Focrux is public as lianmatsuo/focrux, and from then on it is where Focrux is developed (D-076).",
+      "outcome": "The first release of Focrux ships from lianmatsuo/focrux, where it is developed (D-076), with the release artefacts D-046 names.",
       "acceptance_criteria": [
-        "lianmatsuo/focrux holds the tree, and its branches, pull requests and releases are where Focrux is developed.",
         "Every corpus fixture is published in plantedbugs, and the public CI runs the regression suite against a pinned plantedbugs commit.",
         "The first release carries a signed tag, a published SHA-256 and a build provenance attestation (D-046)."
       ],
@@ -1225,8 +1223,7 @@
         "SCP-339",
         "SCP-341",
         "SCP-351"
-      ],
-      "state": "done"
+      ]
     },
     {
       "id": "SCP-343",

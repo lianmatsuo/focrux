@@ -12,9 +12,10 @@
 // what CI runs.
 //
 // Every command is an argv array handed to `spawnSync`: never a shell string,
-// so nothing is word-split or expanded on the way to the process. `--base`,
-// `--head` and `--corpus` are the only values that reach a command from the
-// command line, and the two SHAs are checked against a SHA pattern first.
+// so nothing is word-split or expanded on the way to the process. Four values
+// reach a command from the command line: `--base` and `--head`, checked against
+// a SHA pattern first; `--filter`, checked against the workspace's own package
+// names first; and `--corpus`, a path.
 
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
