@@ -3,7 +3,6 @@ export * from "./blocking.js";
 export * from "./closure-verify.js";
 export * from "./credential.js";
 export * from "./legibility.js";
-export * from "./fvf.js";
 export * from "./prompt.js";
 export * from "./provider.js";
 export * from "./redact.js";

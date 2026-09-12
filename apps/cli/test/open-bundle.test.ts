@@ -59,9 +59,9 @@ describe("the shipped bundle's module graph", () => {
     expect(linked).toContain("apps/cli");
   });
 
-  it("carries the commands the full build is the full build for", () => {
-    // The open entry point dispatches six; this one is every command, and the
-    // ticket store behind them. Read from the graph rather than from the help.
+  it("carries every command, and the ticket store behind them", () => {
+    // Read from the module graph rather than from the help: the graph is what
+    // the artefact carries, and the help is what it says it carries.
     const modules = firstParty(shipped)
       .filter((path) => path.startsWith("apps/cli/"))
       .map((path) => path.split("/").pop());

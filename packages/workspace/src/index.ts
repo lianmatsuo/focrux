@@ -1,7 +1,6 @@
 export * from "./diagnostic.js";
 export * from "./disk.js";
 export * from "./exec.js";
-export * from "./experiment.js";
 export * from "./materialize.js";
 export * from "./naming.js";
 export * from "./ports.js";

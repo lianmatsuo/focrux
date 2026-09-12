@@ -17,8 +17,7 @@ import {
   runDoctorCommand,
   runExecuteCommand,
   type ExecuteOptions,
-} from "../src/execute-core.js";
-import { OPEN_COMMAND_NAMES } from "../src/command-names.js";
+} from "../src/execute.js";
 import { storeDir } from "../src/store.js";
 
 /**
@@ -389,7 +388,6 @@ describe("doctor on a repository with no lockfile", () => {
       streams: reported.streams,
       cwd: repo,
       preflight: okPreflight,
-      commands: OPEN_COMMAND_NAMES,
     });
 
     const report = JSON.parse(reported.out.join("")) as {
@@ -421,7 +419,6 @@ describe("doctor on a repository with no lockfile", () => {
       streams: shown.streams,
       cwd: repo,
       preflight: okPreflight,
-      commands: OPEN_COMMAND_NAMES,
     });
     const text = shown.out.join("");
     expect(text).toContain("advisory  lockfile_missing");
@@ -486,7 +483,6 @@ async function doctor(
     streams: shown.streams,
     cwd: repo,
     preflight: okPreflight,
-    commands: OPEN_COMMAND_NAMES,
   });
   return { text: shown.out.join(""), code };
 }

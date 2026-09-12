@@ -16,14 +16,14 @@ import {
   type RunBundle,
 } from "@focrux/contracts";
 import { BundleStore } from "@focrux/runner";
-import { attemptsRecordSubject } from "../src/inspect-core.js";
+import { attemptsRecordSubject } from "../src/inspect.js";
 import {
   buildTicketlessBundle,
   routingFor,
   writeTicketlessBundle,
   type ReviewTarget,
 } from "../src/ticketless.js";
-import { runVerdictCommand } from "../src/verdict-core.js";
+import { runVerdictCommand } from "../src/verdict.js";
 import { makeAttempt, makeReview } from "./attempt-fixture.js";
 import { SPAWN_TEST_TIMEOUT_MS } from "./spawn-timeout.js";
 
@@ -32,10 +32,10 @@ import { SPAWN_TEST_TIMEOUT_MS } from "./spawn-timeout.js";
  *
  * `focrux review --pr owner/repo#N` writes its bundle into
  * `<repo>/.focrux/reviews/` and files no attempt: there was no run, so there is
- * no attempts record for the id it hands back. Every test here drives the
- * command the way the open build wires it — `attemptsRecordSubject` for the
- * reference, which is the record that build has — against a repository holding
- * only what `review` wrote, which is the shape the readiness run met.
+ * no attempts record for the id it hands back. Every test here resolves the
+ * reference with `attemptsRecordSubject` — the attempts record alone, with no
+ * ticket asked for — against a repository holding only what `review` wrote,
+ * which is the shape the readiness run met.
  *
  * The network is stubbed to throw and every child process but `git` is refused,
  * for the same reason the ticket-store suite does it: a decision is a local

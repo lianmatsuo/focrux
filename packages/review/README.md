@@ -17,7 +17,8 @@ The verdict is structured output over criteria supplied by the plan, never parse
 
 ## The shape
 
-Nine files, one model call surface, no abstraction that does not yet have two users.
+Sixteen modules, three transports onto one model call surface, no abstraction that does not yet
+have two users. `index.ts` re-exports them, and `redact.test.ts` sits in `src/` beside its subject.
 
 | | |
 |---|---|
@@ -27,8 +28,15 @@ Nine files, one model call surface, no abstraction that does not yet have two us
 | `prompt.ts` | Context assembly and the one instruction position |
 | `repo.ts` | The bounded, read-only file surface the reviewer selects from |
 | `provider.ts` | The Anthropic call, plus token accounting |
-| `suppression.ts` | Waivers and measured rule authority |
 | `provider-cli.ts` | The same review over a locally installed `claude` binary |
+| `provider-codex-cli.ts` | The same review over a locally installed `codex` binary |
+| `provider-structured.ts` | The one turn schema both structured-output CLI transports read |
+| `suppression.ts` | Waivers and measured rule authority |
+| `closure-verify.ts` | The single question a remediation round asks of each routed finding |
+| `credential.ts` | What counts as credential-shaped (D-063) |
+| `redact.ts` | Redaction of everything the reviewer writes, at the artifact boundary |
+| `legibility.ts` | Whether the change set is one a person can read (SCP-114) |
+| `agent-config.ts` | Repository-supplied agent configuration, failed closed (ADR-0030) |
 | `review.ts` | The orchestrator |
 
 ## The blocking matrix
