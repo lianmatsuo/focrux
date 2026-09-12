@@ -48,12 +48,12 @@ This is the one home for the decisions that govern Focrux. Every other document 
 - Changes if: an open component turns out to need the hosted plane to work.
 - ADR: [ADR-0032](adr/0032-open-source-the-local-cli-and-the-reviewer.md).
 
-### D-076 — Release and iterate
+### D-076 — Focrux is developed in the public repository
 
 - Owner: Founder
-- Decision: Focrux is released publicly once the open pull requests close, the rename lands (D-098) and the founder gives the word, with no measured bar first. The public repository starts from one commit of this repository's tree without the material that stays private, and from then on it is where Focrux is developed. The private repository stays as the archive and holds that material: the ticket store's records (`.focrux/tickets/`), the spend ledger and the dated evaluation records, the design boards and the planning-mode prototype until the co-founder agrees to publish them, and the control plane's design (D-016): its decisions, its backlog entries with their milestone and the labels only they use, and its eight ADRs. The founder reads the quotations in this register before the push.
-- Why: real use is the evidence (D-099), and one repository is one place to build and take contributions without exposing private history.
-- Changes if: the release shows something that must not be public.
+- Decision: `lianmatsuo/focrux` is where Focrux is developed: its branches, pull requests, issues and releases. Nothing in it is assembled from anywhere else. A private archive holds what stays private: the ticket store's records from before the release, the spend ledger and the dated evaluation records, the design boards and the planning-mode prototype until the co-founder agrees to publish them, and the control plane's design (D-016): its decisions, its backlog entries with their milestone and the labels only they use, and its eight ADRs. The archive is not synced from this repository. Ticket records a run writes under `.focrux/tickets/` stay on the machine that wrote them; `.focrux/config.json` and `.focrux/principles.md` are committed.
+- Why: one repository is one source of truth, a checkout that holds nothing private cannot leak it, and real use is the evidence (D-099).
+- Changes if: the archive's material has to change in step with the code, which would call for a private repository that depends on this one rather than one this one is filtered from.
 
 ### D-098 — The product is Focrux everywhere
 
@@ -186,7 +186,7 @@ This is the one home for the decisions that govern Focrux. Every other document 
 - Owner: Founder
 - Decision: Focrux ships the 25 skills of Matt Pocock's published bundle, at a pinned revision and with their licence. A person can select up to three as executor guidance. The runner appends their text to the execution and remediation briefs and records their revision and content hash on each attempt; selecting none leaves the brief unchanged. Skills do not enable native skill discovery, repository instructions, hooks, plugins or extra permissions, and neither the review nor closure verification receives them.
 - Why: the founder asked for these skills in the product's agents, and pinning keeps what reached a run knowable.
-- Changes if: a selected skill is missing from execution, reaches review, or widens authority.
+- Changes if: a selected skill is missing from execution, reaches review, or widens authority; or the reviewing run keeps catching a working rule the executor could not have known, which would call for a person-authored conventions file under `.focrux/`, delivered as data the way principles are (D-065).
 
 ### D-092 — A remediation round is briefed with its predecessor's account
 
@@ -518,7 +518,7 @@ This is the one home for the decisions that govern Focrux. Every other document 
 ### D-073 — An agent merges here only after an independent review
 
 - Owner: Founder
-- Decision: a session working on this repository may merge a pull request only after a separate agent run on Claude Fable 5.1 (Claude Opus 5 when Fable is unavailable) has read the whole diff against [AGENTS.md](../AGENTS.md) and left an unqualified approve as a review comment naming the model. The reviewing run is never the authoring session. The founder may merge without it. A change to the reviewer carries its regression-suite summary in the pull-request body (D-010), and the review treats its absence as blocking.
+- Decision: a session working on this repository may merge a pull request only after a separate agent run on Claude Fable 5.1 (Claude Opus 5 when Fable is unavailable) has read the whole diff against [AGENTS.md](../AGENTS.md), and the `AGENTS.md` of each package the diff touches, and left an unqualified approve as a review comment naming the model. The reviewing run is never the authoring session. The founder may merge without it. A change to the reviewer carries its regression-suite summary in the pull-request body (D-010), and the review treats its absence as blocking.
 - Why: the product's own principle applied to its repository: what writes and what judges are separate runs.
 - Changes if: a reviewed merge lands an escape a person reading the diff would have stopped.
 
@@ -528,6 +528,13 @@ This is the one home for the decisions that govern Focrux. Every other document 
 - Decision: a ticket whose criteria are validator outcomes is admissible. A validator's pass is `proxy` evidence wherever the validator cannot tell two documents apart. This repository runs its work through Focrux when that is convenient.
 - Why: a green validator says an entry is well formed, never that it is right.
 - Changes if: validator-criteria tickets land entries that turn out wrong on substance.
+
+### D-NEW-commit-convention — A person certifies a commit, and an agent's part is named
+
+- Owner: Founder
+- Decision: every commit on `main` carries the `Signed-off-by` of the person who submits it, their certificate under the Developer Certificate of Origin in `CONTRIBUTING.md`; an agent never certifies. A commit an agent wrote carries the trailer `Assisted-by: LLM`, the Linux kernel's convention, and no `Co-Authored-By` naming a model; `.claude/settings.json` sets that trailer for Claude Code sessions in this repository. The independent review an agent's merge needs (D-073) is maintainer tooling, recorded as a review comment, and is never a required approval on `main`.
+- Why: only a person can certify the certificate, and a history written almost entirely by agents should say so in a form other projects already read.
+- Changes if: a required-approval rule a machine can satisfy is found to catch what the review comment does not.
 
 ### D-113 — The repository carries everything an agent needs
 

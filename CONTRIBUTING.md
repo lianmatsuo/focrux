@@ -56,19 +56,45 @@ By making a contribution to this project, I certify that:
 
 ## Before you open a pull request
 
-Run the gate: the list under "Before you finish" in [`AGENTS.md`](AGENTS.md),
-which is the one place it is written, and it must be green. GitHub Actions are
-off while the account's billing is unresolved, so nothing runs it for you:
-`.github/workflows/build.yml` is the same list written for Actions, and the
-pull request body says that the gate was run locally and that CI did not run.
-The Python validators need `scripts/requirements-validation.txt` installed;
-they check the backlog's ids, labels and dependency graph, and the
-documentation's links, ADR numbering and lifecycle states.
+Run the gate and see it green:
+
+```bash
+pnpm check
+```
+
+`scripts/check.mjs` runs every stage in order and prints each command as it
+goes; `pnpm check --list` names the stages, and `pnpm check --filter
+@focrux/<package>` runs one package after building what it depends on.
+`.github/workflows/build.yml` runs the same stages as steps on every pull
+request, so what passes on your machine is what passes there. The Python
+validators need `scripts/requirements-validation.txt` installed; they check the
+backlog's ids, labels and dependency graph, and the documentation's links, ADR
+numbering and lifecycle states.
 
 The working rules the project holds itself to — how a change is proven, what a
 comment is for, what never becomes an action parameter — are in
-[`AGENTS.md`](AGENTS.md). It is written for whoever does the work, person or
-agent, and it applies to a contributor exactly as it applies to a maintainer.
+[`AGENTS.md`](AGENTS.md), and the rules that bind one package are in that
+package's own `AGENTS.md`. They are written for whoever does the work, person
+or agent, and they apply to a contributor exactly as they apply to a maintainer.
+
+## Working with a coding agent
+
+Most pull requests here are written by the maintainer's own agent sessions, and
+yours may be too. Two things follow from the certificate above:
+
+- The `Signed-off-by` line is yours. Only a person can certify the Developer
+  Certificate of Origin, so an agent never adds it; you review what it wrote,
+  and you sign it off.
+- A commit an agent wrote carries the trailer `Assisted-by: LLM`, the Linux
+  kernel's convention, and no `Co-Authored-By` naming a model. The checked-in
+  `.claude/settings.json` sets that trailer for Claude Code sessions in this
+  repository.
+
+Before an agent-authored pull request from the maintainer merges, a separate
+agent run reads the whole diff against `AGENTS.md` and leaves its approval as a
+review comment. That review is maintainer tooling, not a second person: it is
+never a required approval on `main`, and a change from outside is read by the
+maintainer.
 
 ## A change to the reviewer carries its regression-suite run
 
@@ -111,7 +137,10 @@ not by a refusal to let it be written.
 
 If your change genuinely needs one of these to move — a real bug in the test,
 not a test that is inconvenient for the change you are making — open an issue
-and say why, rather than routing around the check.
+and say why, rather than routing around the check. If you work with Claude
+Code, the checked-in `.claude/settings.json` refuses edits to the same files in
+your session; it is generated from the list by
+`node scripts/sync-protected-paths.mjs --write`.
 
 ## The regression suite, and the delta a reviewer change reports
 

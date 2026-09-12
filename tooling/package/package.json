@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "pack": "node pack.mjs",
-    "test": "node --test assemble-open.test.mjs stage.test.mjs verify-tarball.test.mjs draft-release.test.mjs ../../.github/scripts/protected-paths.test.mjs ../../.github/scripts/regression-delta.test.mjs"
+    "test": "node --test stage.test.mjs verify-tarball.test.mjs draft-release.test.mjs ../../.github/scripts/protected-paths.test.mjs ../../.github/scripts/regression-delta.test.mjs"
   },
   "devDependencies": {
     "esbuild": "catalog:"

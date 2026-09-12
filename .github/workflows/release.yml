@@ -1,9 +1,8 @@
 name: Release
 
-# The install channel D-046 names for a design partner: one private tarball, a
-# SHA-256 beside it, and build provenance attested by CI — attached to a draft
-# release on this private repository, which the founder verifies and hands over
-# out of band. Nothing here reaches an installed copy: there is no auto-update
+# The install channel D-046 names: one tarball, a SHA-256 beside it, and build
+# provenance attested by CI — attached to a draft release on this repository,
+# which the founder verifies and publishes. Nothing here reaches an installed copy: there is no auto-update
 # (D-046), so a newer version is a new tarball and a message.
 
 on:

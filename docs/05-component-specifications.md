@@ -108,9 +108,9 @@ Scoped here to the seeded-defect corpus and the fixed regression suite drawn fro
 
 **Emits:** `runs.json`, `summary.json`, `report.md` and `rule-authority.json`, and, spawning the built CLI binary itself once per fixture per repeat, the same review artifacts a real run produces.
 
-## `tooling/package` — the tarball and the open-source tree
+## `tooling/package` — the tarball and the corpus
 
-**Owns:** the CLI tarball a design partner installs — one bundled file, the runner's write-guard hook beside it, a version manifest and a licence notice, archived with a published SHA-256 ([D-046](11-open-decisions.md), `pack.mjs`); assembly of the public repository's tree from a named commit, carrying every file except the private set named in `PRIVATE_PATHS`, each rule with its own reason, and scanned before every write for internal references — a `.local/` run directory, an evidence-archive name, a path into the private set — that must be allow-listed by reason or the assembly refuses ([D-075](11-open-decisions.md), `assemble-open.mjs`); the public corpus assembly (`assemble-corpus.mjs`); tarball verification and draft-release scripting consumed by `.github/workflows/release.yml`; the gate's protected-paths check and regression delta under `.github/scripts/`.
+**Owns:** the CLI tarball a design partner installs — one bundled file, the runner's write-guard hook beside it, a version manifest and a licence notice, archived with a published SHA-256 ([D-046](11-open-decisions.md), `pack.mjs`); the public corpus assembly from a named commit ([D-075](11-open-decisions.md), `assemble-corpus.mjs`); tarball verification and draft-release scripting consumed by `.github/workflows/release.yml`; the gate's protected-paths check and regression delta under `.github/scripts/`.
 
 **Consumes:** the built workspace; a named commit — assembly is reproducible from a sha, never from an uncommitted edit.
 

@@ -20,7 +20,7 @@ Focrux runs on one machine, with the person's own subscriptions or keys. What a 
 
 **Commercial:** anything hosted or shared across people, which is the control plane ([D-016](../11-open-decisions.md)).
 
-From the public release, the public repository is where Focrux is developed ([D-076](../11-open-decisions.md)). The private repository keeps the history and any private material.
+`lianmatsuo/focrux` is where Focrux is developed ([D-076](../11-open-decisions.md)); a private archive holds the material that stays private.
 
 ## Consequences
 

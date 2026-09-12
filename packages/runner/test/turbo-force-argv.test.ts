@@ -66,7 +66,7 @@ describe("a command that runs something else", () => {
     for (const argv of [
       ["python3", "scripts/validate_docs.py"],
       ["pnpm", "run", "test"],
-      ["node", "--test", "tooling/package/assemble-open.test.mjs"],
+      ["node", "--test", "tooling/package/stage.test.mjs"],
       // A turbo that is an argument rather than the program: nothing here is
       // going to guess what a wrapper does with it.
       ["node", "scripts/run.mjs", "turbo", "run", "test"],

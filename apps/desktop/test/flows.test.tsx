@@ -2,12 +2,18 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import {
   cleanup,
+  configure,
   fireEvent,
   render,
   screen,
   waitFor,
   within,
 } from "@testing-library/react";
+
+// A CI runner renders this app several times slower than a laptop, and the
+// library's default one-second `findBy` timeout reads as a missing button
+// there. Five seconds is what the explicit waits in this file already allow.
+configure({ asyncUtilTimeout: 5000 });
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { App, type Route, type TaskView } from "../src/renderer/shell/App.js";

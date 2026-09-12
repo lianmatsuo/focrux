@@ -3,7 +3,7 @@
 What comes next, in order. A step is done when its condition holds; the [backlog](../backlog/issues.json) holds the tickets.
 
 1. **The records finish their cleanup.** The evaluation records and the measurement programme's code are removed, and code comments citing removed decisions are rewritten ([D-111](11-open-decisions.md), [D-099](11-open-decisions.md)).
-2. **Release.** The public tree is this repository's tree without the material that stays private ([D-076](11-open-decisions.md)), so it carries everything that runs on one machine ([D-075](11-open-decisions.md)). It is verified, then pushed as `lianmatsuo/focrux`, which becomes where Focrux is developed, and every corpus fixture is published in `plantedbugs`: **80 defective fixtures across seven classes and 28 clean**. The product-regulation artefacts come with it ([D-048](11-open-decisions.md)).
+2. **Release.** Focrux is developed in `lianmatsuo/focrux` ([D-076](11-open-decisions.md)), which carries everything that runs on one machine ([D-075](11-open-decisions.md)), and every corpus fixture is published in `plantedbugs`: **80 defective fixtures across seven classes and 28 clean**. The first release carries a signed tag, a published SHA-256 and a build provenance attestation ([D-046](11-open-decisions.md)), and the product-regulation artefacts come with it ([D-048](11-open-decisions.md)).
 3. **First people.** The co-founder uses Focrux, and the design partner starts once [D-084](11-open-decisions.md)'s list holds, with their baseline captured first.
 4. **The loop's next capabilities:**
    - large work as one ticket with an execution graph, planning mode, the interview, specs, sizes and per-node review (D-100, D-101, D-102, D-103, D-104, D-107);
