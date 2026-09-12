@@ -529,7 +529,7 @@ This is the one home for the decisions that govern Focrux. Every other document 
 - Why: a green validator says an entry is well formed, never that it is right.
 - Changes if: validator-criteria tickets land entries that turn out wrong on substance.
 
-### D-NEW-commit-convention — A person certifies a commit, and an agent's part is named
+### D-114 — A person certifies a commit, and an agent's part is named
 
 - Owner: Founder
 - Decision: a commit merges to `main` carrying the `Signed-off-by` of the person who submits it, their certificate under the Developer Certificate of Origin in `CONTRIBUTING.md`; an agent never certifies. A commit an agent wrote carries the trailer `Assisted-by: LLM`, the Linux kernel's convention, and no `Co-Authored-By` naming a model; `.claude/settings.json` sets that trailer for Claude Code sessions in this repository. The independent review an agent's merge needs (D-073) is maintainer tooling, recorded as a review comment, and is never a required approval on `main`.
