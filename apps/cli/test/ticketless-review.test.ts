@@ -825,19 +825,15 @@ describe("ac_4: a real public pull request, pinned by commit", () => {
 }, SPAWN_TEST_TIMEOUT_MS);
 
 /**
- * The ticketless review is an open command, and the open build refuses a module
- * from the closed planning package (checked at assembly by
- * `tooling/package/assemble-open.mjs`, whose allowlist covers the admission
- * side and not this one). The reading of untrusted text it needs lives in
- * `@focrux/contracts` for that reason, and the assertion is here rather than
- * only in the assembler because this is the file that must not reach for it.
+ * The ticketless review reads a pull request body, external text like an issue
+ * body, through `@focrux/contracts` and never through the drafting package: a
+ * review command does not depend on the package that proposes contracts. The
+ * assertion is here because this is the file that must not reach for it.
  */
 describe("what the ticketless review may depend on", () => {
-  it("imports no module from the closed planning package", () => {
+  it("imports no module from the drafting package", () => {
     const source = readFileSync(join(here, "..", "src", "ticketless.ts"), "utf8");
-    // Assembled rather than written out: the assembler refuses any published
-    // file that spells the closed scope, and this test is a published file.
-    expect(source).not.toContain(["@focrux", "planning"].join("/"));
+    expect(source).not.toContain("@focrux/planning");
   });
 });
 

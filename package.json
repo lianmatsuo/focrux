@@ -8,6 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
+    "check": "node scripts/check.mjs",
     "validate": "python3 scripts/validate_backlog.py && python3 scripts/validate_docs.py && python3 scripts/validate_diagrams.py",
     "issues:dry-run": "python3 scripts/sync_github_issues.py",
     "build": "turbo run build",

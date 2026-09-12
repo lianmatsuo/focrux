@@ -1,10 +1,9 @@
 name: Build
 
-# The gate, written for GitHub Actions. The one list of what it runs is under
-# "Before you finish" in AGENTS.md; a check added there is added here in the
-# same change, and the other way round. Actions are off while the account's
-# billing is unresolved, so a person runs that list and says so in the pull
-# request; this file is what runs when they are on again.
+# The gate is `scripts/check.mjs`. This file runs its stages, one step per
+# stage, so the Actions page names the stage that failed and a contributor runs
+# the same commands on their own machine. A check is added to a stage there;
+# only its step appears here.
 
 on:
   pull_request:
@@ -37,34 +36,22 @@ jobs:
           node-version: "22"
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - name: install
+        run: node scripts/check.mjs install
 
-      # `typecheck`, `test` and `lint` each depend on `^build`, which builds a
-      # package's *dependencies* and not the package itself. The corpus steps
-      # below run the built binary, so the leaf packages need building too.
-      - name: Build
-        run: pnpm exec turbo run build
+      - name: build
+        run: node scripts/check.mjs build
 
-      - name: Bundled desktop runtime and license
-        run: node apps/desktop/scripts/check-runtime.mjs
+      - name: runtime
+        run: node scripts/check.mjs runtime
 
-      - name: Typecheck, test and lint
-        run: pnpm exec turbo run typecheck test lint
+      - name: code
+        run: node scripts/check.mjs code
 
-      # The corpus is not run here: it calls a model provider, it costs money,
-      # and a CI run is not a measurement anyone would quote. This asserts only
-      # that every fixture is well formed and that its expectations name things
-      # that exist — which is what would silently rot.
-      - name: The corpus is well formed
-        run: node packages/evaluation/dist/main.js
-
-      # The committed diffs are generated from the before/ and after/ trees.
-      # A tree edited without regenerating them makes the corpus measure
-      # something other than what it says it measures.
-      - name: Fixture diffs match their trees
-        run: |
-          node packages/evaluation/scripts/build-diffs.mjs
-          git diff --exit-code -- packages/evaluation/corpus
+      # No provider is reached and nothing is spent: `--run` is the flag that
+      # would, and this stage never passes it.
+      - name: corpus
+        run: node scripts/check.mjs corpus
 
   # The documentation, backlog and diagram validators, and the
   # rejection-path tests that prove each one can fail. Every check here
@@ -86,43 +73,15 @@ jobs:
       - name: Install validator dependencies
         run: python -m pip install --quiet --disable-pip-version-check -r scripts/requirements-validation.txt
 
-      - name: Repository validator rejection paths
-        run: python -m unittest discover -s scripts -p 'test_*.py'
-
-      - name: Backlog — IDs, labels, milestones, dependency cycles
-        run: python scripts/validate_backlog.py
-
-      - name: Docs — links, ADR numbering, lifecycle states, foreign-key/edge duplication
-        run: python scripts/validate_docs.py
-
-      - name: Diagrams — renderings match their Graphviz sources
-        run: python scripts/validate_diagrams.py
-
-      # Authored fixtures carry their trees; the diff beside them is what those
-      # trees produce. `core.abbrev=7` because git otherwise abbreviates index
-      # hashes to eight characters here and every fixture reads as mismatched.
-      - name: Fixture diffs — each authored fixture's diff is what its trees produce
+      # `FOCRUX_PYTHON` names the interpreter the step above installed the
+      # validators' dependencies into, rather than whatever `python3` resolves
+      # to on the runner.
+      - name: validators
         env:
-          GIT_CONFIG_COUNT: "1"
-          GIT_CONFIG_KEY_0: core.abbrev
-          GIT_CONFIG_VALUE_0: "7"
-        run: python scripts/validate_fixture_diffs.py
+          FOCRUX_PYTHON: python
+        run: node scripts/check.mjs validators
 
-      - name: Issue templates and workflows parse as YAML
-        run: |
-          python - <<'PY'
-          import pathlib, sys, yaml
-          failed = False
-          for path in sorted(pathlib.Path(".github").rglob("*.y*ml")):
-              try:
-                  yaml.safe_load(path.read_text())
-              except Exception as exc:
-                  print(f"::error file={path}::{exc}")
-                  failed = True
-          sys.exit(1 if failed else 0)
-          PY
-
-  # A required check: a pull request that edits a file that judges a change —
+  # A check on every pull request: one that edits a file that judges a change —
   # the reviewer's blocking, remediation and decision-order tests, the
   # runner's security test, and the sample fixtures the reviewer is scored
   # on — fails here, naming the file and the rule it
@@ -152,11 +111,11 @@ jobs:
 
       # The two commits named in the pull request's own event payload — never
       # a branch name, and never anything read out of its title, body or diff.
-      - name: Protected paths
-        run: |
-          node .github/scripts/protected-paths.mjs \
-            "${{ github.event.pull_request.base.sha }}" \
-            "${{ github.event.pull_request.head.sha }}"
+      - name: protected-paths
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/check.mjs protected-paths --base "$BASE_SHA" --head "$HEAD_SHA"
 
   # The reviewer's regression suite, against the public corpus pinned in
   # `.github/corpus-pin.json` — so a pull request that touches the reviewer
@@ -210,8 +169,8 @@ jobs:
           git clone --quiet "$repository.git" .corpus
           git -C .corpus checkout --quiet "$commit"
 
-      - name: Regression suite (dry run — resolves every fixture id, spends nothing)
-        run: node packages/evaluation/dist/main.js --suite regression --corpus "$PWD/.corpus/fixtures"
+      - name: regression-dry-run
+        run: node scripts/check.mjs regression-dry-run --corpus "$PWD/.corpus/fixtures"
 
       # Both conditions are tested here rather than in an `if:` because a
       # secret cannot be read by a job-level expression at all — it is only

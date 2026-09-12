@@ -14,8 +14,8 @@ import { afterAll, describe, expect, it } from "vitest";
 import { EXIT_CODES } from "@focrux/contracts";
 import type { PreflightRequest, PreflightResult } from "@focrux/runner";
 import { exitForThrown } from "../src/entry.js";
-import { parseExecuteArgs, runExecuteCommand, type ExecuteOptions } from "../src/execute-core.js";
-import { attemptsRecordSubject, runInspectCommand } from "../src/inspect-core.js";
+import { parseExecuteArgs, runExecuteCommand, type ExecuteOptions } from "../src/execute.js";
+import { attemptsRecordSubject, runInspectCommand } from "../src/inspect.js";
 import { storeDir } from "../src/store.js";
 
 /**

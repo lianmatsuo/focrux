@@ -24,7 +24,7 @@ import { BaseSourceSchema } from "@focrux/runner";
 import { UsageError } from "./args.js";
 import { readPullRequest } from "./pull-request.js";
 import { headCommit, repositoryId } from "./store.js";
-import type { ExecuteArgs } from "./execute-core.js";
+import type { ExecuteArgs } from "./execute.js";
 
 /**
  * `focrux run` with nothing admitted behind it (SCP-180).

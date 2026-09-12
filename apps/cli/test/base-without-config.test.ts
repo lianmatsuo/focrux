@@ -20,9 +20,8 @@ import {
   runDoctorCommand,
   runExecuteCommand,
   type ExecuteOptions,
-} from "../src/execute-core.js";
-import { attemptsRecordSubject, runInspectCommand } from "../src/inspect-core.js";
-import { OPEN_COMMAND_NAMES } from "../src/command-names.js";
+} from "../src/execute.js";
+import { attemptsRecordSubject, runInspectCommand } from "../src/inspect.js";
 import { exitForThrown } from "../src/entry.js";
 import { storeDir } from "../src/store.js";
 
@@ -762,7 +761,6 @@ describe("a base_ref that is not a branch name", () => {
       streams: reported.streams,
       cwd: repo,
       preflight: okPreflight,
-      commands: OPEN_COMMAND_NAMES,
     });
 
     const shown = uncoloured(reported.out.join(""));
@@ -911,7 +909,6 @@ describe("what says where a run publishes", () => {
         streams: reported.streams,
         cwd: repo,
         preflight: okPreflight,
-        commands: OPEN_COMMAND_NAMES,
       });
       return uncoloured(reported.out.join(""));
     };
@@ -935,7 +932,6 @@ describe("what says where a run publishes", () => {
       streams: reported.streams,
       cwd: repo,
       preflight: okPreflight,
-      commands: OPEN_COMMAND_NAMES,
     });
     const report = JSON.parse(reported.out.join("")) as {
       base: { ref: string | null; from: string | null };
@@ -951,7 +947,6 @@ describe("what says where a run publishes", () => {
       streams: written.streams,
       cwd: repo,
       preflight: okPreflight,
-      commands: OPEN_COMMAND_NAMES,
     });
     const onDisk = JSON.parse(readFileSync(join(storeDir(repo, null), "config.json"), "utf8")) as {
       base_ref?: string;

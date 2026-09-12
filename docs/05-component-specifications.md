@@ -4,7 +4,7 @@ One entry per real component in this repository. **Owns** is what only this comp
 
 ## `apps/cli` — the `focrux` command
 
-One binary carries every command: `doctor`, `baseline`, `review`, `inspect`, `verdict`, `run`, `admit`, `edit`, `approve`, `list`, `sync`, `serve`, `mcp`, `agent`, `stops`, `escapes` and `principle`. `tooling/package` bundles it into the design-partner tarball and the open-source tree, linking `@focrux/contracts`, `@focrux/planning`, `@focrux/review`, `@focrux/runner` and `@focrux/workspace` ([D-075](11-open-decisions.md), [ADR-0032](adr/0032-open-source-the-local-cli-and-the-reviewer.md)).
+One binary carries every command: `doctor`, `baseline`, `review`, `inspect`, `verdict`, `run`, `admit`, `edit`, `approve`, `list`, `sync`, `serve`, `mcp`, `agent`, `stops`, `escapes` and `principle`. `tooling/package` bundles it into the design-partner tarball, linking `@focrux/contracts`, `@focrux/planning`, `@focrux/review`, `@focrux/runner` and `@focrux/workspace` ([D-075](11-open-decisions.md), [ADR-0032](adr/0032-open-source-the-local-cli-and-the-reviewer.md)).
 
 **Owns:** the ticket store under `.focrux/` — admission, contracts, drafts, approval and edit history; `focrux serve`, the queue over that store: it fetches the base ref, reads open pull requests through `sync`, decides who waits by set arithmetic over approved scope, re-levels open branches behind the base, starts runs up to the configured concurrency, drafts labelled tracker issues into `plan_review`, and, under `merge: loop`, merges the head pull request once [D-041](11-open-decisions.md)'s conditions hold ([D-108](11-open-decisions.md)); the loopback tool endpoint `focrux serve` hosts and `focrux mcp` / `focrux agent` reach, one capability token per role, scoped to reads plus `admit`, `edit`, `sync` and pause/resume — never approve, publish or merge ([D-109](11-open-decisions.md)); the stops/escapes ledger and the baseline stopwatch ([D-038](11-open-decisions.md)).
 
@@ -34,7 +34,7 @@ Decided, not built: the phone's surfaces, which follow pairing ([D-097](11-open-
 
 Versioned Zod schemas and inferred types — files, not tables — for every artifact the loop passes between its own components. The dependency floor: every other package here builds on it, and it depends on none of them.
 
-**Owns:** `PlanContract` (the immutable outcome, criteria, scope and base, [ADR-0016](adr/0016-minimal-machine-maintained-planning.md)), `Ticket`, `ChangeSet`, `CheckResult`, `ReviewArtifact`, `ExecutionAttempt`, `RunBundle`, `MaterializationManifest`, `PermissionProfile`, `LimitsTable`, `SecretIndex` (materialized secrets indexed by the sha256 of file and value, [D-012](11-open-decisions.md)), the queue's scheduling primitives, and risk derivation (`derivePlannedRisk` from declared scope, `deriveActualRisk` from the sealed diff — a level may rise, never fall).
+**Owns:** `PlanContract` (the immutable outcome, criteria, scope and base, [ADR-0016](adr/0016-minimal-machine-maintained-planning.md)), `Ticket`, `ChangeSet`, `CheckResult`, `ReviewArtifact`, `ExecutionAttempt`, `RunBundle`, `MaterializationManifest`, `PermissionProfile`, `LimitsTable`, `SecretIndex` (materialized secrets indexed by the sha256 of file and value, [D-012](11-open-decisions.md)), `issueAuthoredAttempts`, which reports rather than filters every line of an issue that claims the work is already done or addresses the drafter, the queue's scheduling primitives, and risk derivation (`derivePlannedRisk` from declared scope, `deriveActualRisk` from the sealed diff — a level may rise, never fall).
 
 **Consumes:** nothing in this repository.
 
@@ -82,7 +82,7 @@ Decided, not built: a stall detector replacing the ceilings above ([D-096](11-op
 
 The contract draft, and the measurement of what a person did to it.
 
-**Owns:** `draftContract` — one model call that turns an issue into a proposed outcome, two to four criteria and a one-to-eight-glob scope, never executed and never approved by drafting alone ([D-071](11-open-decisions.md), [D-072](11-open-decisions.md)); `issueAuthoredAttempts`, which reports rather than filters every line of an issue that claims the work is already done or addresses the drafter; `contractEditCount`, which counts the fields a person changed between the contract as first rendered and the one approved ([D-072](11-open-decisions.md)).
+**Owns:** `draftContract` — one model call that turns an issue into a proposed outcome, two to four criteria and a one-to-eight-glob scope, never executed and never approved by drafting alone ([D-071](11-open-decisions.md), [D-072](11-open-decisions.md)); `contractEditCount`, which counts the fields a person changed between the contract as first rendered and the one approved ([D-072](11-open-decisions.md)).
 
 **Consumes:** an issue or a Markdown file, read as external, trust-tagged data — never as instruction — and the repository's own file tree, two levels deep, for proposed globs to be checked against; nothing else of the repository ([ADR-0023](adr/0023-untrusted-context-boundary.md)).
 
@@ -108,13 +108,13 @@ Scoped here to the seeded-defect corpus and the fixed regression suite drawn fro
 
 **Emits:** `runs.json`, `summary.json`, `report.md` and `rule-authority.json`, and, spawning the built CLI binary itself once per fixture per repeat, the same review artifacts a real run produces.
 
-## `tooling/package` — the tarball and the open-source tree
+## `tooling/package` — the tarball and the corpus
 
-**Owns:** the CLI tarball a design partner installs — one bundled file, the runner's write-guard hook beside it, a version manifest and a licence notice, archived with a published SHA-256 ([D-046](11-open-decisions.md), `pack.mjs`); assembly of the public repository's tree from a named commit, carrying every file except the private set named in `PRIVATE_PATHS`, each rule with its own reason, and scanned before every write for internal references — a `.local/` run directory, an evidence-archive name, a path into the private set — that must be allow-listed by reason or the assembly refuses ([D-075](11-open-decisions.md), `assemble-open.mjs`); the public corpus assembly (`assemble-corpus.mjs`); tarball verification and draft-release scripting consumed by `.github/workflows/release.yml`; the gate's protected-paths check and regression delta under `.github/scripts/`.
+**Owns:** the CLI tarball a design partner installs — one bundled file, the runner's write-guard hook beside it, a version manifest and a licence notice, archived with a published SHA-256 ([D-046](11-open-decisions.md), `pack.mjs`); the public corpus assembly from a named commit ([D-075](11-open-decisions.md), `assemble-corpus.mjs`); tarball verification and draft-release scripting consumed by `.github/workflows/release.yml`; the gate's protected-paths check and regression delta under `.github/scripts/`.
 
 **Consumes:** the built workspace; a named commit — assembly is reproducible from a sha, never from an uncommitted edit.
 
-**Emits:** `release/focrux-<version>.tgz` and its digest; the assembled open-source tree; the assembled public corpus tree.
+**Emits:** `release/focrux-<version>.tgz` and its digest; the assembled public corpus tree.
 
 ## `tooling/skills` — executor skill guidance
 

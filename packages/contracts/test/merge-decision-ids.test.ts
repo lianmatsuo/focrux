@@ -14,7 +14,7 @@ import {
  * The sentences the merge decision hands a person, read for identifiers only
  * this repository knows.
  *
- * `merge.ts` ships in the open tree, so its stops are printed in a terminal
+ * `merge.ts` ships in the release tarball, so its stops are printed in a terminal
  * belonging to somebody who has none of this repository's decision records: a
  * `D-0nn` or `SCP-nnn` there names a document they cannot open, in the one
  * line that is supposed to tell them what to do next.

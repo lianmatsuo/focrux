@@ -1421,7 +1421,7 @@ function storeWithUnpricedAttempt(name: string): {
  * These four were run against the renderer as it stood before this change and
  * all four failed — measured, not reasoned about, and re-measurable by anyone:
  *
- *   git checkout 6e86387 -- apps/cli/src/inspect-core.ts
+ *   git checkout 6e86387 -- apps/cli/src/inspect.ts
  *   pnpm --filter @focrux/cli exec vitest run test/inspect.test.ts \
  *     -t "what an attempt leads with"
  *

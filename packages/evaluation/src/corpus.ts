@@ -40,8 +40,8 @@ export interface LoadedFixture {
  * `loadCorpus()`, the CLI without `--corpus` — reads what it names instead of
  * the corpus packaged beside this file. It exists so absence is observable:
  * `test/corpus-absence.test.ts` points it at a directory that is not there and
- * proves the corpus suites skip, which is the open tree's condition without
- * deleting anything here.
+ * proves the corpus suites skip rather than fail, without deleting anything
+ * here.
  */
 export const CORPUS_DIR_ENV = "FOCRUX_EVAL_CORPUS_DIR";
 

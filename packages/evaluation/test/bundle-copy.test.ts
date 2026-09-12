@@ -448,13 +448,9 @@ describe("a run with no bundle to copy is refused before anything is spawned", (
 });
 
 /**
- * The real `focrux` binary, if this tree has one that starts.
- *
- * A tree that carries the command surface without its open entry point does not
- * build `apps/cli` at all, so there is no program to bundle and nothing this
- * suite could compare. That is the CLI's gap rather than the harness's, and it
- * closes on its own the day the entry point lands — so this waits on the
- * condition rather than on a flag somebody has to remember to turn off.
+ * The real `focrux` binary, if this tree has built one that starts: this
+ * package's tests can run before `apps/cli` is built, so the suite below waits
+ * on the binary rather than on a flag somebody has to remember to turn off.
  */
 const CLI_ENTRY = resolve(here, "..", "..", "..", "apps", "cli", "dist", "main.js");
 // Gates a `describe` below rather than running inside a test, so a hang here

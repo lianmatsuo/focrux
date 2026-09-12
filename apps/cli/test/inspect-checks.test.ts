@@ -8,8 +8,8 @@ import {
   type PreflightRequest,
   type PreflightResult,
 } from "@focrux/runner";
-import { parseExecuteArgs, runExecuteCommand, type ExecuteOptions } from "../src/execute-core.js";
-import { attemptsRecordSubject, runInspectCommand } from "../src/inspect-core.js";
+import { parseExecuteArgs, runExecuteCommand, type ExecuteOptions } from "../src/execute.js";
+import { attemptsRecordSubject, runInspectCommand } from "../src/inspect.js";
 
 /**
  * What `focrux inspect` says about the checks on the head a run published.

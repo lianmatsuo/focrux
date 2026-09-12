@@ -1,4 +1,3 @@
-export * from "./authored.js";
 export * from "./delimit.js";
 export * from "./diff.js";
 export * from "./draft.js";

@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { DiagnosticResultSchema, type DiagnosticResult } from "@focrux/contracts";
 import type { PreflightResult } from "@focrux/runner";
 import { afterAll, describe, expect, it } from "vitest";
-import { runDoctorCommand, type DoctorOptions } from "../src/execute-core.js";
+import { runDoctorCommand, type DoctorOptions } from "../src/execute.js";
 import { USAGE } from "../src/usage.js";
 import { SPAWN_TEST_TIMEOUT_MS } from "./spawn-timeout.js";
 
@@ -161,8 +161,8 @@ describe("focrux doctor, on a checkout with no corpus cache", () => {
 
     const line = corpusLine(text);
     expect(line).toContain("absent");
-    expect(line).toContain("focrux-corpus --sync");
-    // The line is a warning: a machine that has never synced the corpus can
+    expect(line).toContain("focrux-corpus prepare");
+    // The line is a warning: a machine that has never prepared the corpus can
     // still run everything `doctor` is otherwise reporting on.
     expect(code).toBe(0);
   });
@@ -218,7 +218,7 @@ describe("focrux doctor, on a cache pinned to some other commit", () => {
     expect(line).toContain("behind");
     expect(line).toContain(OLDER_COMMIT);
     expect(line).toContain(SCORED_COMMIT);
-    expect(line).toContain("focrux-corpus --sync");
+    expect(line).toContain("focrux-corpus prepare");
     expect(code).toBe(0);
   });
 }, SPAWN_TEST_TIMEOUT_MS);
@@ -264,11 +264,8 @@ describe("the corpus-cache line is a warning and nothing else", () => {
 }, SPAWN_TEST_TIMEOUT_MS);
 
 /**
- * Both builds print the line, so both helps have to describe it — and they are
- * two texts, not one filtered copy of the other. Asserted the same way the
- * help's account of standard input is: the open build's is a string this file
- * imports, the full build's is source read off disk, because this file travels
- * to a tree that holds only the open half.
+ * `doctor` prints the line, so the help has to describe it. Asserted over
+ * `USAGE` itself, the same way the help's account of standard input is.
  */
 describe("what the help says about the corpus cache", () => {
   it("describes it", () => {

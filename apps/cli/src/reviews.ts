@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { UsageError } from "./args.js";
-import type { InspectSubject } from "./inspect-core.js";
+import type { InspectSubject } from "./inspect.js";
 import { TicketlessReviewBundleSchema, type TicketlessReviewBundle } from "./ticketless.js";
 
 /**

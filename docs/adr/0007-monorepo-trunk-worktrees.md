@@ -4,7 +4,7 @@
 
 ## Decision
 
-Focrux is developed in one monorepo, with short-lived branches in their own worktrees and pull requests to `main`, each passing the gate [`AGENTS.md`](../../AGENTS.md) lists before it merges. The loop's own attempts run in worktrees too.
+Focrux is developed in one monorepo, with short-lived branches in their own worktrees and pull requests to `main`, each passing the gate, `pnpm check`, before it merges. The loop's own attempts run in worktrees too.
 
 ## Consequences
 

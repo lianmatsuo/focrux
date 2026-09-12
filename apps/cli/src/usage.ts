@@ -1,8 +1,6 @@
 /**
- * The help the full build writes, for the entry point that carries every command.
- *
- * Its own module: the open entry point links against `args.js` for the review
- * flags, and must not carry the closed commands help text along with them.
+ * The help `focrux` writes: every command it carries, in the order the entry
+ * point lists them.
  */
 
 export const USAGE = `focrux — contract to pull request, locally
@@ -25,7 +23,7 @@ export const USAGE = `focrux — contract to pull request, locally
       One line reports the corpus cache at .local/corpus-cache: absent, or the
       commit it is pinned to and the fixtures it holds, or behind — naming both
       its commit and the one the recorded regression score was measured against.
-      Absent and behind name \`focrux-corpus --sync\` as the fix. It is a warning:
+      Absent and behind name \`focrux-corpus prepare\` as the fix. It is a warning:
       the corpus is what scores the reviewer, not what runs an attempt, so it
       never moves the exit code.
 

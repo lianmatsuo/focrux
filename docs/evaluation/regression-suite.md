@@ -24,6 +24,9 @@ node packages/evaluation/dist/main.js --suite regression --corpus "$corpus" --ru
 node .github/scripts/regression-delta.mjs <out> .github/regression-score.json          # what moved against the recorded score
 ```
 
+`pnpm check regression-dry-run` does the first six lines for you: it clones the pinned corpus into
+`.local/plantedbugs`, checks out the pinned commit, and runs the dry run.
+
 `--corpus` is not optional. Without it the harness reads the working tree's own copy under
 `packages/evaluation/corpus/fixtures` and says nothing about it, and a score against that copy is
 not comparable with the recorded one. The dry run is in the gate every pull request runs

@@ -11,8 +11,13 @@ import { runBaselineCommand } from "./baseline.js";
 import { startEntryPoint, type EntryPoint } from "./entry.js";
 import { runEditCommand } from "./edit.js";
 import { runEscapesCommand } from "./escapes.js";
-import { FULL_COMMAND_SET, runDoctorCommand, runExecuteCommand, type FullCommandName } from "./execute.js";
-import { parseExecuteArgs } from "./execute-core.js";
+import {
+  FULL_COMMAND_SET,
+  parseExecuteArgs,
+  runDoctorCommand,
+  runExecuteCommand,
+  type FullCommandName,
+} from "./execute.js";
 import { runInspectCommand } from "./inspect.js";
 import { parsePrincipleArgs, runPrincipleCommand } from "./principles.js";
 import { VERSION, runReviewCommand } from "./run.js";

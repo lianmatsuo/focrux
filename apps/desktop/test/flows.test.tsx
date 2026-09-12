@@ -2,6 +2,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import {
   cleanup,
+  configure,
   fireEvent,
   render,
   screen,
@@ -16,6 +17,11 @@ import { runnerProgress } from "../src/renderer/presentation.js";
 import { HomePage } from "../src/renderer/tasks/HomePage.js";
 import { TaskPage } from "../src/renderer/tasks/TaskPage.js";
 import { previewBridge } from "../src/renderer/preview.js";
+
+// A CI runner renders this app several times slower than a laptop, and the
+// library's default one-second `findBy` timeout reads as a missing button
+// there. Five seconds is what the explicit waits in this file already allow.
+configure({ asyncUtilTimeout: 5000 });
 
 let client: QueryClient;
 let decisionDetail: Detail;

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { TicketSchema, type Ticket } from "@focrux/contracts";
 import { UsageError } from "../src/args.js";
-import { reopen } from "../src/execute-core.js";
+import { reopen } from "../src/execute.js";
 
 /**
  * `reopen` walks the shortest **legal** route back to `ready`, and a guarded

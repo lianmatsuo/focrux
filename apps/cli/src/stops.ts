@@ -27,12 +27,12 @@ import { UsageError } from "./args.js";
 import type { Streams } from "./admit.js";
 import {
   attemptsRecordSubject,
-  buildInspectReport,
+  buildReportForSubject,
   summariseMergedCost,
   type InspectReport,
   type InspectSubject,
   type MergedCostSummary,
-} from "./inspect-core.js";
+} from "./inspect.js";
 import { escapeRows } from "./escapes.js";
 import { listChanges, storeDir, type SyncedChange } from "./tickets.js";
 import { readLocalVerdictsOrWarn, verdictsPath } from "./verdicts.js";
@@ -735,7 +735,7 @@ export const weekHidingWarning = (from: string, to: string): string =>
   `warning ${from} → ${to}: ${HIDING_SENTENCE}`;
 
 /**
- * A merged change, as `buildInspectReport` needs it to roll its cost.
+ * A merged change, as `buildReportForSubject` needs it to roll its cost.
  *
  * SCP-284: a local run's cost is rolled through the resolver `inspect` itself
  * uses on a store with no ticket file — one answer to "what is this id",
@@ -747,7 +747,7 @@ function mergedSubject(dir: string, change: SyncedChange): InspectSubject {
     : attemptsRecordSubject(dir, change.ticket_id);
 }
 
-/** A merged ticket, as `buildInspectReport` needs it to roll its cost. */
+/** A merged ticket, as `buildReportForSubject` needs it to roll its cost. */
 function mergedTicketSubject(ticket: Ticket): InspectSubject {
   return {
     kind: "ticket",
@@ -829,7 +829,7 @@ export async function runStopsCommand(input: {
   for (const change of mergedChanges) {
     try {
       mergedReports.push(
-        buildInspectReport({
+        buildReportForSubject({
           storeDirectory: dir,
           subject: mergedSubject(dir, change),
           attempt: null,

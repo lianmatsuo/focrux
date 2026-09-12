@@ -116,20 +116,15 @@ markdown_files = [
     ROOT / "README.md",
     ROOT / "AGENTS.md",
     *ROOT.glob("docs/**/*.md"),
-    # Package and app READMEs cross-link into docs/ and were outside this check
-    # until a stale link got in. Corpus fixture trees are excluded: they are
-    # sample repositories, and their contents are the thing under review.
-    # tooling/package/OPEN-*.md are excluded too: they are written for the root
-    # of the assembled public tree, so their relative links resolve there rather
-    # than where the sources sit. assemble-open.mjs resolves them against the
-    # published set and refuses a dangling one, which is their check.
+    # Package and app READMEs cross-link into docs/. Corpus fixture trees are
+    # excluded: they are sample repositories, and their contents are the thing
+    # under review.
     *(
         path
         for pattern in ("packages/**/*.md", "apps/**/*.md", "tooling/**/*.md")
         for path in ROOT.glob(pattern)
         if "node_modules" not in path.parts
         and "fixtures" not in path.parts
-        and not path.name.startswith("OPEN-")
         # Pinned upstream skills contain illustrative links into an imaginary
         # consuming repository. Their bytes are checked by tooling/skills/build.mjs;
         # they are not canonical documentation links in this repository.

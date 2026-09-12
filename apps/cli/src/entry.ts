@@ -10,13 +10,13 @@ import type { Streams } from "./streams.js";
  */
 
 /**
- * What one build of `focrux` can be asked to do.
+ * What `focrux` can be asked to do.
  *
- * Named by their union rather than as strings, so a build whose table lists a
- * command its dispatch does not answer fails to compile instead of at the user.
+ * Named by their union rather than as strings, so a table that lists a command
+ * its dispatch does not answer fails to compile instead of at the user.
  */
 export interface EntryPoint<Command extends string = string> {
-  /** The help this build writes, which names its commands and nothing else. */
+  /** The help, which names the commands and nothing else. */
   usage: string;
   /** The commands it carries, in the order the help lists them. */
   commands: readonly Command[];

@@ -1,5 +1,5 @@
 name: Security or trust boundary
-about: Change something that affects untrusted content or agent authority
+about: Change something that affects untrusted content or agent authority. To report a vulnerability, use the private channel in SECURITY.md instead
 labels: ["area:security"]
 body:
   - type: textarea

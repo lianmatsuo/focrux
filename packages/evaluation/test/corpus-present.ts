@@ -6,7 +6,7 @@ import { CORPUS_DIR_ENV, defaultCorpusDir, loadCorpus, type LoadedFixture } from
 /**
  * The gate the suites whose subject is the corpus stand behind.
  *
- * The harness travels into the open tree; the fixture corpus does not. A suite
+ * The harness can be run in a checkout without the fixture corpus. A suite
  * whose *subject* is the corpus — the corpus is well formed — has nothing to
  * assert there, and absence is a fact about that tree rather than a defect in
  * it. So those suites skip, naming what is missing, and never fail on absence.

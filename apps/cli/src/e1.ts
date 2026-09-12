@@ -25,15 +25,15 @@ import {
   type E1Thresholds,
 } from "@focrux/contracts";
 import { UsageError } from "./args.js";
-import { baselinePath, readBaselineFile } from "./baseline-core.js";
-import { formatDuration } from "./execute-core.js";
+import { baselinePath, readBaselineFile } from "./baseline.js";
+import { formatDuration } from "./execute.js";
 import { storeDir } from "./store.js";
 import type { Streams } from "./streams.js";
 
 /**
  * `focrux baseline` beyond the stopwatch: the E1 harness (D-038, SCP-080).
  *
- * `baseline-core.ts` times one piece of work. These six subcommands are what
+ * `baseline.ts` times one piece of work. These six subcommands are what
  * turns a pile of readings into a claim: a partner's ten, the thresholds they
  * agreed to before any of it was measured, the seal that fixes the ten before
  * the product is ever used, the product runs of those same ten, and the

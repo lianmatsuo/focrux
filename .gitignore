@@ -15,20 +15,18 @@ worktrees/
 # The partner tarball and its SHA-256, written by tooling/package/pack.mjs (D-046).
 release/
 
-# The local store. Everything in it is working state — unfinished reviews,
-# worktrees, run bundles, quarantine — except the two things that are records.
+# The local store. Everything in it is working state — tickets and their
+# contracts, unfinished reviews, worktrees, run bundles, quarantine — except the
+# two files that are this repository's own declarations (D-076).
 #
 # Written as `.focrux/*` rather than `.focrux/`, because git cannot re-include a
 # path whose parent directory is itself excluded: excluding the directory would
 # make the two exceptions below silently do nothing.
 .focrux/*
 
-# A ticket is the record of a decision a person made, and the contract beside it
-# is what execution was bound by. Keeping the contract in git is what makes "it
-# did not change after approval" checkable rather than merely forbidden.
-!.focrux/tickets/
+# The run configuration for this repository, and the owner's recorded product
+# decisions (D-065): durable, reviewed, shared.
 !.focrux/config.json
-# Principles are the owner's recorded product decisions (D-065): durable, reviewed, shared.
 !.focrux/principles.md
 
 # Corpus run output: full diffs and file contents, not for the repository.

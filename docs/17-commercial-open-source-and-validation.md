@@ -12,7 +12,7 @@ Everything that runs on one machine is open source. Anything hosted or shared ac
   - once built, `focrux interview` and phone pairing over the local network.
 - **Commercial:** the control plane ([D-016](11-open-decisions.md)).
 
-`tooling/package` assembles the open-source tree and the release tarball, each carrying everything above ([D-075](11-open-decisions.md)).
+`tooling/package` builds the release tarball, which carries everything above ([D-075](11-open-decisions.md)).
 
 ## Licences
 
@@ -26,7 +26,7 @@ This document is product architecture, not legal advice.
 
 ## The release
 
-Focrux is released and iterated in public when and in the form [D-076](11-open-decisions.md) decides, and from then on `lianmatsuo/focrux` is where it is developed.
+Focrux is developed in `lianmatsuo/focrux` ([D-076](11-open-decisions.md)) and released from it.
 
 Releases carry a signed tag, a published SHA-256 and a build provenance attestation, with no auto-update ([D-046](11-open-decisions.md)). The product-regulation artefacts come with the first binary release ([D-048](11-open-decisions.md)).
 

@@ -15,8 +15,7 @@ import { dirname, join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { preflight, type PreflightRequest } from "@focrux/runner";
 import { parseReviewArgs } from "../src/args.js";
-import { OPEN_COMMAND_NAMES } from "../src/command-names.js";
-import { parseExecuteArgs, runDoctorCommand } from "../src/execute-core.js";
+import { FULL_COMMAND_SET, parseExecuteArgs, runDoctorCommand } from "../src/execute.js";
 import { buildCli, REPO_ROOT, removeStagedBundles, spawnBuilt } from "./open-build.js";
 
 /**
@@ -50,20 +49,11 @@ import { buildCli, REPO_ROOT, removeStagedBundles, spawnBuilt } from "./open-bui
  * fails here too.
  */
 
-/**
- * The open README, wherever it is: this repository authors it at
- * `tooling/package/OPEN-README.md` and the assembly publishes it as the public
- * tree's own `README.md`. The authored copy is looked for first, because in
- * this repository the root README.md is the private one and is a different
- * document; in the published tree the authored path is absent and the root one
- * is the file this test is about.
- */
+/** The repository's README, whose quick start this file checks against the CLI. */
 function openReadmePath(): string {
-  const authored = join(REPO_ROOT, "tooling", "package", "OPEN-README.md");
-  if (existsSync(authored)) return authored;
-  const published = join(REPO_ROOT, "README.md");
-  if (existsSync(published)) return published;
-  throw new Error(`no open README at ${authored} and none at ${published}`);
+  const readme = join(REPO_ROOT, "README.md");
+  if (existsSync(readme)) return readme;
+  throw new Error(`no README at ${readme}`);
 }
 
 const QUICK_START_HEADING = "## Quick start";
@@ -177,9 +167,9 @@ function checkAgainstTheCli(step: Step): void {
   const command = rest[0] ?? "";
   const named = (why: string): Error =>
     new Error(`quick-start step ${step.position} — \`${step.text}\` — ${why}`);
-  if (!OPEN_COMMAND_NAMES.includes(command as (typeof OPEN_COMMAND_NAMES)[number])) {
+  if (!FULL_COMMAND_SET.includes(command as (typeof FULL_COMMAND_SET)[number])) {
     throw named(
-      `names \`${command}\`, which this build does not dispatch (it has: ${OPEN_COMMAND_NAMES.join(", ")})`,
+      `names \`${command}\`, which \`focrux\` does not dispatch (it has: ${FULL_COMMAND_SET.join(", ")})`,
     );
   }
   const parse = PARSERS[command];
@@ -675,7 +665,6 @@ describe("the prerequisites the quick start states before its first command", ()
       cwd: repo,
       preflight: (request: PreflightRequest) =>
         preflight({ ...request, minNodeMajor: Number(process.versions.node.split(".")[0]) + 1 }),
-      commands: OPEN_COMMAND_NAMES,
     });
     // eslint-disable-next-line no-control-regex
     const shown = out.join("").replace(/\u001b\[[0-9;]*m/g, "");

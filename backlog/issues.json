@@ -8,7 +8,7 @@
     },
     {
       "title": "Release",
-      "description": "The public tree, this repository's tree without its private material, carries everything that runs on one machine; it is verified and pushed as lianmatsuo/focrux, with every corpus fixture published in plantedbugs (D-075, D-076)."
+      "description": "Focrux is developed in lianmatsuo/focrux, which carries everything that runs on one machine, with every corpus fixture published in plantedbugs (D-075, D-076); the first release carries a signed tag, a SHA-256 and a provenance attestation (D-046)."
     },
     {
       "title": "First people",
@@ -1207,16 +1207,15 @@
     },
     {
       "id": "SCP-342",
-      "title": "Release Focrux publicly as lianmatsuo/focrux",
+      "title": "Ship the first release from lianmatsuo/focrux",
       "milestone": "Release",
       "labels": [
         "type:operations",
         "priority:p0",
         "area:platform"
       ],
-      "outcome": "Focrux is public as lianmatsuo/focrux, starting from one commit of the tree `tooling/package/assemble-open.mjs` assembles, and from then on it is where Focrux is developed (D-076).",
+      "outcome": "The first release of Focrux ships from lianmatsuo/focrux, where it is developed (D-076), with the release artefacts D-046 names.",
       "acceptance_criteria": [
-        "The public repository starts from one commit of the assembled tree, after the founder's word.",
         "Every corpus fixture is published in plantedbugs, and the public CI runs the regression suite against a pinned plantedbugs commit.",
         "The first release carries a signed tag, a published SHA-256 and a build provenance attestation (D-046)."
       ],

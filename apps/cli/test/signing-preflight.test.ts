@@ -6,14 +6,13 @@ import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
 import { EXIT_CODES } from "@focrux/contracts";
 import type { PreflightRequest, PreflightResult } from "@focrux/runner";
 import { runOrThrow } from "@focrux/workspace";
-import { OPEN_COMMAND_NAMES } from "../src/command-names.js";
 import { exitForThrown } from "../src/entry.js";
 import {
   parseExecuteArgs,
   runDoctorCommand,
   runExecuteCommand,
   type ExecuteOptions,
-} from "../src/execute-core.js";
+} from "../src/execute.js";
 import { storeDir } from "../src/store.js";
 
 /**
@@ -236,7 +235,6 @@ describe("a repository whose configuration signs commits with a key nothing can 
       streams: read.streams,
       cwd: repo,
       preflight: okPreflight,
-      commands: OPEN_COMMAND_NAMES,
     });
 
     expect(code).toBe(1);
@@ -261,7 +259,6 @@ describe("a repository whose configuration signs commits with a key nothing can 
       streams: read.streams,
       cwd: repo,
       preflight: okPreflight,
-      commands: OPEN_COMMAND_NAMES,
     });
 
     expect(code).toBe(0);

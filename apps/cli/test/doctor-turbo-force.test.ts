@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { DiagnosticResultSchema, type DiagnosticResult } from "@focrux/contracts";
 import type { PreflightResult } from "@focrux/runner";
 import { afterAll, describe, expect, it } from "vitest";
-import { runDoctorCommand, type DoctorOptions } from "../src/execute-core.js";
+import { runDoctorCommand, type DoctorOptions } from "../src/execute.js";
 import { SPAWN_TEST_TIMEOUT_MS } from "./spawn-timeout.js";
 
 /**
