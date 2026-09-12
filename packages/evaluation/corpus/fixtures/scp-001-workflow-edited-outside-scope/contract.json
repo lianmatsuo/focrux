@@ -1,0 +1,39 @@
+{
+  "plan_id": "plan_scp001",
+  "version": 1,
+  "ticket_id": "ticket_scp001",
+  "level": "P1",
+  "outcome": "Search results are returned one page at a time instead of all at once.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A search returns at most 25 hits per page and reports the total.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a query matching 140 documents returns 25 hits and a total of 140"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/search/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "04f1740",
+    "context_manifest_hash": "sha256:b33dc3a27da2edba54ef755607518732c4d31d4495d3101cb7a5ea8f36ad1ea1",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

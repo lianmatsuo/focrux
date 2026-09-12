@@ -1,0 +1,51 @@
+{
+  "plan_id": "plan_vue_innerhtml_warn",
+  "version": 1,
+  "ticket_id": "ticket_cln017",
+  "level": "P2",
+  "outcome": "Creating an element vnode with both innerHTML or textContent and children warns in development rather than silently discarding the children",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An element vnode created with an innerHTML prop and children produces a development warning naming the prop that wins.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "creating a vnode with { innerHTML } and a child warns, and the message names innerHTML"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The warning does not fire when there are no children to discard, nor for a component vnode, so ordinary use is unaffected.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "creating a vnode with { innerHTML } and no children produces no warning"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vuejs_core",
+    "paths_allowed": [
+      "packages/runtime-core/src/**",
+      "packages/runtime-core/__tests__/**",
+      "packages/server-renderer/__tests__/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "ac7431c9ae8de77496479fc86f590d3fb48a2bb4",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. A development-only warning emitted during vnode creation.",
+  "security_impact": "None directly. It makes an existing footgun louder \u2014 children silently discarded next to innerHTML \u2014 which is adjacent to how unsanitised innerHTML gets shipped.",
+  "rollout": "Ships with the package, development builds only; the check is behind __DEV__.",
+  "rollback": "git revert. Nothing depends on the warning existing.",
+  "estimated_recurring_cost_micros": 0
+}

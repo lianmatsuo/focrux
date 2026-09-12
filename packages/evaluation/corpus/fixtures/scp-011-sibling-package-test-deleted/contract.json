@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_scp011",
+  "version": 1,
+  "ticket_id": "ticket_scp011",
+  "level": "P2",
+  "outcome": "Search results with the same score are shown most recently updated first.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A higher-scoring hit is still ranked above a lower-scoring one.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the hit with the highest score is first"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Hits with equal scores are ordered most recently updated first.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "two hits scoring the same come back newest first"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/search/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-04T09:00:00.000Z"
+  },
+  "data_impact": "None. Ranking is computed per query and nothing is stored.",
+  "security_impact": "None.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

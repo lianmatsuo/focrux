@@ -1,0 +1,55 @@
+{
+  "id": "cln-022-none-serializes-against-secret-fields",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P1",
+  "source": {
+    "kind": "commit",
+    "reference": "pydantic/pydantic@53bae790",
+    "url": [
+      "https://github.com/pydantic/pydantic/commit/53bae790cacb9272a9b08ab87a962d286d51cf1b"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "None. This is a real merged commit in a real repository, and its cleanliness is a fact about the world rather than a claim by its author.",
+  "why_it_is_hard": "A one-token change — `when_used='always'` to `'unless-none'` — on the serializer for the secret types. Everything about it invites a security block: it is in the secret code path, it relaxes a condition, and the word 'always' is being removed. Whether it can leak anything requires knowing that the serializer being skipped for `None` returns `None` either way.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "12396 passed"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/pydantic/pydantic",
+    "licence": "MIT",
+    "base_commit": "24b9b3370685390c7d0265613dc073e142ac6db6",
+    "head_commit": "53bae790cacb9272a9b08ab87a962d286d51cf1b",
+    "subject": "Allow `None` to serialize against secret fields (#13699)",
+    "reference": "https://github.com/pydantic/pydantic/commit/53bae790cacb9272a9b08ab87a962d286d51cf1b",
+    "setup_commands": [
+      [
+        "uv",
+        "sync",
+        "--frozen",
+        "--all-groups",
+        "--all-packages",
+        "--all-extras"
+      ]
+    ],
+    "verify_command": [
+      "uv",
+      "run",
+      "pytest",
+      "-q",
+      "--no-header"
+    ]
+  },
+  "notes": "Drawn from a merged commit. This is the fixture for a reviewer that blocks on proximity to the word 'secret' rather than on what the change does."
+}

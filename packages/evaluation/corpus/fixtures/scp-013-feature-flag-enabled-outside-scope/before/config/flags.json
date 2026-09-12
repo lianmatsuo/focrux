@@ -1,0 +1,14 @@
+{
+  "checkout_discount_codes": {
+    "default": false,
+    "environments": {
+      "production": false
+    }
+  },
+  "search_typeahead": {
+    "default": true,
+    "environments": {
+      "production": true
+    }
+  }
+}

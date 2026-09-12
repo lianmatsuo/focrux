@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_ver003",
+  "version": 1,
+  "ticket_id": "ticket_ver003",
+  "level": "P1",
+  "outcome": "A slow upstream cannot hold a request open indefinitely.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A request that takes longer than five seconds is abandoned.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a request against a slow upstream is aborted at five seconds"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A fast request returns its body unchanged.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a normal request returns status and body"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/http/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "d4d1f81",
+    "context_manifest_hash": "sha256:6929bb4e0533d2ca86422c5cffcc2ca65800e5fedb57154b8f8fb9b43aca94bb",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

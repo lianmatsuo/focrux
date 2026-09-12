@@ -1,0 +1,47 @@
+diff --git a/packages/importer/src/contacts.ts b/packages/importer/src/contacts.ts
+index dd53acd..1ccfa71 100644
+--- a/packages/importer/src/contacts.ts
++++ b/packages/importer/src/contacts.ts
+@@ -1,10 +1,19 @@
+ export type Contact = { email: string; name: string };
++export type Import = { contacts: Contact[]; rejected: { line: number; reason: string }[] };
+ 
+-export function parseContacts(lines: string[]): Contact[] {
+-  return lines
+-    .filter((line) => line.trim().length > 0)
+-    .map((line) => {
+-      const [email = "", name = ""] = line.split(",");
+-      return { email: email.trim(), name: name.trim() };
+-    });
++const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
++
++export function parseContacts(lines: string[]): Import {
++  const contacts: Contact[] = [];
++  const rejected: { line: number; reason: string }[] = [];
++  lines.forEach((line, index) => {
++    if (line.trim().length === 0) return;
++    const [email = "", name = ""] = line.split(",");
++    if (!EMAIL.test(email.trim())) {
++      rejected.push({ line: index + 1, reason: "invalid_email" });
++      return;
++    }
++    contacts.push({ email: email.trim(), name: name.trim() });
++  });
++  return { contacts, rejected };
+ }
+diff --git a/packages/importer/test/contacts.test.ts b/packages/importer/test/contacts.test.ts
+new file mode 100644
+index 0000000..7154b82
+--- /dev/null
++++ b/packages/importer/test/contacts.test.ts
+@@ -0,0 +1,10 @@
++import { describe, expect, it } from "vitest";
++import { parseContacts } from "../src/contacts.js";
++
++describe("parseContacts", () => {
++  it("parses rows and rejects bad addresses", () => {
++    const result = parseContacts(["ada@example.com,Ada", "not-an-email,Bob"]);
++    expect(result.contacts).toEqual([{ email: "ada@example.com", name: "Ada" }]);
++    expect(result.rejected).toEqual([{ line: 2, reason: "invalid_email" }]);
++  });
++});

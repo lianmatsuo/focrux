@@ -1,0 +1,45 @@
+{
+  "id": "ver-007-loop-body-never-runs",
+  "class": "verification_defect",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Tests that pass without exercising the behaviour they name: the vacuous-assertion patterns catalogued in test-quality literature and observed in agent-authored suites",
+    "url": [
+      "https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "Redaction matches exact top-level keys only, so `user.password`, `Password`, and any nested object pass through in full — ac_2 asks for sensitive values not to reach the log. The test that names redaction iterates an array that is never populated, so its body runs zero times and both assertions inside it are unreachable.",
+  "why_it_is_hard": "An empty table-driven test is the least visible vacuous test there is: the assertions are present, correct, and would catch the defect if they ran. The declaration and the loop are far enough apart to read as an oversight, which is what makes it worth measuring — the reviewer has to notice that CASES is never appended to.",
+  "expected_detection": {
+    "mode": "coverage",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/audit/test/redact.test.ts"
+    ],
+    "rule_prefixes": [],
+    "statuses": [
+      "not_met"
+    ],
+    "strengths": [
+      "proxy",
+      "asserted_only"
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The assertions inside the loop are the right ones. The fixture is about whether the reviewer checks that they execute."
+}

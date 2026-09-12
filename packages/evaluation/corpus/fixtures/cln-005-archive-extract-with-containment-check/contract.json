@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_cln005",
+  "version": 1,
+  "ticket_id": "ticket_cln005",
+  "level": "P2",
+  "outcome": "An editor can import a content archive exported from another instance.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An archive's entries are written into the import directory.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "each entry appears under the destination"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "No archive entry can write outside the import directory.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an entry whose name escapes the destination is refused"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/import/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "None beyond what the criteria state.",
+  "security_impact": "Stated in the criteria.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "a97253e",
+    "context_manifest_hash": "sha256:8f5c7178d3c0df5d3d1d5d25795995071bcd3574a49309b496c12796e42f2eed",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

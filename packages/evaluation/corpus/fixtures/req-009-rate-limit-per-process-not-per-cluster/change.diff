@@ -1,0 +1,47 @@
+diff --git a/packages/api/src/throttle.ts b/packages/api/src/throttle.ts
+index de453f9..6e44893 100644
+--- a/packages/api/src/throttle.ts
++++ b/packages/api/src/throttle.ts
+@@ -5,3 +5,16 @@ export function decide(count: number, limit: number, windowMs: number): Decision
+     ? { allowed: true, retryAfterMs: 0 }
+     : { allowed: false, retryAfterMs: windowMs };
+ }
++
++const counts = new Map<string, { count: number; resetAt: number }>();
++
++/** Rate limit a caller to `limit` requests per `windowMs`. */
++export function throttle(key: string, limit: number, windowMs: number, now: number): Decision {
++  const existing = counts.get(key);
++  if (!existing || existing.resetAt <= now) {
++    counts.set(key, { count: 1, resetAt: now + windowMs });
++    return decide(0, limit, windowMs);
++  }
++  existing.count += 1;
++  return decide(existing.count - 1, limit, windowMs);
++}
+diff --git a/packages/api/test/throttle.test.ts b/packages/api/test/throttle.test.ts
+new file mode 100644
+index 0000000..40bc16b
+--- /dev/null
++++ b/packages/api/test/throttle.test.ts
+@@ -0,0 +1,20 @@
++import { describe, expect, it } from "vitest";
++import { throttle } from "../src/throttle.js";
++
++describe("throttle", () => {
++  it("allows up to the limit", () => {
++    for (let i = 0; i < 3; i += 1) {
++      expect(throttle("k1", 3, 1000, 0).allowed).toBe(true);
++    }
++  });
++
++  it("refuses past the limit", () => {
++    for (let i = 0; i < 3; i += 1) throttle("k2", 3, 1000, 0);
++    expect(throttle("k2", 3, 1000, 0).allowed).toBe(false);
++  });
++
++  it("allows again once the window has passed", () => {
++    for (let i = 0; i < 3; i += 1) throttle("k3", 3, 1000, 0);
++    expect(throttle("k3", 3, 1000, 2000).allowed).toBe(true);
++  });
++});

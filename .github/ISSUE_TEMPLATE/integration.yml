@@ -1,0 +1,44 @@
+name: Integration
+about: Add or change an external provider connector
+labels: ["type:integration"]
+body:
+  - type: input
+    id: provider
+    attributes:
+      label: Provider and API/version
+    validations:
+      required: true
+  - type: textarea
+    id: permissions
+    attributes:
+      label: Required permissions and credential lifecycle
+    validations:
+      required: true
+  - type: textarea
+    id: authority
+    attributes:
+      label: Source authority per field group
+      description: >
+        Which fields does the provider own, which does Focrux own, and which are read-only?
+        No generic last-write-wins is permitted (ADR-0027). State the conflict policy and
+        the freshness objective.
+    validations:
+      required: true
+  - type: textarea
+    id: events
+    attributes:
+      label: Source events and normalised contracts
+    validations:
+      required: true
+  - type: textarea
+    id: failure
+    attributes:
+      label: Idempotency, rate limits, retries, and failure modes
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+    validations:
+      required: true

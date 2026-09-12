@@ -1,0 +1,38 @@
+{
+  "id": "mig-007-foreign-key-validated-under-lock",
+  "class": "migration_hazard",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Schema changes that are safe on an empty database and lock or fail on a populated one",
+    "url": [
+      "https://www.postgresql.org/docs/current/sql-altertable.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "Adding a foreign key without `NOT VALID` scans every existing row while holding a lock on both tables, and it fails outright if any subscription references a plan that no longer exists — which the migration's own comment says is the situation. The safe form adds it `NOT VALID`, cleans the orphans, then runs `VALIDATE CONSTRAINT`, which takes a weaker lock. ac_2 asks for it to apply to a populated table.",
+  "why_it_is_hard": "The migration says in its first line that orphaned references exist, and then adds a constraint that cannot be created while they do. A reviewer that reads only the SQL sees a correct constraint; the contradiction is between the comment and the statement, one line apart.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/subs/migrations/0010_subscription_plan_fk.sql"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The evidence that the migration fails is written in the migration, by its author, as the reason for it."
+}

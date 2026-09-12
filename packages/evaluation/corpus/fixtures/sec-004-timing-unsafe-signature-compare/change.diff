@@ -1,0 +1,35 @@
+diff --git a/packages/webhooks/src/verify.ts b/packages/webhooks/src/verify.ts
+new file mode 100644
+index 0000000..390000a
+--- /dev/null
++++ b/packages/webhooks/src/verify.ts
+@@ -0,0 +1,9 @@
++import { sign } from "./sign.js";
++
++const SECRET = process.env.WEBHOOK_SECRET ?? "";
++
++/** Reject a delivery whose signature header does not match the body. */
++export function verifyDelivery(body: string, headerSignature: string): boolean {
++  const expected = sign(body, SECRET);
++  return expected === headerSignature;
++}
+diff --git a/packages/webhooks/test/verify.test.ts b/packages/webhooks/test/verify.test.ts
+new file mode 100644
+index 0000000..432876c
+--- /dev/null
++++ b/packages/webhooks/test/verify.test.ts
+@@ -0,0 +1,14 @@
++import { describe, expect, it } from "vitest";
++import { verifyDelivery } from "../src/verify.js";
++import { sign } from "../src/sign.js";
++
++describe("delivery verification", () => {
++  it("accepts a correctly signed body", () => {
++    const body = '{"id":"evt_1"}';
++    expect(verifyDelivery(body, sign(body, process.env.WEBHOOK_SECRET ?? ""))).toBe(true);
++  });
++
++  it("rejects a wrong signature", () => {
++    expect(verifyDelivery('{"id":"evt_1"}', "deadbeef")).toBe(false);
++  });
++});

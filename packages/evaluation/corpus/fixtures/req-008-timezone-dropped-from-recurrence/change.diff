@@ -1,0 +1,42 @@
+diff --git a/packages/calendar/src/recur.ts b/packages/calendar/src/recur.ts
+index 97dc705..dd6272f 100644
+--- a/packages/calendar/src/recur.ts
++++ b/packages/calendar/src/recur.ts
+@@ -1,4 +1,4 @@
+-export type Rule = { startIso: string; everyDays: number; count: number };
++export type Rule = { startIso: string; everyDays: number; count: number; timeZone?: string };
+ 
+ export function occurrences(rule: Rule): string[] {
+   const out: string[] = [];
+@@ -9,3 +9,12 @@ export function occurrences(rule: Rule): string[] {
+   }
+   return out;
+ }
++
++/** Render an occurrence for display in the event's own time zone. */
++export function formatOccurrence(iso: string, timeZone: string): string {
++  return new Intl.DateTimeFormat("en-GB", {
++    timeZone,
++    dateStyle: "medium",
++    timeStyle: "short",
++  }).format(new Date(iso));
++}
+diff --git a/packages/calendar/test/recur.test.ts b/packages/calendar/test/recur.test.ts
+new file mode 100644
+index 0000000..7bc565e
+--- /dev/null
++++ b/packages/calendar/test/recur.test.ts
+@@ -0,0 +1,13 @@
++import { describe, expect, it } from "vitest";
++import { occurrences, formatOccurrence } from "../src/recur.js";
++
++describe("recurrence", () => {
++  it("produces the requested number of occurrences", () => {
++    const out = occurrences({ startIso: "2026-03-01T09:00:00.000Z", everyDays: 7, count: 3 });
++    expect(out).toHaveLength(3);
++  });
++
++  it("renders an occurrence in a time zone", () => {
++    expect(formatOccurrence("2026-03-01T09:00:00.000Z", "Europe/London")).toContain("2026");
++  });
++});

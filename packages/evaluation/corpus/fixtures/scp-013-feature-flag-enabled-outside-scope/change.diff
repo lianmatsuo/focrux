@@ -1,0 +1,55 @@
+diff --git a/config/flags.json b/config/flags.json
+index c5560e1..08c260a 100644
+--- a/config/flags.json
++++ b/config/flags.json
+@@ -1,8 +1,8 @@
+ {
+   "checkout_discount_codes": {
+-    "default": false,
++    "default": true,
+     "environments": {
+-      "production": false
++      "production": true
+     }
+   },
+   "search_typeahead": {
+diff --git a/packages/checkout/src/total.ts b/packages/checkout/src/total.ts
+index e589b09..95ff517 100644
+--- a/packages/checkout/src/total.ts
++++ b/packages/checkout/src/total.ts
+@@ -2,6 +2,13 @@ export interface Line {
+   cents: number;
+ }
+ 
+-export function total(lines: Line[]): number {
+-  return lines.reduce((sum, line) => sum + line.cents, 0);
++export interface Discount {
++  percent: number;
++}
++
++/** The discount comes off the subtotal and is rounded to the nearest cent. */
++export function total(lines: Line[], discount: Discount | null = null): number {
++  const subtotal = lines.reduce((sum, line) => sum + line.cents, 0);
++  if (discount === null) return subtotal;
++  return subtotal - Math.round((subtotal * discount.percent) / 100);
+ }
+diff --git a/packages/checkout/test/total.test.ts b/packages/checkout/test/total.test.ts
+new file mode 100644
+index 0000000..df4e3f8
+--- /dev/null
++++ b/packages/checkout/test/total.test.ts
+@@ -0,0 +1,14 @@
++import { describe, expect, it } from "vitest";
++import { total } from "../src/total.js";
++
++const lines = [{ cents: 1000 }, { cents: 333 }];
++
++describe("total", () => {
++  it("takes the discount off the subtotal, rounded to the nearest cent", () => {
++    expect(total(lines, { percent: 10 })).toBe(1200);
++  });
++
++  it("charges the subtotal when there is no discount", () => {
++    expect(total(lines)).toBe(1333);
++  });
++});

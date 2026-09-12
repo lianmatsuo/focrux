@@ -1,0 +1,45 @@
+{
+  "id": "ver-008-assertion-recomputes-the-implementation",
+  "class": "verification_defect",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Tests that pass without exercising the behaviour they name: the vacuous-assertion patterns catalogued in test-quality literature and observed in agent-authored suites",
+    "url": [
+      "https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "`netCents` is not the inverse of `grossCents`: rounding is applied to a different quantity in each direction, so `netCents(grossCents(n))` differs from `n` for amounts where the VAT lands on a half penny — ac_2 asks for the round trip to hold. The test asserts `netCents` against the same expression the function computes, so it holds whatever that expression is.",
+  "why_it_is_hard": "A tautological assertion is invisible in a passing run and looks like a careful reviewer's own working. The comment even says the two agree by construction, which reads as a note about precision rather than a confession. The correct test — a round trip against grossCents — is one line away and would fail.",
+  "expected_detection": {
+    "mode": "coverage",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/pricing/test/vat.test.ts"
+    ],
+    "rule_prefixes": [],
+    "statuses": [
+      "not_met"
+    ],
+    "strengths": [
+      "proxy",
+      "asserted_only"
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The clearest instance in the corpus of a test that cannot fail: it recomputes the implementation and compares."
+}

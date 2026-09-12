@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_sec009",
+  "version": 1,
+  "ticket_id": "ticket_sec009",
+  "level": "P2",
+  "outcome": "An API error tells the caller which dependency failed without telling them anything else.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An unrecognised error stays opaque.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an ordinary Error maps to internal_error with no detail"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The detail returned for an upstream failure contains nothing that is not safe for the caller to see.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an upstream error carrying a connection string and an authorization header maps to a detail containing neither"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/gateway/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. Error mapping is per request.",
+  "security_impact": "Credential disclosure to any caller who can provoke an upstream failure.",
+  "rollout": "Ships with the gateway.",
+  "rollback": "git revert restores the opaque message.",
+  "estimated_recurring_cost_micros": 0
+}

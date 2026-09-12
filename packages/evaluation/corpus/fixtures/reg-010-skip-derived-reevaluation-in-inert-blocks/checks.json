@@ -1,0 +1,24 @@
+[
+  {
+    "check_id": "check_ut",
+    "name": "unit",
+    "kind": "unit",
+    "status": "passed",
+    "summary": "7349 passed, 61 skipped (31 test files passed)",
+    "command": "pnpm test",
+    "detail": "Measured at the pinned head commit on 2026-08-29, not declared. Green including the change's own new runtime sample, which is the point: the suite proves the reported symptom is gone and cannot say whether the cause was addressed. Svelte reverted the next day because it was not.",
+    "duration_ms": 0,
+    "source": "file"
+  },
+  {
+    "check_id": "check_baseline",
+    "name": "fail-first",
+    "kind": "regression-baseline",
+    "status": "failed",
+    "summary": "the change's own tests passed at the base commit",
+    "command": "pnpm test (at 25a1c5368be7, tests only)",
+    "detail": "The tests added or changed by this diff were applied to the base commit and passed against the unfixed code. They therefore do not discriminate: they would have passed before the change and prove nothing about it. Test files applied: packages/svelte/tests/runtime-runes/samples/if-block-const-inert-derived/_config.js, packages/svelte/tests/runtime-runes/samples/if-block-const-inert-derived/main.svelte.",
+    "duration_ms": 32292,
+    "source": "file"
+  }
+]

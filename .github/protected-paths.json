@@ -1,0 +1,31 @@
+{
+  "_comment": [
+    "Read by .github/scripts/protected-paths.mjs on every pull request. Two shapes:",
+    "'protected_tests' are exact file paths -- a change matches only that file, never a",
+    "same-named file elsewhere or a longer name that merely starts with it (blocking.test.ts.bak",
+    "is not blocking.test.ts). 'protected_paths' are exact paths or globs ('**' crosses directory",
+    "boundaries, '*' does not) -- anything under them is protected, source and tests alike.",
+    "",
+    "The four tests judge the reviewer: its blocking, remediation and decision-order tests, and",
+    "the runner's security test. The sample fixtures are",
+    "what the reviewer is scored on -- a fixture is never weakened because the reviewer missed it,",
+    "so a pull request may not answer a miss by editing the fixture that caught it.",
+    "",
+    "The reviewer's own prompt and code are deliberately NOT protected. A change to the reviewer is",
+    "the contribution this repository invites; what holds it honest is its regression score, quoted",
+    "in the pull request, not a refusal to let it be written. A rule that protected the prompt would",
+    "refuse the very pull request CONTRIBUTING.md asks for.",
+    "",
+    "The only path that may change these: a maintainer's release commit on the default branch,",
+    "which this check does not run against -- see CONTRIBUTING.md."
+  ],
+  "protected_tests": [
+    "packages/review/test/blocking.test.ts",
+    "packages/review/test/remediation.test.ts",
+    "packages/review/test/decision-order.test.ts",
+    "packages/runner/test/security.test.ts"
+  ],
+  "protected_paths": [
+    "packages/evaluation/sample/**"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "focrux",
+  "private": true,
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "validate": "python3 scripts/validate_backlog.py && python3 scripts/validate_docs.py && python3 scripts/validate_diagrams.py",
+    "issues:dry-run": "python3 scripts/sync_github_issues.py",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "release:pack": "node tooling/package/pack.mjs",
+    "issues:apply": "python3 scripts/sync_github_issues.py --apply",
+    "desktop:build": "turbo run build --filter=@focrux/desktop...",
+    "desktop:dev": "pnpm desktop:build && pnpm --filter @focrux/desktop dev",
+    "desktop:preview": "pnpm --filter @focrux/desktop preview",
+    "desktop:start": "pnpm --filter @focrux/desktop start",
+    "desktop:package": "pnpm desktop:build && pnpm --filter @focrux/desktop package"
+  },
+  "devDependencies": {
+    "turbo": "2.10.12"
+  }
+}

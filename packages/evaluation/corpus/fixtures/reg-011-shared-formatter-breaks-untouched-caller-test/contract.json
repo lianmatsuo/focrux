@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_reg011",
+  "version": 1,
+  "ticket_id": "ticket_reg011",
+  "level": "P2",
+  "outcome": "Amounts on the invoice PDF and the dashboard are shown with thousands separators, so a customer reads 1,234.56 rather than 1234.56.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "formatMoney renders thousands separators: 123456 minor units render as 1,234.56 and 100000000 as 1,000,000.00.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "expect(formatMoney(123456)).toBe(\"1,234.56\")"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Every existing caller of formatMoney keeps working, and every package's tests pass.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "vitest run across every package passes"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/*/src/**",
+      "packages/*/test/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-06T03:00:00.000Z"
+  },
+  "data_impact": "None. Amounts stay integer minor units in storage; only the rendered string changes.",
+  "security_impact": "None.",
+  "rollout": "Ships with the format package; callers pick it up at their next build.",
+  "rollback": "git revert restores the plain rendering.",
+  "estimated_recurring_cost_micros": 0
+}

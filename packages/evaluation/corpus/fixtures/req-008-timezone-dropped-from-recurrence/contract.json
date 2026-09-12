@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_req008",
+  "version": 1,
+  "ticket_id": "ticket_req008",
+  "level": "P1",
+  "outcome": "A recurring event happens at the same local time each occurrence.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A rule produces the requested number of occurrences.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a count of 3 produces 3 occurrences"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Occurrences keep the same local wall-clock time across a daylight-saving change.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a 09:00 weekly event is still 09:00 local after the clocks change"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/calendar/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

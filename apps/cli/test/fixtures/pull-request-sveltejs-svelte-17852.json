@@ -1,0 +1,56 @@
+{
+  "what_this_is": "sveltejs/svelte#17852 as `gh` answered for it, recorded so a review of it replays on a machine with no credential and no network. Written by test/fixtures/record-pull-request.mjs; re-run that script to re-record. Do not hand-edit — a hand-edited capture is not one.",
+  "captured": {
+    "at": "2026-09-04",
+    "by": "apps/cli/test/fixtures/record-pull-request.mjs sveltejs/svelte#17852",
+    "with": "gh version 2.98.0 (2026-08-20)",
+    "commands": {
+      "view": "gh pr view 17852 --repo sveltejs/svelte --json number,title,body,url,headRefName,baseRefName,headRefOid,baseRefOid,state,mergeCommit,mergedAt",
+      "diff": "gh pr diff 17852 --repo sveltejs/svelte",
+      "commit": "gh api repos/sveltejs/svelte/commits/e3f06f9fc7ea0703bc89f94fd82ae4b7855e7a0a",
+      "licence": "gh api repos/sveltejs/svelte/license"
+    },
+    "upstream_licence": "MIT",
+    "upstream_licence_notice": {
+      "copyright": "Copyright (c) 2016-2025 [Svelte Contributors](https://github.com/sveltejs/svelte/graphs/contributors)",
+      "permission_notice": "The permission notice is the MIT text at https://github.com/sveltejs/svelte/blob/main/LICENSE.md; it is not copied here.",
+      "url": "https://github.com/sveltejs/svelte/blob/main/LICENSE.md"
+    }
+  },
+  "pinned": {
+    "reference": "sveltejs/svelte#17852",
+    "url": "https://github.com/sveltejs/svelte/pull/17852",
+    "title": "fix: skip derived re-evaluation inside inert effect blocks",
+    "state": "MERGED",
+    "merged_at": "2026-03-04T22:15:10Z",
+    "head_commit": "1d55e971b2d8b07bf88adf7a3403c99d9c7fae95",
+    "base_commit": "25a1c5368be77b1014c3ff8b79cf9b1fe7f706f5",
+    "merge_commit": "e3f06f9fc7ea0703bc89f94fd82ae4b7855e7a0a",
+    "parent_commits": [
+      "25a1c5368be77b1014c3ff8b79cf9b1fe7f706f5"
+    ],
+    "changed_files": [
+      ".changeset/chatty-papers-sing.md",
+      "packages/svelte/src/internal/client/reactivity/deriveds.js",
+      "packages/svelte/tests/runtime-runes/samples/if-block-const-inert-derived/_config.js",
+      "packages/svelte/tests/runtime-runes/samples/if-block-const-inert-derived/main.svelte"
+    ],
+    "repository": "https://github.com/sveltejs/svelte"
+  },
+  "notes": {
+    "why_this_pull_request": "Its body states what the change does and states no acceptance criteria — and the checklist under 'Before submitting the PR' is GitHub's template, whose items ('include a test that fails without this PR but passes with it') read exactly like criteria and are not any. A real pull request judged against criteria lifted off a template is the failure SCP-179 exists to avoid, so ac_2 is tested against a real body rather than an invented one. It is also small — four files — and merged, so the pin cannot move.",
+    "also_recorded_in": "The evaluation corpus pins the same pull request for a different purpose, as fixture reg-010-skip-derived-reevaluation-in-inert-blocks. The two records are checked against each other in apps/cli/test/ticketless-review.test.ts.",
+    "upstream_code_is_checked_in_here": "Deliberately, and unlike the corpus's pinned fixtures, which compute their diff from a clone into a gitignored cache. A test that reads that cache is a test CI fails, and the patch is what the reviewer reads — so an offline test that did not carry it would be asserting about a change this repository wrote. sveltejs/svelte is MIT; its copyright notice, the licence and the commit the patch was taken from are recorded above it."
+  },
+  "gh_pr_view": {
+    "number": 17852,
+    "title": "fix: skip derived re-evaluation inside inert effect blocks",
+    "body": "this is #17850 with changes (for whatever reason I wasn't able to push direct to the fork) — same test but simplified, and a simpler fix that doesn't undo the recent (necessary!) changes to the scheduling logic\r\n\r\n### Before submitting the PR, please make sure you do the following\r\n\r\n- [x] It's really useful if your PR references an issue where it is discussed ahead of time. In many cases, features are absent for a reason. For large changes, please create an RFC: https://github.com/sveltejs/rfcs\r\n- [x] Prefix your PR title with `feat:`, `fix:`, `chore:`, or `docs:`.\r\n- [x] This message body should clearly illustrate what problems it solves.\r\n- [x] Ideally, include a test that fails without this PR but passes with it.\r\n- [x] If this PR changes code within `packages/svelte/src`, add a changeset (`npx changeset`).\r\n\r\n### Tests and linting\r\n\r\n- [x] Run the tests with `pnpm test` and lint the project with `pnpm lint`\r\n",
+    "url": "https://github.com/sveltejs/svelte/pull/17852",
+    "headRefName": "pr/17850",
+    "baseRefName": "main",
+    "headRefOid": "1d55e971b2d8b07bf88adf7a3403c99d9c7fae95",
+    "baseRefOid": "25a1c5368be77b1014c3ff8b79cf9b1fe7f706f5"
+  },
+  "gh_pr_diff": "diff --git a/.changeset/chatty-papers-sing.md b/.changeset/chatty-papers-sing.md\nnew file mode 100644\nindex 000000000000..4d85b91bfc68\n--- /dev/null\n+++ b/.changeset/chatty-papers-sing.md\n@@ -0,0 +1,5 @@\n+---\n+'svelte': patch\n+---\n+\n+fix: skip derived re-evaluation inside inert effect blocks\ndiff --git a/packages/svelte/src/internal/client/reactivity/deriveds.js b/packages/svelte/src/internal/client/reactivity/deriveds.js\nindex 7df765129429..2c9b9da33eac 100644\n--- a/packages/svelte/src/internal/client/reactivity/deriveds.js\n+++ b/packages/svelte/src/internal/client/reactivity/deriveds.js\n@@ -10,7 +10,8 @@ import {\n \tASYNC,\n \tWAS_MARKED,\n \tDESTROYED,\n-\tCLEAN\n+\tCLEAN,\n+\tINERT\n } from '#client/constants';\n import {\n \tactive_reaction,\n@@ -305,10 +306,22 @@ function get_derived_parent_effect(derived) {\n  * @returns {T}\n  */\n export function execute_derived(derived) {\n+\tvar parent_effect = get_derived_parent_effect(derived);\n+\n+\t// don't update `{@const ...}` in an outroing block\n+\tif (\n+\t\t!async_mode_flag &&\n+\t\t!is_destroying_effect &&\n+\t\tparent_effect !== null &&\n+\t\t(parent_effect.f & INERT) !== 0\n+\t) {\n+\t\treturn derived.v;\n+\t}\n+\n \tvar value;\n \tvar prev_active_effect = active_effect;\n \n-\tset_active_effect(get_derived_parent_effect(derived));\n+\tset_active_effect(parent_effect);\n \n \tif (DEV) {\n \t\tlet prev_eager_effects = eager_effects;\ndiff --git a/packages/svelte/tests/runtime-runes/samples/if-block-const-inert-derived/_config.js b/packages/svelte/tests/runtime-runes/samples/if-block-const-inert-derived/_config.js\nnew file mode 100644\nindex 000000000000..b8031820795a\n--- /dev/null\n+++ b/packages/svelte/tests/runtime-runes/samples/if-block-const-inert-derived/_config.js\n@@ -0,0 +1,18 @@\n+import { flushSync, tick } from 'svelte';\n+import { test } from '../../test';\n+\n+export default test({\n+\thtml: '<button>clear</button><div><p>hello</p></div>',\n+\n+\tasync test({ assert, target, raf, logs }) {\n+\t\tconst [button] = target.querySelectorAll('button');\n+\n+\t\tflushSync(() => button.click());\n+\t\tassert.deepEqual(logs, ['hello']);\n+\n+\t\t// Let the transition finish and clean up\n+\t\traf.tick(100);\n+\n+\t\tassert.htmlEqual(target.innerHTML, '<button>clear</button>');\n+\t}\n+});\ndiff --git a/packages/svelte/tests/runtime-runes/samples/if-block-const-inert-derived/main.svelte b/packages/svelte/tests/runtime-runes/samples/if-block-const-inert-derived/main.svelte\nnew file mode 100644\nindex 000000000000..58b34d52b936\n--- /dev/null\n+++ b/packages/svelte/tests/runtime-runes/samples/if-block-const-inert-derived/main.svelte\n@@ -0,0 +1,32 @@\n+<script>\n+\tlet value = $state('hello');\n+\n+\tfunction compute(v) {\n+\t\tconsole.log(v);\n+\t\treturn { data: v, ready: true };\n+\t}\n+\n+\tfunction fade(node) {\n+\t\treturn {\n+\t\t\tduration: 100,\n+\t\t\ttick: (t) => {\n+\t\t\t\tnode.style.opacity = String(t);\n+\t\t\t}\n+\t\t};\n+\t}\n+</script>\n+\n+<button\n+\tonclick={() => {\n+\t\tvalue = undefined;\n+\t}}>clear</button\n+>\n+\n+{#if value}\n+\t{@const result = compute(value)}\n+\t{#if result.ready}\n+\t\t<div out:fade|global>\n+\t\t\t<p>{result.data}</p>\n+\t\t</div>\n+\t{/if}\n+{/if}\n"
+}

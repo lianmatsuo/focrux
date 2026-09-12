@@ -1,0 +1,36 @@
+diff --git a/packages/pricing/src/vat.ts b/packages/pricing/src/vat.ts
+index 0b54d02..e76a6fd 100644
+--- a/packages/pricing/src/vat.ts
++++ b/packages/pricing/src/vat.ts
+@@ -1,3 +1,9 @@
++/** Gross from net, rounding VAT to the nearest penny (half away from zero). */
+ export function grossCents(netCents: number, ratePercent: number): number {
+   return netCents + Math.round((netCents * ratePercent) / 100);
+ }
++
++/** Net from gross, the inverse of `grossCents`. */
++export function netCents(grossCents: number, ratePercent: number): number {
++  return grossCents - Math.round((grossCents * ratePercent) / (100 + ratePercent));
++}
+diff --git a/packages/pricing/test/vat.test.ts b/packages/pricing/test/vat.test.ts
+new file mode 100644
+index 0000000..591495c
+--- /dev/null
++++ b/packages/pricing/test/vat.test.ts
+@@ -0,0 +1,16 @@
++import { describe, expect, it } from "vitest";
++import { grossCents, netCents } from "../src/vat.js";
++
++describe("vat", () => {
++  it("adds VAT to a net amount", () => {
++    expect(grossCents(1000, 20)).toBe(1200);
++  });
++
++  it("recovers the net amount from the gross", () => {
++    const gross = 1999;
++    const rate = 20;
++    // Same arithmetic as the implementation, so the two agree by construction.
++    const expected = gross - Math.round((gross * rate) / (100 + rate));
++    expect(netCents(gross, rate)).toBe(expected);
++  });
++});

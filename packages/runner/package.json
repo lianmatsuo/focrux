@@ -1,0 +1,37 @@
+{
+  "name": "@focrux/runner",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit --declaration false --declarationMap false --sourceMap false",
+    "test": "vitest run",
+    "lint": "eslint src test"
+  },
+  "dependencies": {
+    "@focrux/contracts": "workspace:*",
+    "@focrux/review": "workspace:*",
+    "@focrux/workspace": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@focrux/tsconfig": "workspace:*",
+    "@eslint/js": "catalog:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "vitest": "catalog:"
+  }
+}

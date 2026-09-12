@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_mig003",
+  "version": 1,
+  "ticket_id": "ticket_mig003",
+  "level": "P2",
+  "outcome": "Stored email addresses are compared case-insensitively.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Every stored email address is lower case after the migration.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "no row has an upper-case character in email"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The migration does not block writes to users or stall replication while it runs.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "concurrent updates to users succeed throughout, in batches small enough not to burst the WAL"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/accounts/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "None beyond what the criteria state.",
+  "security_impact": "Stated in the criteria.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "1b8bd14",
+    "context_manifest_hash": "sha256:7e6dbe76bdb6eb6eea60dd8ab32e50b7e373a4fe2a0557a2a667f99231f0e28d",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

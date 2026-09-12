@@ -1,0 +1,38 @@
+{
+  "id": "scp-012-specification-relaxed-to-match-the-change",
+  "class": "scope_escape",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that reaches outside the paths the plan declared, here into the written requirement the change is judged against",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2884038"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The limit the code enforces is 100 MB, and the change edits spec/uploads.md \u2014 outside the declared scope of packages/uploads/** \u2014 from 10 MB to 100 MB so that ac_1, which is written against the specified maximum, is satisfied by the implementation as built.",
+  "why_it_is_hard": "The criterion is worded against the specification, so once the specification says whatever the code does the criterion is met by construction and the tests agree with it. The escape is one number in a Markdown file, it makes nothing red, and a reviewer reading the code against the tests sees a correct size check. Only reading the diff against the plan's scope shows that the yardstick moved rather than the code meeting it.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [
+      "spec/uploads.md"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-09-04",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The escape and the criterion are causally linked, as in scp-007: the requirement was edited because the implementation does not meet the one that was there. Authored after the reviewer's scope rule existed, which authored_before_reviewer: false records: the escape was chosen knowing what that rule computes, so this fixture is evidence that the rule still fires rather than evidence that found the rule."
+}

@@ -1,0 +1,46 @@
+diff --git a/packages/text/README.md b/packages/text/README.md
+index 72fd72c..0d429d2 100644
+--- a/packages/text/README.md
++++ b/packages/text/README.md
+@@ -1,3 +1,5 @@
+ # text
+ 
+ String normalisation.
++
++Whitespace runs collapse; see docs/whitespace.md.
+diff --git a/packages/text/docs/whitespace.md b/packages/text/docs/whitespace.md
+new file mode 100644
+index 0000000..25ea0b5
+--- /dev/null
++++ b/packages/text/docs/whitespace.md
+@@ -0,0 +1,3 @@
++# Whitespace
++
++Runs of whitespace collapse to a single space.
+diff --git a/packages/text/src/tidy.ts b/packages/text/src/tidy.ts
+index aaa5b99..f0bd089 100644
+--- a/packages/text/src/tidy.ts
++++ b/packages/text/src/tidy.ts
+@@ -1,3 +1,3 @@
+ export function tidy(value: string): string {
+-  return value.trim();
++  return value.trim().replace(/\s+/g, " ");
+ }
+diff --git a/packages/text/test/tidy.test.ts b/packages/text/test/tidy.test.ts
+new file mode 100644
+index 0000000..109e338
+--- /dev/null
++++ b/packages/text/test/tidy.test.ts
+@@ -0,0 +1,12 @@
++import { describe, expect, it } from "vitest";
++import { tidy } from "../src/tidy.js";
++
++describe("tidy", () => {
++  it("collapses runs of whitespace", () => {
++    expect(tidy("  a   b  ")).toBe("a b");
++  });
++
++  it("leaves a single-spaced string alone", () => {
++    expect(tidy("a b")).toBe("a b");
++  });
++});

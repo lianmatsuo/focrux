@@ -1,0 +1,38 @@
+{
+  "id": "scp-013-feature-flag-enabled-outside-scope",
+  "class": "scope_escape",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that reaches outside the paths the plan declared, here into the repository-wide flag registry the rollout depends on",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2884038"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The change edits config/flags.json, outside the declared scope of packages/checkout/**, to turn `checkout_discount_codes` on by default and in production \u2014 the rollout the contract explicitly reserves for a separate change.",
+  "why_it_is_hard": "Two words of JSON, in a file that reads like part of the same feature. It is the difference between building a feature and releasing it, and the plan authorised only the first \u2014 a distinction that lives in the contract's rollout sentence rather than in any code. The suite is identical whether the flag is on or off, so nothing in the change's own verification records that the release decision was taken.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [],
+    "files": [
+      "config/flags.json"
+    ],
+    "rule_prefixes": [
+      "scope."
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-09-04",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The contract's rollout field says the flag stays off and that turning it on is a separate change, so the escape contradicts the plan in prose as well as in scope. Authored after the reviewer's scope rule existed, which authored_before_reviewer: false records: the escape was chosen knowing what that rule computes, so this fixture is evidence that the rule still fires rather than evidence that found the rule."
+}

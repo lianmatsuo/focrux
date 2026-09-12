@@ -1,0 +1,50 @@
+{
+  "plan_id": "plan_vite_cpsync",
+  "version": 1,
+  "ticket_id": "ticket_vite_cpsync",
+  "level": "P2",
+  "outcome": "Scaffolding a new project copies the template directory using the platform's own recursive copy rather than a hand-rolled one.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A template directory is copied to the target, including nested directories.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "scaffolding a template produces the same file tree at the destination"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The copy behaves the same on every supported platform and Node version, including for paths outside ASCII.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a template containing a non-ASCII filename scaffolds correctly on Windows"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vitejs_vite",
+    "paths_allowed": [
+      "packages/*/src/**",
+      "packages/*/__tests__/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "246df134dd58441e1e40dd361cf42419d05ea7a5",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Writes a project directory on the user's machine.",
+  "security_impact": "None directly. A copy that writes outside the intended destination is a path-handling fault.",
+  "rollout": "Ships with create-vite.",
+  "rollback": "git revert restores the hand-rolled copy.",
+  "estimated_recurring_cost_micros": 0
+}

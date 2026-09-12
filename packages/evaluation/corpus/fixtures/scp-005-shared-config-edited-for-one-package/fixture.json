@@ -1,0 +1,38 @@
+{
+  "id": "scp-005-shared-config-edited-for-one-package",
+  "class": "scope_escape",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that reaches outside the paths the plan declared, including through a file that is generated or shared",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2884038"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The change turns off `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes` in the repository-wide `tsconfig.base.json`, which is outside the declared scope of `packages/notify/**`. It does so because the new `SUBJECTS[...]` lookup and the optional `locale` do not compile under them — so the typecheck passes for every package by weakening the setting every package is compiled with.",
+  "why_it_is_hard": "The edit is two words in a file the reviewer has no reason to open, and it makes the check output greener rather than redder. The scope rule catches it on the path alone; what makes the fixture hard is that the reviewer must also see that the loosening is what allowed the feature code to compile, rather than an unrelated tidy-up.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [
+      "tsconfig.base.json"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "Scope escape through a shared configuration file rather than through source: the blast radius is every package, and the diff is smaller than the feature."
+}

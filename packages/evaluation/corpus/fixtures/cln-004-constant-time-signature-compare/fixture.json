@@ -1,0 +1,31 @@
+{
+  "defective": false,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "Round two: ac_2 restated. 'Takes the same time whatever the supplied value' is not provable by any test in this tree, and the reviewer split 1/3 on it. The criterion now names the primitive and the property, both readable from the source. Pre-registered.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "class": "clean",
+  "id": "cln-004-constant-time-signature-compare",
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The correct counterpart of sec-004: CWE-208 avoided with crypto.timingSafeEqual and an explicit length check, as GitHub's webhook documentation prescribes",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/208.html",
+      "https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. The comparison is constant time and the length check is deliberate and commented.",
+  "why_it_is_hard": "It is byte-for-byte the shape of sec-004 with the defect removed. A reviewer that learned 'signature comparison in a diff means block' fails here, and that is a false block on a correct change.",
+  "runtime": {
+    "status": "runs",
+    "note": "3 passed (3) in 1 passed (1)"
+  }
+}

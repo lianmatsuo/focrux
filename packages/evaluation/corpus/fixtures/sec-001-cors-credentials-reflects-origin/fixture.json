@@ -1,0 +1,38 @@
+{
+  "id": "sec-001-cors-credentials-reflects-origin",
+  "class": "security_introduction",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "cve",
+    "reference": "CVE-2026-54290 / GHSA-88fw-hqm2-52qc — hono CORS middleware reflects any Origin with credentials",
+    "url": [
+      "https://github.com/honojs/hono/security/advisories/GHSA-88fw-hqm2-52qc",
+      "https://github.com/advisories/GHSA-88fw-hqm2-52qc"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "MIT (hono) — permissive, but the fixture is still written here rather than copied",
+    "code_copied": false
+  },
+  "defect": "applyCors reflects the caller's Origin into Access-Control-Allow-Origin and sets Access-Control-Allow-Credentials: true, so every origin can read cookie-authenticated responses.",
+  "why_it_is_hard": "The criterion the change was written for (ac_1) is genuinely satisfied and genuinely tested. The defect is that the same three lines also satisfy it for everyone else, which is a criterion the change never mentions. A reviewer asking only 'does it do what it says' passes it.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/gateway/src/cors.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "notes": "Plan level was raised to P2 by a human for externally visible behaviour, which no path derivation can see. deriveActualRisk lands on P1 here, so the block must come from ac_2 being not_met, not from the high-risk row.",
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  }
+}

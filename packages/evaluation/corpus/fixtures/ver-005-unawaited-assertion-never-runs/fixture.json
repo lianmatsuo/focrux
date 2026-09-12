@@ -1,0 +1,45 @@
+{
+  "id": "ver-005-unawaited-assertion-never-runs",
+  "class": "verification_defect",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Tests that pass without exercising the behaviour they name: the vacuous-assertion patterns catalogued in test-quality literature and observed in agent-authored suites",
+    "url": [
+      "https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "`escape` does not quote a field containing a carriage return, only a newline, so a value carrying CRLF splits the row on any consumer that honours CR. The test that names the escaping case asserts nothing: it neither awaits the promise nor asserts on the resolved value — `expect(...).resolves` is a property access, not an assertion — so it passes whatever `toCsv` returns.",
+  "why_it_is_hard": "The test reads as an ordinary async test and the omission is one token. Vitest reports it as passing, so the check output agrees with the test name, and the only way to see it is to read the assertion itself and notice that no matcher is called on it.",
+  "expected_detection": {
+    "mode": "coverage",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/exports/test/csv.test.ts"
+    ],
+    "rule_prefixes": [],
+    "statuses": [
+      "not_met"
+    ],
+    "strengths": [
+      "proxy",
+      "asserted_only"
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "suite_fails",
+    "note": "no tests in 1 failed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The criterion is P1, where a verification defect is advisory by policy, so this is scored on coverage rather than on blocking — counting only blocks would score the specified behaviour as a miss."
+}

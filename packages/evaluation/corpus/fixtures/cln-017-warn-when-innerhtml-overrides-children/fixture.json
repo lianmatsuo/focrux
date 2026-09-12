@@ -1,0 +1,51 @@
+{
+  "id": "cln-017-warn-when-innerhtml-overrides-children",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P2",
+  "source": {
+    "kind": "commit",
+    "reference": "vuejs/core#15194",
+    "url": [
+      "https://github.com/vuejs/core/commit/684a8defd2fdcba7eafa0c817b97ae1fab2c8b75"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "None. This is a real merged commit in a real repository, and its cleanliness is a fact about the world rather than a claim by its author.",
+  "why_it_is_hard": "The new check runs inside vnode creation, on every element vnode with props, in development. Whether that is an acceptable place for a string comparison and a children walk is a judgement about a very hot path, and the diff gives no measurement either way.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "3649 passed | 6 skipped (3655) in 182 passed | 1 skipped (183)"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/vuejs/core",
+    "licence": "MIT",
+    "base_commit": "ac7431c9ae8de77496479fc86f590d3fb48a2bb4",
+    "head_commit": "684a8defd2fdcba7eafa0c817b97ae1fab2c8b75",
+    "subject": "dx(runtime-core): warn when innerHTML/textContent overrides children (#15194)",
+    "reference": "https://github.com/vuejs/core/commit/684a8defd2fdcba7eafa0c817b97ae1fab2c8b75",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "run",
+      "test-unit"
+    ]
+  },
+  "notes": "Drawn from a merged commit. Touches two packages, which is a plausible scope finding; both are inside the declared scope."
+}

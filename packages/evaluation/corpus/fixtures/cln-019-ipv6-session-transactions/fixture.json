@@ -1,0 +1,54 @@
+{
+  "id": "cln-019-ipv6-session-transactions",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P1",
+  "source": {
+    "kind": "commit",
+    "reference": "pallets/flask@de8429ff",
+    "url": [
+      "https://github.com/pallets/flask/commit/de8429ffda8cfb54db175529e2bae72a24e1fa7e"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "BSD-3-Clause",
+    "code_copied": false
+  },
+  "defect": "None. This is a real merged commit in a real repository, and its cleanliness is a fact about the world rather than a claim by its author.",
+  "why_it_is_hard": "One line, and the `or \"localhost\"` fallback in it is the interesting part: it is either a sensible default for a host that cannot be parsed or a silent misattribution of a cookie to the wrong domain. Deciding which requires knowing what `host_url` can be, which the diff does not say.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "492 passed in 1.01s"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/pallets/flask",
+    "licence": "BSD-3-Clause",
+    "base_commit": "514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b",
+    "head_commit": "de8429ffda8cfb54db175529e2bae72a24e1fa7e",
+    "subject": "Fix IPv6 session transactions",
+    "reference": "https://github.com/pallets/flask/commit/de8429ffda8cfb54db175529e2bae72a24e1fa7e",
+    "setup_commands": [
+      [
+        "uv",
+        "sync",
+        "--group",
+        "tests"
+      ]
+    ],
+    "verify_command": [
+      "uv",
+      "run",
+      "--group",
+      "tests",
+      "pytest",
+      "-q"
+    ]
+  },
+  "notes": "Drawn from a merged commit in a Python repository. Touches cookie domain handling, so a reviewer that treats anything cookie-shaped as security-blocking will block it."
+}

@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_sec007",
+  "version": 1,
+  "ticket_id": "ticket_sec007",
+  "level": "P2",
+  "outcome": "A customer-supplied webhook endpoint is checked before the product makes requests to it.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An ordinary public https endpoint is accepted.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a public https URL is deliverable"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "An endpoint that resolves to a private, loopback or link-local address is refused, including by numeric or alternate spelling.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a URL for 169.254.169.254 and one for 10.0.0.5 are both refused"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/integrations/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None directly. The product makes outbound requests to the address.",
+  "security_impact": "Server-side request forgery: a customer chooses an address inside the product's own network, including cloud instance metadata.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert removes the check entirely.",
+  "estimated_recurring_cost_micros": 0
+}

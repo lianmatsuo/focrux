@@ -1,0 +1,30 @@
+{
+  "defective": false,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "class": "clean",
+  "id": "cln-003-generated-and-lockfile-exempt",
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The generated_paths exemption: without it scope enforcement fires on every lockfile update and codegen output in a real repository",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/1120.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. The lockfile and the regenerated client are both declared in generated_paths and are exempt from scope accounting.",
+  "why_it_is_hard": "It is the exemption tested in the direction that costs something. scp-002 and scp-004 punish a reviewer that under-enforces scope; this one punishes a reviewer that over-enforces it, which is the failure users actually notice.",
+  "runtime": {
+    "status": "not_installable",
+    "note": "ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with \"frozen-lockfile\" because pnpm-lock.yaml is not up to date with <ROOT>/package.json — Note that in CI environments this setting is true by default. If you still need to run"
+  }
+}

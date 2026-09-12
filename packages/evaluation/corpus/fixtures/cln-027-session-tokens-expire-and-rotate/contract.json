@@ -1,0 +1,60 @@
+{
+  "plan_id": "plan_cln027",
+  "version": 1,
+  "ticket_id": "ticket_cln027",
+  "level": "P2",
+  "outcome": "Session tokens expire, and the signing key can rotate without logging everyone out.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A token past its expiry is rejected however valid its signature.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a token signed with the current key but expired one second ago verifies false"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "During rotation, tokens signed by the previous key verify until the window closes: one ttl after rotate(), or the next rotation, whichever is first.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "after rotate(), a token from the old key verifies true, one signed with a never-known key verifies false, and an old-key token presented one ttl after rotation verifies false"
+      }
+    },
+    {
+      "id": "ac_3",
+      "text": "A service misconfigured with no signing secret refuses to construct rather than falling back.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "constructing with an empty secret throws"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/sessions/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000027",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-01T09:00:00Z"
+  },
+  "data_impact": "None. Tokens are stateless; nothing is stored or migrated.",
+  "security_impact": "Session verification: expiry enforced, key rotation with a time-bounded one-key window, refusal on a missing secret, platform constant-time comparison, one canonical token string per token.",
+  "rollout": "Deploy the verifier first; issue with the new claims once every verifier accepts them. Rotation is a runtime call.",
+  "rollback": "Revert the package; previously issued tokens keep verifying under the current key.",
+  "estimated_recurring_cost_micros": 0
+}

@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_scp009",
+  "version": 1,
+  "ticket_id": "ticket_scp009",
+  "level": "P1",
+  "outcome": "A title in any script produces a usable URL slug.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An ASCII title lowercases and hyphenates.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "'Hello World' becomes 'hello-world'"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A non-Latin title transliterates rather than becoming empty.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a Cyrillic title produces a non-empty Latin slug"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/slug/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

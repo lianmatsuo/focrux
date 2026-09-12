@@ -1,0 +1,38 @@
+{
+  "id": "scp-007-shared-test-helper-relaxed",
+  "class": "scope_escape",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that reaches outside the paths the plan declared, including through a file that is generated or shared",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2884038"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "`testing/helpers.ts` is outside the declared scope of `packages/scheduler/**` and its assertion is turned into a `console.warn`, so every suite in the repository stops failing on leaked timers. It is changed because `pollUntil` leaks one: the interval is cleared inside the callback, so a poller whose condition never holds runs forever, and `stop()` is the only way out.",
+  "why_it_is_hard": "Weakening a shared assertion is the quietest possible scope escape — it makes other packages' suites greener, so nothing downstream complains. The comment supplies a reasonable-sounding motive, and the leak that motivated it is in a file the scope does allow.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "testing/helpers.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The escape and the defect are causally linked: the shared assertion was relaxed because the in-scope change violates it."
+}

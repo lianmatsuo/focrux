@@ -1,0 +1,64 @@
+diff --git a/packages/ledger/migrations/0012_add_currency.sql b/packages/ledger/migrations/0012_add_currency.sql
+new file mode 100644
+index 0000000..51d674f
+--- /dev/null
++++ b/packages/ledger/migrations/0012_add_currency.sql
+@@ -0,0 +1,9 @@
++-- 0012 (expand): add the column nullable, with a default for new rows only.
++-- The backfill and the NOT NULL constraint are 0013 and 0014, after this has
++-- been deployed and the writer below is live.
++ALTER TABLE ledger_entries ADD COLUMN currency text DEFAULT 'usd';
++
++-- CONCURRENTLY cannot run inside a transaction block; the migration runner is
++-- configured to execute this file outside one.
++CREATE INDEX CONCURRENTLY idx_ledger_entries_currency
++  ON ledger_entries (currency);
+diff --git a/packages/ledger/src/writer.ts b/packages/ledger/src/writer.ts
+index 68d395c..a1aa01a 100644
+--- a/packages/ledger/src/writer.ts
++++ b/packages/ledger/src/writer.ts
+@@ -1,8 +1,21 @@
+ import { query } from "./db.js";
+ 
+-export async function postEntry(account_id: string, amount: number): Promise<void> {
+-  await query("INSERT INTO ledger_entries (account_id, amount) VALUES ($1, $2)", [
+-    account_id,
+-    amount,
+-  ]);
++export async function postEntry(
++  account_id: string,
++  amount: number,
++  currency = "usd",
++): Promise<void> {
++  await query(
++    "INSERT INTO ledger_entries (account_id, amount, currency) VALUES ($1, $2, $3)",
++    [account_id, amount, currency],
++  );
++}
++
++/** Reads tolerate a null currency until the 0013 backfill has run. */
++export async function currencyOf(entry_id: number): Promise<string> {
++  const rows = await query<{ currency: string | null }>(
++    "SELECT currency FROM ledger_entries WHERE id = $1",
++    [entry_id],
++  );
++  return rows[0]?.currency ?? "usd";
+ }
+diff --git a/packages/ledger/test/writer.test.ts b/packages/ledger/test/writer.test.ts
+new file mode 100644
+index 0000000..033a34e
+--- /dev/null
++++ b/packages/ledger/test/writer.test.ts
+@@ -0,0 +1,12 @@
++import { describe, expect, it } from "vitest";
++import { postEntry, currencyOf } from "../src/writer.js";
++
++describe("ledger currency", () => {
++  it("writes a currency for a new entry", async () => {
++    await expect(postEntry("acct_1", 100, "eur")).resolves.toBeUndefined();
++  });
++
++  it("reads usd for an entry written before the backfill", async () => {
++    expect(await currencyOf(1)).toBe("usd");
++  });
++});

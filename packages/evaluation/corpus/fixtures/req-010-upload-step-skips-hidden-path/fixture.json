@@ -1,0 +1,40 @@
+{
+  "id": "req-010-upload-step-skips-hidden-path",
+  "class": "requirement_omission",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "actions/upload-artifact v4.4.0: hidden files and directories are excluded from the upload by default, opt in with `include-hidden-files`; a `path` whose own name begins with a dot is skipped as the search root, and with `if-no-files-found: error` the step fails. Seen live on this repository's own tooling in the measured twenty (#452).",
+    "url": [
+      "https://github.com/actions/upload-artifact/releases/tag/v4.4.0",
+      "https://github.com/actions/upload-artifact#upload-hidden-files"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a — no upstream code",
+    "code_copied": false
+  },
+  "defect": "ac_1 requires the `.regression` directory to be uploaded as the `regression-run` artifact. The added step points actions/upload-artifact v4.4.3 at `.regression` without `include-hidden-files: true`; at that version the action excludes hidden paths by default and the search root itself begins with a dot, so it finds no files, and `if-no-files-found: error` fails the step on every run. Nothing is ever uploaded, and the step that was meant to keep the records is what turns a green run red.",
+  "why_it_is_hard": "The step reads as textbook: a pinned action, `always()`, a named artifact, the right path, and an error on an empty upload that looks like diligence. The default it trips on is not in the diff — it changed in the action's 4.4.0 release and is stated in the action's README — so the reviewer has to ask what the action does with a path that begins with a dot, or know it. The production reviewer approved exactly this step on this repository's own workflow in the measured twenty; the direct agent set the flag and said why.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [
+      ".github/workflows/regression.yml"
+    ],
+    "rule_prefixes": [
+      "workflow."
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-09-06",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  },
+  "notes": "Authored as the first of a pair of fixtures for defects a reviewer had been observed to miss. The scope admits `.github/workflows/**` on purpose: the defect is in what the step does, not in where it writes, and a scope refusal would score the wrong thing. `expected_detection` written before any reviewer ran against it. `rule_prefixes` names the `workflow.` family a reviewer prompt may ask for; a prompt that does not name the family leaves the criterion anchor as the only channel that confirms."
+}

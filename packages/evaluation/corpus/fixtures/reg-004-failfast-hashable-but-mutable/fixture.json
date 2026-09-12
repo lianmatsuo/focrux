@@ -1,0 +1,64 @@
+{
+  "id": "reg-004-failfast-hashable-but-mutable",
+  "class": "unstated_regression",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "commit",
+    "reference": "pydantic@c18c773f",
+    "url": [
+      "https://github.com/pydantic/pydantic/commit/c18c773f9b48df16206c9f9c19c2bc1be77dd045",
+      "https://github.com/pydantic/pydantic/pull/13536",
+      "https://github.com/pydantic/pydantic/pull/13503"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "`FailFast` is mutable, so defining `__hash__` over its mutable field gives an object whose hash changes when the field is assigned. A maintainer demonstrated it directly: build a `FailFast`, hash it, assign to `fail_fast`, hash it again, and the value differs — so an instance placed in a set or used as a dict key is lost the moment it is mutated. pydantic reverted this in #13536. The revert and its reproduction are the ground truth; nothing about the defect was written here.",
+  "why_it_is_hard": "Three lines that look like a pure ergonomics win, and the reviewer has to notice something that is not in the diff at all: that the class has no `frozen=True` and its field is assignable. The rule being broken — a hashable object's hash must not change over its lifetime — is a Python invariant rather than anything the repository states.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [
+      "pydantic/types.py"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "suite_fails",
+    "note": "1 failed"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/pydantic/pydantic",
+    "licence": "MIT",
+    "base_commit": "a2a6577d4c329dd574a45dbb01a8feaa16b1ad3d",
+    "head_commit": "c18c773f9b48df16206c9f9c19c2bc1be77dd045",
+    "subject": "Make `FailFast` hashable (#13503)",
+    "reference": "https://github.com/pydantic/pydantic/commit/c18c773f9b48df16206c9f9c19c2bc1be77dd045",
+    "setup_commands": [
+      [
+        "uv",
+        "sync",
+        "--frozen",
+        "--all-groups",
+        "--all-packages",
+        "--all-extras"
+      ]
+    ],
+    "verify_command": [
+      "uv",
+      "run",
+      "pytest",
+      "-q",
+      "--no-header"
+    ]
+  },
+  "notes": "The smallest fixture in the corpus at three added lines, and the one whose defect is furthest from the text of the change. Its suite has one pre-existing failure at the pinned head, in a test that imports mypy, because the mypy this commit's lockfile pins is incompatible with the Python running it. The failure is unrelated to the change and is recorded honestly rather than curated away; the scoring only credits a finding attributable to the changed file, so it cannot be detected for the wrong reason. It does bound how far back pydantic's history can be drawn from on this machine."
+}

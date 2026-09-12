@@ -1,0 +1,31 @@
+{
+  "defective": false,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "Round two: readEntries is now a real reader rather than a stub returning [], the tests assert on the written files rather than on the return value, the escaping entry is a real traversal name, bodies are written as bytes, the unused import is gone and the temp directories are cleaned. Round one's findings on all six points were correct. Pre-registered.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "class": "clean",
+  "id": "cln-005-archive-extract-with-containment-check",
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The correct counterpart of sec-002: the containment test applied to the resolved path, which is the fix the pnpm and apostrophecms advisories both landed",
+    "url": [
+      "https://github.com/pnpm/pnpm/security/advisories/GHSA-6pfh-p556-v868",
+      "https://github.com/apostrophecms/apostrophe/security/advisories/GHSA-mwxc-m426-3f78"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. Entry paths are resolved and tested for containment, and the escaping case has a test.",
+  "why_it_is_hard": "Same package, same function, same criteria as sec-002. The only difference is four lines that a reviewer has to actually read rather than pattern-match on 'archive extraction'.",
+  "runtime": {
+    "status": "runs",
+    "note": "4 passed (4) in 1 passed (1)"
+  }
+}

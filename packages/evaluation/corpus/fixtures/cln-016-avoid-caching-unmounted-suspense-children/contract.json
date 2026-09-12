@@ -1,0 +1,50 @@
+{
+  "plan_id": "plan_vue_keepalive_suspense",
+  "version": 1,
+  "ticket_id": "ticket_cln016",
+  "level": "P2",
+  "outcome": "KeepAlive does not cache a suspense child that never mounted, so a later activation does not resurrect an empty subtree",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A suspense subtree that is deactivated before it resolves is not written into the KeepAlive cache.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "deactivating a KeepAlive-wrapped Suspense before its async child resolves leaves no entry for it in the cache"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Re-activating a KeepAlive-wrapped Suspense that did resolve still renders its resolved content rather than an empty subtree.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "switching back to a resolved async child inside KeepAlive renders its content"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vuejs_core",
+    "paths_allowed": [
+      "packages/runtime-core/src/**",
+      "packages/runtime-core/__tests__/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "a72036f66bcb9a4f3b3737cda19eeba1bc531e15",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. KeepAlive's cache is in-memory component state for the lifetime of a page.",
+  "security_impact": "None. The guard narrows what is cached; it grants no new access and reads no new input.",
+  "rollout": "Ships with the package. No flag: the change is a narrowing of an existing cache write.",
+  "rollback": "git revert. Before the change an unresolved suspense child was written to the cache, so a revert restores that.",
+  "estimated_recurring_cost_micros": 0
+}

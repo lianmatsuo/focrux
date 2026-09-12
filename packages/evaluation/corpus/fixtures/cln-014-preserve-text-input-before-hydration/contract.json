@@ -1,0 +1,45 @@
+{
+  "plan_id": "plan_vue_vmodel_hydrate",
+  "version": 1,
+  "ticket_id": "ticket_cln014",
+  "level": "P1",
+  "outcome": "Text a user typed before hydration survives it instead of being reset to the server-rendered value",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A value the user typed into a text input before hydration is still there after the component hydrates, rather than being replaced by the server-rendered one.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "hydrating a v-model text input whose live value differs from the server-rendered markup leaves the live value in place"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The value the hydration comparison reads is normalised the way the DOM normalises it, so a field the user never touched is not mistaken for one they edited.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the hydration test asserts the live value survives, which fails without the normalisation because the server-rendered value and the live value differ only by newline handling"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vuejs_core",
+    "paths_allowed": [
+      "packages/runtime-dom/src/**",
+      "packages/runtime-core/__tests__/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "b67cfcfa090b320691c805d4edc936f8f87a0d42",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

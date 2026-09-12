@@ -1,0 +1,56 @@
+diff --git a/packages/ledger/migrations/0022_add_currency_and_backfill.sql b/packages/ledger/migrations/0022_add_currency_and_backfill.sql
+new file mode 100644
+index 0000000..a0d696c
+--- /dev/null
++++ b/packages/ledger/migrations/0022_add_currency_and_backfill.sql
+@@ -0,0 +1,11 @@
++-- Entries become multi-currency. The application writes `currency` from this
++-- release; this migration backfills the rows that predate it.
++ALTER TABLE entries ADD COLUMN currency text;
++
++UPDATE entries
++   SET currency = accounts.default_currency
++  FROM accounts
++ WHERE accounts.id = entries.account_id
++   AND entries.currency IS NULL;
++
++ALTER TABLE entries ALTER COLUMN currency SET NOT NULL;
+diff --git a/packages/ledger/src/entry.ts b/packages/ledger/src/entry.ts
+index f054a63..511fa74 100644
+--- a/packages/ledger/src/entry.ts
++++ b/packages/ledger/src/entry.ts
+@@ -1,5 +1,14 @@
+-export type Entry = { id: number; account_id: string; amount_cents: number };
++export type Entry = { id: number; account_id: string; amount_cents: number; currency: string };
+ 
+ export function sum(entries: Entry[]): number {
+   return entries.reduce((total, entry) => total + entry.amount_cents, 0);
+ }
++
++/** Entries in different currencies cannot be summed without conversion. */
++export function sumByCurrency(entries: Entry[]): Map<string, number> {
++  const totals = new Map<string, number>();
++  for (const entry of entries) {
++    totals.set(entry.currency, (totals.get(entry.currency) ?? 0) + entry.amount_cents);
++  }
++  return totals;
++}
+diff --git a/packages/ledger/test/entry.test.ts b/packages/ledger/test/entry.test.ts
+new file mode 100644
+index 0000000..0d6d337
+--- /dev/null
++++ b/packages/ledger/test/entry.test.ts
+@@ -0,0 +1,13 @@
++import { describe, expect, it } from "vitest";
++import { sumByCurrency } from "../src/entry.js";
++
++describe("sumByCurrency", () => {
++  it("totals each currency separately", () => {
++    const totals = sumByCurrency([
++      { id: 1, account_id: "a", amount_cents: 100, currency: "GBP" },
++      { id: 2, account_id: "a", amount_cents: 200, currency: "USD" },
++    ]);
++    expect(totals.get("GBP")).toBe(100);
++    expect(totals.get("USD")).toBe(200);
++  });
++});

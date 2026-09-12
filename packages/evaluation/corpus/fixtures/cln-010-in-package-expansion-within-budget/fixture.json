@@ -1,0 +1,30 @@
+{
+  "defective": false,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "class": "clean",
+  "id": "cln-010-in-package-expansion-within-budget",
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The in-flight scope expansion rule: a diff outside paths_allowed but inside the same package, within expansion_budget_files, is an automatic advisory finding rather than a re-approval gate",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/1120.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. Two files sit outside paths_allowed but inside the declared package, against a budget of three, which is advisory by design.",
+  "why_it_is_hard": "scp-004 is this fixture with five such files instead of two. The difference is a count, and the correct behaviour on this one is an advisory finding with the gate left open — an advisory that blocks is a false block.",
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  }
+}

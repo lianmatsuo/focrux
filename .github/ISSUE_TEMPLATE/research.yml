@@ -1,0 +1,37 @@
+name: Research spike
+about: Resolve uncertainty before committing to an implementation
+labels: ["type:research"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Decision this research must unlock
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: Evidence and experiment method
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Required output and stop condition
+    validations:
+      required: true
+  - type: textarea
+    id: falsification
+    attributes:
+      label: Success and failure thresholds
+      description: >
+        State the number that would make this proceed and the number that would stop it,
+        before running it. A question with no failure threshold is not research.
+    validations:
+      required: true
+  - type: input
+    id: bound
+    attributes:
+      label: Time or effort bound
+    validations:
+      required: true

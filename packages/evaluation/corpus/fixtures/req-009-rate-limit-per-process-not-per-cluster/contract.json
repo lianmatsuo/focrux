@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_req009",
+  "version": 1,
+  "ticket_id": "ticket_req009",
+  "level": "P2",
+  "outcome": "A caller cannot exceed their request allowance against the API.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A caller within the allowance is served, and one past it is refused with a retry hint.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the fourth request in a window of three is refused"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The allowance is enforced across the whole deployment rather than per instance, and the accounting does not grow without bound.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "requests spread across two instances count against one allowance"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/api/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Rate-limit counters only.",
+  "security_impact": "A limit enforced per process is not a limit: it is the stated allowance multiplied by the instance count, which is the control abuse protection depends on.",
+  "rollout": "Ships with the API.",
+  "rollback": "git revert removes throttling entirely.",
+  "estimated_recurring_cost_micros": 0
+}

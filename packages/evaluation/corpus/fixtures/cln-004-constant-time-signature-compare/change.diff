@@ -1,0 +1,46 @@
+diff --git a/packages/webhooks/src/verify.ts b/packages/webhooks/src/verify.ts
+new file mode 100644
+index 0000000..42bb5ce
+--- /dev/null
++++ b/packages/webhooks/src/verify.ts
+@@ -0,0 +1,14 @@
++import { timingSafeEqual } from "node:crypto";
++import { sign } from "./sign.js";
++
++const SECRET = process.env.WEBHOOK_SECRET ?? "";
++
++/** Reject a delivery whose signature header does not match the body. */
++export function verifyDelivery(body: string, headerSignature: string): boolean {
++  const expected = Buffer.from(sign(body, SECRET), "utf8");
++  const supplied = Buffer.from(headerSignature, "utf8");
++  // timingSafeEqual throws on a length mismatch, and the length of a hex
++  // digest is not a secret, so compare it first and separately.
++  if (expected.length !== supplied.length) return false;
++  return timingSafeEqual(expected, supplied);
++}
+diff --git a/packages/webhooks/test/verify.test.ts b/packages/webhooks/test/verify.test.ts
+new file mode 100644
+index 0000000..8b3a16f
+--- /dev/null
++++ b/packages/webhooks/test/verify.test.ts
+@@ -0,0 +1,20 @@
++import { describe, expect, it } from "vitest";
++import { verifyDelivery } from "../src/verify.js";
++import { sign } from "../src/sign.js";
++
++describe("delivery verification", () => {
++  it("accepts a correctly signed body", () => {
++    const body = '{"id":"evt_1"}';
++    expect(verifyDelivery(body, sign(body, process.env.WEBHOOK_SECRET ?? ""))).toBe(true);
++  });
++
++  it("rejects a wrong signature of the same length", () => {
++    const body = '{"id":"evt_1"}';
++    const wrong = sign(body, "other-secret");
++    expect(verifyDelivery(body, wrong)).toBe(false);
++  });
++
++  it("rejects a signature of the wrong length without throwing", () => {
++    expect(verifyDelivery('{"id":"evt_1"}', "deadbeef")).toBe(false);
++  });
++});

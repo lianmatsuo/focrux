@@ -1,0 +1,57 @@
+[
+  {
+    "check_id": "check_tc",
+    "name": "typecheck",
+    "kind": "typecheck",
+    "status": "passed",
+    "summary": "0 errors",
+    "command": "tsc --noEmit",
+    "detail": null,
+    "duration_ms": null,
+    "source": "file"
+  },
+  {
+    "check_id": "check_ut",
+    "name": "unit",
+    "kind": "unit",
+    "status": "passed",
+    "summary": "2 passed",
+    "command": "vitest run",
+    "detail": null,
+    "duration_ms": null,
+    "source": "file"
+  },
+  {
+    "check_id": "check_lt",
+    "name": "lint",
+    "kind": "lint",
+    "status": "passed",
+    "summary": "0 problems",
+    "command": "eslint .",
+    "detail": null,
+    "duration_ms": null,
+    "source": "file"
+  },
+  {
+    "check_id": "check_ss",
+    "name": "secret-scan",
+    "kind": "secret-scan",
+    "status": "passed",
+    "summary": "0 findings",
+    "command": "gitleaks detect",
+    "detail": null,
+    "duration_ms": null,
+    "source": "file"
+  },
+  {
+    "check_id": "check_mg",
+    "name": "migration",
+    "kind": "migration",
+    "status": "passed",
+    "summary": "1 applied to scratch database",
+    "command": "psql -f migrations/0012_add_currency.sql",
+    "detail": null,
+    "duration_ms": null,
+    "source": "file"
+  }
+]

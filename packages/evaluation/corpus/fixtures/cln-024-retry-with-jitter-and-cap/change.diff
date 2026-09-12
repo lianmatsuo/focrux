@@ -1,0 +1,185 @@
+diff --git a/packages/inventory/README.md b/packages/inventory/README.md
+index b62101c..cd46595 100644
+--- a/packages/inventory/README.md
++++ b/packages/inventory/README.md
+@@ -1,3 +1,4 @@
+ # inventory
+ 
+-Fetches stock levels from the upstream inventory service.
++Fetches stock levels from the upstream inventory service, retrying transient
++failures with capped, jittered backoff.
+diff --git a/packages/inventory/src/client.ts b/packages/inventory/src/client.ts
+index 3b86f18..f5e159a 100644
+--- a/packages/inventory/src/client.ts
++++ b/packages/inventory/src/client.ts
+@@ -3,17 +3,67 @@ export interface Upstream {
+ }
+ 
+ export class UpstreamError extends Error {
++  /** 0 means no response was received; any other value is the upstream's status. */
+   readonly status: number;
+-  constructor(status: number) {
+-    super(`upstream returned ${status}`);
++  constructor(status: number, options?: { cause?: unknown }) {
++    super(status === 0 ? "no response from upstream" : `upstream returned ${status}`, options);
+     this.status = status;
+   }
+ }
+ 
+-export async function getStock(upstream: Upstream, sku: string): Promise<number> {
+-  const response = await upstream.fetchStock(sku);
+-  if (response.status !== 200 || response.quantity === undefined) {
+-    throw new UpstreamError(response.status);
++export interface RetryPolicy {
++  /** Total attempts, the first included. */
++  max_attempts: number;
++  /** The exponential base wait before jitter, in milliseconds. */
++  base_ms: number;
++  /** No single wait exceeds this, jitter included. */
++  cap_ms: number;
++}
++
++export const DEFAULT_RETRY: RetryPolicy = { max_attempts: 4, base_ms: 100, cap_ms: 2000 };
++
++/** Injected so tests are deterministic and instantaneous. */
++export interface RetryHooks {
++  sleep: (ms: number) => Promise<void>;
++  random: () => number;
++}
++
++const isTransient = (status: number): boolean => status >= 500 || status === 0;
++
++/**
++ * Full jitter: a uniform draw over [0, min(cap, base * 2^n)]. The draw starts
++ * at zero on purpose — synchronized clients spread out instead of herding.
++ */
++export function waitFor(attempt: number, policy: RetryPolicy, random: () => number): number {
++  const ceiling = Math.min(policy.cap_ms, policy.base_ms * 2 ** attempt);
++  return Math.floor(random() * ceiling);
++}
++
++export async function getStock(
++  upstream: Upstream,
++  sku: string,
++  policy: RetryPolicy = DEFAULT_RETRY,
++  hooks: RetryHooks = { sleep: (ms) => new Promise((r) => setTimeout(r, ms)), random: Math.random },
++): Promise<number> {
++  if (!Number.isInteger(policy.max_attempts) || policy.max_attempts < 1) {
++    throw new RangeError(`max_attempts must be a positive integer, got ${policy.max_attempts}`);
++  }
++  let lastStatus = 0;
++  let lastCause: unknown;
++  for (let attempt = 0; attempt < policy.max_attempts; attempt += 1) {
++    if (attempt > 0) await hooks.sleep(waitFor(attempt - 1, policy, hooks.random));
++    let response;
++    try {
++      response = await upstream.fetchStock(sku);
++    } catch (error) {
++      lastStatus = 0;
++      lastCause = error;
++      continue;
++    }
++    if (response.status === 200 && response.quantity !== undefined) return response.quantity;
++    lastStatus = response.status;
++    lastCause = undefined;
++    if (!isTransient(response.status)) throw new UpstreamError(response.status);
+   }
+-  return response.quantity;
++  throw new UpstreamError(lastStatus, lastCause === undefined ? undefined : { cause: lastCause });
+ }
+diff --git a/packages/inventory/test/client.test.ts b/packages/inventory/test/client.test.ts
+new file mode 100644
+index 0000000..990de4a
+--- /dev/null
++++ b/packages/inventory/test/client.test.ts
+@@ -0,0 +1,90 @@
++import { describe, expect, it } from "vitest";
++import { DEFAULT_RETRY, UpstreamError, getStock, waitFor } from "../src/client.js";
++
++// 0.75 rather than 0.5, deliberately: at exactly 0.5 an exponent off-by-one is
++// invisible, since 0.5 * base * 2^(n+1) equals base * 2^n.
++const hooks = (waits: number[], random = () => 0.75) => ({
++  sleep: async (ms: number) => {
++    waits.push(ms);
++  },
++  random,
++});
++
++const failing = (statuses: number[], quantity = 7) => {
++  let call = 0;
++  return {
++    calls: () => call,
++    fetchStock: async () => {
++      const status = statuses[call] ?? 200;
++      call += 1;
++      return status === 200 ? { status, quantity } : { status };
++    },
++  };
++};
++
++describe("getStock", () => {
++  it("returns the success after transient failures", async () => {
++    const upstream = failing([503, 503, 200]);
++    const quantity = await getStock(upstream, "sku_1", DEFAULT_RETRY, hooks([]));
++    expect(quantity).toBe(7);
++    expect(upstream.calls()).toBe(3);
++  });
++
++  it("tries exactly max_attempts times when the upstream never recovers", async () => {
++    const upstream = failing([503, 503, 503, 503, 503]);
++    await expect(getStock(upstream, "sku_1", DEFAULT_RETRY, hooks([]))).rejects.toThrow(UpstreamError);
++    expect(upstream.calls()).toBe(4);
++  });
++
++  it("does not retry a caller error", async () => {
++    const upstream = failing([400]);
++    await expect(getStock(upstream, "sku_1", DEFAULT_RETRY, hooks([]))).rejects.toThrow("400");
++    expect(upstream.calls()).toBe(1);
++  });
++
++  it("retries a thrown network error as transient", async () => {
++    let call = 0;
++    const upstream = {
++      fetchStock: async () => {
++        call += 1;
++        if (call < 2) throw new Error("ECONNRESET");
++        return { status: 200, quantity: 3 };
++      },
++    };
++    expect(await getStock(upstream, "sku_1", DEFAULT_RETRY, hooks([]))).toBe(3);
++  });
++
++  it("waits exactly within the stated bracket on every attempt", async () => {
++    const waits: number[] = [];
++    const upstream = failing([503, 503, 503, 503]);
++    await expect(getStock(upstream, "sku_1", DEFAULT_RETRY, hooks(waits))).rejects.toThrow();
++    // At random = 0.75 the exact expected waits are 75, 150, 300; an exponent
++    // off-by-one would produce 150, 300, 600 and fail here.
++    expect(waits).toEqual([75, 150, 300]);
++  });
++
++  it("actually jitters: the wait is the random draw scaled, zero included", () => {
++    expect(waitFor(0, DEFAULT_RETRY, () => 0)).toBe(0);
++    expect(waitFor(0, DEFAULT_RETRY, () => 0.999)).toBe(99);
++    expect(waitFor(3, DEFAULT_RETRY, () => 0.25)).toBe(200);
++  });
++
++  it("never waits longer than the cap even at high attempt counts", () => {
++    expect(waitFor(10, DEFAULT_RETRY, () => 1)).toBeLessThanOrEqual(2000);
++  });
++
++  it("keeps the root cause on the error after exhaustion", async () => {
++    const boom = new Error("ECONNRESET");
++    const upstream = { fetchStock: async () => { throw boom; } };
++    const error = await getStock(upstream, "sku_1", DEFAULT_RETRY, hooks([])).catch((e: unknown) => e);
++    expect(error).toBeInstanceOf(UpstreamError);
++    expect((error as Error).message).toBe("no response from upstream");
++    expect((error as Error).cause).toBe(boom);
++  });
++
++  it("refuses a nonsensical attempt budget instead of failing confusingly", async () => {
++    await expect(
++      getStock(failing([]), "sku_1", { ...DEFAULT_RETRY, max_attempts: 0 }, hooks([])),
++    ).rejects.toThrow(RangeError);
++  });
++});

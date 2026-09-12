@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv009",
+  "version": 1,
+  "ticket_id": "ticket_adv009",
+  "level": "P2",
+  "outcome": "A failed job is retried on an increasing backoff rather than immediately.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A job with attempts remaining is retried once its backoff has elapsed.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a job whose backoff has elapsed is retried"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A job is never retried sooner than its backoff allows, whatever timestamp it carries.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a job whose failed_at is ahead of the current clock is not retried immediately"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/jobs/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. Retry decisions are computed from a job record.",
+  "security_impact": "None directly. An immediate retry loop is a denial-of-service against the job's own downstream.",
+  "rollout": "Ships with the worker.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

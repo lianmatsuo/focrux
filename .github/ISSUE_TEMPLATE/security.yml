@@ -1,0 +1,50 @@
+name: Security or trust boundary
+about: Change something that affects untrusted content or agent authority
+labels: ["area:security"]
+body:
+  - type: textarea
+    id: threat
+    attributes:
+      label: Threat and reachability
+      description: Which threat in docs/08-security-autonomy-and-data.md, and is it reachable in Phase 1?
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Untrusted content reaching a model or an action
+        - Agent authority, permission profile, or a prohibited action
+        - Credential handling or exfiltration path
+        - Verdict integrity or deterministic precedence
+        - Cost amplification or kill switch
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: control
+    attributes:
+      label: Control and where it is enforced
+      description: >
+        Enforcement must be in the runner, the schema, or a deterministic check — not in a
+        prompt. State which.
+    validations:
+      required: true
+  - type: textarea
+    id: fixture
+    attributes:
+      label: Evaluation fixture that fails without this control
+      description: A control with no fixture is untested. Name the fixture and its pass threshold.
+    validations:
+      required: true
+  - type: dropdown
+    id: launch_blocking
+    attributes:
+      label: Launch-blocking?
+      description: See the launch-blocking list in docs/08-security-autonomy-and-data.md.
+      options:
+        - "Yes — nothing connects to an external repository until this lands"
+        - "No"
+    validations:
+      required: true

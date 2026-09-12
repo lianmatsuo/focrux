@@ -1,0 +1,8 @@
+lockfileVersion: '9.0'
+
+importers:
+  packages/upstream:
+    dependencies:
+      upstream-client:
+        specifier: 2.1.0
+        version: 2.1.0

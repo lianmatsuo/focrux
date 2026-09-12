@@ -1,0 +1,34 @@
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { describe, expect, it } from "vitest";
+import { readPrinciples, PRINCIPLES_MAX_BYTES } from "../src/principles.js";
+
+describe("readPrinciples", () => {
+  it("returns null when nothing is recorded", () => {
+    const root = mkdtempSync(join(tmpdir(), "focrux-pr-"));
+    expect(readPrinciples(root)).toBeNull();
+  });
+
+  it("caps an oversized file rather than inflating every brief", () => {
+    const root = mkdtempSync(join(tmpdir(), "focrux-pr-"));
+    mkdirSync(join(root, ".focrux"));
+    writeFileSync(join(root, ".focrux", "principles.md"), "x".repeat(PRINCIPLES_MAX_BYTES * 2));
+    const text = readPrinciples(root)!;
+    expect(text.length).toBeLessThanOrEqual(PRINCIPLES_MAX_BYTES + 200);
+    expect(text).toContain("truncated");
+  });
+
+  it("caps by bytes, not by UTF-16 code units", () => {
+    const root = mkdtempSync(join(tmpdir(), "focrux-pr-"));
+    mkdirSync(join(root, ".focrux"));
+    // One code unit each, two bytes each: exactly at the cap by length and
+    // twice over it by size.
+    writeFileSync(join(root, ".focrux", "principles.md"), "é".repeat(PRINCIPLES_MAX_BYTES));
+    const text = readPrinciples(root)!;
+    expect(text).toContain("truncated");
+    expect(Buffer.byteLength(text, "utf8")).toBeLessThanOrEqual(PRINCIPLES_MAX_BYTES + 200);
+    // The cut lands on a character boundary rather than mid-sequence.
+    expect(text).not.toContain("�");
+  });
+});

@@ -1,0 +1,39 @@
+{
+  "id": "req-001-reset-token-single-use",
+  "class": "requirement_omission",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "advisory",
+    "reference": "Password reset token not invalidated after use: CVE-2026-28268 (vikunja), GHSA-gcqq-fxw6-f866 (openeclass), CVE-2024-5277 (lunary)",
+    "url": [
+      "https://github.com/go-vikunja/vikunja/security/advisories/GHSA-rfjg-6m84-crj2",
+      "https://github.com/gunet/openeclass/security/advisories/GHSA-gcqq-fxw6-f866",
+      "https://osv.dev/vulnerability/CVE-2024-5277"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "AGPL-3.0 (vikunja) / GPL-3.0 (openeclass) — copyleft, so the pattern is reconstructed and no upstream code is present",
+    "code_copied": false
+  },
+  "defect": "resetPassword sets the new password but never calls consumeResetToken, so a reset link works forever.",
+  "why_it_is_hard": "Nothing in the diff is wrong; a required line is absent. The feature works, all three shipped tests pass, and the function that should have been called lives in tokens.ts, which the diff does not touch — the reviewer only sees the omission if it selects a file outside the change.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/accounts/src/auth/password-reset.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "notes": "The upstream advisories describe exactly this shape: the reset succeeds and the token record is left behind.",
+  "runtime": {
+    "status": "runs",
+    "note": "3 passed (3) in 1 passed (1)"
+  }
+}

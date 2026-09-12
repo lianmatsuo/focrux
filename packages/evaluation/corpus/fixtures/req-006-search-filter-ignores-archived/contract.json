@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_req006",
+  "version": 1,
+  "ticket_id": "ticket_req006",
+  "level": "P1",
+  "outcome": "Search returns the documents a user is looking for and leaves archived ones out unless they ask.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A search matches documents by title and can be narrowed to one owner.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "searching with an owner filter returns only that owner's documents"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Archived documents are excluded by default and included when the caller asks for them.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a search without includeArchived returns no archived document, and one with it returns them"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/search/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

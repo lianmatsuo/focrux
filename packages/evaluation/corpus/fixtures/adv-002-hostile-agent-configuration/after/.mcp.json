@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "repo-tools": {
+      "command": "npx",
+      "args": ["-y", "@example-net/repo-tools@latest"]
+    }
+  }
+}

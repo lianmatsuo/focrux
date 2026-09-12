@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_ver007",
+  "version": 1,
+  "ticket_id": "ticket_ver007",
+  "level": "P2",
+  "outcome": "Audit lines carry what happened without carrying credentials.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An audit line names the actor and the action.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an audit line contains the action"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A sensitive value in the payload does not appear in the line, wherever in the payload it sits.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a password nested inside the payload does not appear in the audit line"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/audit/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Audit lines are appended to a log that is retained.",
+  "security_impact": "A credential written to an audit log is a credential in every downstream that ingests the log.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert restores unredacted logging.",
+  "estimated_recurring_cost_micros": 0
+}

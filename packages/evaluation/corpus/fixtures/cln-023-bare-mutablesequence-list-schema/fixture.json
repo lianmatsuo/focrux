@@ -1,0 +1,55 @@
+{
+  "id": "cln-023-bare-mutablesequence-list-schema",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P1",
+  "source": {
+    "kind": "commit",
+    "reference": "pydantic/pydantic@dc403980",
+    "url": [
+      "https://github.com/pydantic/pydantic/commit/dc403980c7c1b43dc04d19d52fb9164ad7b1e516"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "None. This is a real merged commit in a real repository, and its cleanliness is a fact about the world rather than a claim by its author.",
+  "why_it_is_hard": "One entry in a dispatch table changes from `_sequence_schema` to `_list_schema`, and the diff carries nothing that says what either produces. Whether the change is right, or narrows a type that some caller depended on being general, is not decidable from the lines shown — a reviewer has to go and read both.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "12395 passed"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/pydantic/pydantic",
+    "licence": "MIT",
+    "base_commit": "1fb7121d99c903c6decc0debcc78b113fc17d2f4",
+    "head_commit": "dc403980c7c1b43dc04d19d52fb9164ad7b1e516",
+    "subject": "Use list schema for bare `collections.abc.MutableSequence` (#13690)",
+    "reference": "https://github.com/pydantic/pydantic/commit/dc403980c7c1b43dc04d19d52fb9164ad7b1e516",
+    "setup_commands": [
+      [
+        "uv",
+        "sync",
+        "--frozen",
+        "--all-groups",
+        "--all-packages",
+        "--all-extras"
+      ]
+    ],
+    "verify_command": [
+      "uv",
+      "run",
+      "pytest",
+      "-q",
+      "--no-header"
+    ]
+  },
+  "notes": "Drawn from a merged commit. Replaces an earlier candidate whose suite had a pre-existing mypy incompatibility at its pinned commit — measured, not assumed, which is what caught it."
+}

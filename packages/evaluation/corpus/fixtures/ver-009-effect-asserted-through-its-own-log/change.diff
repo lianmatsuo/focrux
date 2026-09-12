@@ -1,0 +1,46 @@
+diff --git a/packages/webhooks/src/deliver.ts b/packages/webhooks/src/deliver.ts
+index 29647d1..733bb16 100644
+--- a/packages/webhooks/src/deliver.ts
++++ b/packages/webhooks/src/deliver.ts
+@@ -1,6 +1,17 @@
+ export type Delivery = { url: string; body: string; attempt: number };
+ 
++const logged: string[] = [];
++export function deliveryLog(): readonly string[] {
++  return logged;
++}
++
++/** Deliver, retrying a 5xx up to twice. A 4xx is final. */
+ export async function deliver(delivery: Delivery, send: (d: Delivery) => Promise<number>): Promise<boolean> {
+-  const status = await send(delivery);
+-  return status >= 200 && status < 300;
++  for (let attempt = 0; attempt < 3; attempt += 1) {
++    const status = await send({ ...delivery, attempt });
++    logged.push(`attempt=${attempt} status=${status}`);
++    if (status >= 200 && status < 300) return true;
++    if (status < 500) return false;
++  }
++  return false;
+ }
+diff --git a/packages/webhooks/test/deliver.test.ts b/packages/webhooks/test/deliver.test.ts
+new file mode 100644
+index 0000000..cbb76d1
+--- /dev/null
++++ b/packages/webhooks/test/deliver.test.ts
+@@ -0,0 +1,16 @@
++import { beforeEach, describe, expect, it } from "vitest";
++import { deliver, deliveryLog } from "../src/deliver.js";
++
++const delivery = { url: "https://example.com/hook", body: "{}", attempt: 0 };
++
++describe("deliver", () => {
++  it("reports success on a 2xx", async () => {
++    expect(await deliver(delivery, async () => 200)).toBe(true);
++  });
++
++  it("retries a 5xx", async () => {
++    await deliver(delivery, async () => 503);
++    // Asserts the log, not the calls.
++    expect(deliveryLog().filter((line) => line.includes("status=503")).length).toBeGreaterThan(1);
++  });
++});

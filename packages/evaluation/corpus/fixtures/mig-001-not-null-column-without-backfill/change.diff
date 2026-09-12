@@ -1,0 +1,48 @@
+diff --git a/packages/accounts/migrations/0007_add_verified_at.sql b/packages/accounts/migrations/0007_add_verified_at.sql
+new file mode 100644
+index 0000000..0b08083
+--- /dev/null
++++ b/packages/accounts/migrations/0007_add_verified_at.sql
+@@ -0,0 +1,4 @@
++-- 0007: verification timestamp for the new activation flow.
++ALTER TABLE users ADD COLUMN verified_at timestamptz NOT NULL;
++
++CREATE INDEX idx_users_verified_at ON users (verified_at);
+diff --git a/packages/accounts/src/verify.ts b/packages/accounts/src/verify.ts
+index dbb3919..7513734 100644
+--- a/packages/accounts/src/verify.ts
++++ b/packages/accounts/src/verify.ts
+@@ -1,7 +1,14 @@
+-import { setPassword } from "./auth/store.js";
++import { query } from "./db.js";
+ 
++/** Mark an account verified. Called once, from the activation link handler. */
+ export async function verifyAccount(user_id: string): Promise<void> {
+-  void user_id;
+-  void setPassword;
+-  throw new Error("not implemented");
++  await query("UPDATE users SET verified_at = now() WHERE id = $1", [user_id]);
++}
++
++export async function verifiedAt(user_id: string): Promise<Date | null> {
++  const rows = await query<{ verified_at: Date }>(
++    "SELECT verified_at FROM users WHERE id = $1",
++    [user_id],
++  );
++  return rows[0]?.verified_at ?? null;
+ }
+diff --git a/packages/accounts/test/verify.test.ts b/packages/accounts/test/verify.test.ts
+new file mode 100644
+index 0000000..150441c
+--- /dev/null
++++ b/packages/accounts/test/verify.test.ts
+@@ -0,0 +1,9 @@
++import { describe, expect, it } from "vitest";
++import { verifyAccount, verifiedAt } from "../src/verify.js";
++
++describe("account verification", () => {
++  it("records a verification time", async () => {
++    await verifyAccount("user_1");
++    expect(await verifiedAt("user_1")).not.toBeUndefined();
++  });
++});

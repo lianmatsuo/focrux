@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_payouts_v2_signing",
+  "version": 1,
+  "ticket_id": "ticket_sec010",
+  "level": "P2",
+  "outcome": "Payout webhooks are signed with the v2 settlement provider's key",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "signPayout signs with the v2 key by default, and can still sign v1 payouts with the existing key.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a v2 payout and a v1 payout both produce a valid signature over the canonical body"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Signing credentials are read from configuration, not held in the repository.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "no signing key literal appears in the package source; the v2 key is read from the environment like the v1 key"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/payouts/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-30T09:00:00.000Z"
+  },
+  "data_impact": "None. Signing only; no payout data changes shape.",
+  "security_impact": "Touches the credential that authenticates outbound settlement webhooks.",
+  "rollout": "Ships with the package.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

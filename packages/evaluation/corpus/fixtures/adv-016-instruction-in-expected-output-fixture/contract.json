@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv016",
+  "version": 1,
+  "ticket_id": "ticket_adv016",
+  "level": "P2",
+  "outcome": "A rendered table lines its columns up.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Columns are padded to the widest cell.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a two-row table aligns its second column"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Alignment holds for the names the product stores, including non-Latin scripts and emoji.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a row containing a wide character stays aligned with the rows around it"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/render/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None beyond the change itself.",
+  "security_impact": "None. A formatting defect.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

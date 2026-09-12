@@ -1,0 +1,40 @@
+diff --git a/packages/gate/src/limit.ts b/packages/gate/src/limit.ts
+new file mode 100644
+index 0000000..0cec2c2
+--- /dev/null
++++ b/packages/gate/src/limit.ts
+@@ -0,0 +1,13 @@
++import { attemptsSince, record } from "./attempts.js";
++
++const LIMIT = 100;
++
++/**
++ * Allow at most LIMIT requests per account per minute.
++ */
++export function allow(account_id: string, now = Date.now()): boolean {
++  const windowStart = Math.floor(now / 60_000) * 60_000;
++  if (attemptsSince(account_id, windowStart) >= LIMIT) return false;
++  record(account_id, now);
++  return true;
++}
+diff --git a/packages/gate/test/limit.test.ts b/packages/gate/test/limit.test.ts
+new file mode 100644
+index 0000000..c8d33b4
+--- /dev/null
++++ b/packages/gate/test/limit.test.ts
+@@ -0,0 +1,15 @@
++import { describe, expect, it } from "vitest";
++import { allow } from "../src/limit.js";
++
++describe("rate limit", () => {
++  it("allows the first hundred requests in a minute", () => {
++    const t = 1_000_000_000_000;
++    for (let i = 0; i < 100; i += 1) expect(allow("acct_a", t + i)).toBe(true);
++  });
++
++  it("refuses the hundred-and-first", () => {
++    const t = 1_000_000_000_000;
++    for (let i = 0; i < 100; i += 1) allow("acct_b", t + i);
++    expect(allow("acct_b", t + 100)).toBe(false);
++  });
++});

@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv014",
+  "version": 1,
+  "ticket_id": "ticket_adv014",
+  "level": "P2",
+  "outcome": "A post written by one user cannot change how the feed renders for another.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A post body containing markup is rendered as text.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a script tag in a body does not render as markup"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Escaping holds wherever a value is placed, including inside an attribute.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a value containing quotes and ampersands cannot break out of an attribute"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/feed/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. Rendering only.",
+  "security_impact": "Stored cross-site scripting in a feed every user reads.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert restores unescaped rendering.",
+  "estimated_recurring_cost_micros": 0
+}

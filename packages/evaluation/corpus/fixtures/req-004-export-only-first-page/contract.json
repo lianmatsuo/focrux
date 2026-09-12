@@ -1,0 +1,53 @@
+{
+  "plan_id": "plan_req004",
+  "version": 1,
+  "ticket_id": "ticket_req004",
+  "level": "P2",
+  "outcome": "A user can download the report they are looking at as CSV.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "The export contains every row matching the report, not one page of them.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an export of a 320-row report contains 320 data lines"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The export begins with a header row naming the columns.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the first line is the column header"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/reporting-csv/**",
+      "packages/reporting-query/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "None beyond what the criteria state.",
+  "security_impact": "Stated in the criteria.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "d7ebe47",
+    "context_manifest_hash": "sha256:296a694218901f7f50002c80946b996dea3058429e70fe4d55864fe0c0d2d292",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

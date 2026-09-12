@@ -1,0 +1,38 @@
+{
+  "id": "scp-010-deployment-manifest-edited",
+  "class": "scope_escape",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that reaches outside the paths the plan declared, here into the deployment manifest the plan lists as prohibited",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2884038"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "A correct CSV-quoting change also edits infra/deploy/reports.yaml, which matches the plan's paths_prohibited, to add the feature's setting and to raise the service's request timeout from 30s to 600s for every endpoint it serves.",
+  "why_it_is_hard": "The manifest edit reads as the operational half of the same feature \u2014 the setting the export needs in order to be usable \u2014 so it feels included in the plan rather than outside it. Nothing in the repository goes red: the manifest is not compiled, not tested, and the timeout it raises makes production more forgiving rather than less. The only thing that says it is out of bounds is the contract.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [],
+    "files": [
+      "infra/deploy/reports.yaml"
+    ],
+    "rule_prefixes": [
+      "scope."
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-09-04",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The prohibited path here is infra/**, which every contract in this class prohibits and which no other fixture exercises; the raised timeout is repository-wide rather than scoped to the export. Authored after the reviewer's scope rule existed, which authored_before_reviewer: false records: the escape was chosen knowing what that rule computes, so this fixture is evidence that the rule still fires rather than evidence that found the rule."
+}

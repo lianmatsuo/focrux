@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_ver009",
+  "version": 1,
+  "ticket_id": "ticket_ver009",
+  "level": "P2",
+  "outcome": "A webhook delivery that fails transiently is retried without overwhelming the endpoint.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A delivery that succeeds is reported as delivered.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a 2xx response returns true"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Retries after a server error are spaced rather than sent immediately one after another.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "three attempts against a 5xx endpoint are separated in time"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/webhooks/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. Delivery attempts are outbound.",
+  "security_impact": "An unspaced retry burst against a third-party endpoint is a denial-of-service the product's own address is attached to.",
+  "rollout": "Ships with the worker.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

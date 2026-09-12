@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_mig008",
+  "version": 1,
+  "ticket_id": "ticket_mig008",
+  "level": "P2",
+  "outcome": "Ledger entries record their currency and are totalled per currency.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Entries are totalled separately per currency.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "two currencies total separately"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The schema change can be deployed while the previous release is still writing entries.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the migration applies and the old code can still insert entries until the new release is live"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/ledger/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Adds and backfills a column on the largest table in the schema.",
+  "security_impact": "None.",
+  "rollout": "Migration and application release are separate deploys.",
+  "rollback": "Dropping the column loses currencies written after the migration.",
+  "estimated_recurring_cost_micros": 0
+}

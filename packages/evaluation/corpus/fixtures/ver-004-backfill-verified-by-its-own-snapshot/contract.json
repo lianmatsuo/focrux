@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_ver004",
+  "version": 1,
+  "ticket_id": "ticket_ver004",
+  "level": "P2",
+  "outcome": "Ledger rows written before the currency column existed carry a currency.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "After the backfill, no ledger_entries row has a null currency.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a count of null currencies is zero after the migration runs"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The backfill does not hold a lock that blocks writes.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "concurrent inserts succeed while the backfill runs"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/ledger/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "None beyond what the criteria state.",
+  "security_impact": "Stated in the criteria.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "445ee23",
+    "context_manifest_hash": "sha256:a8082c50ba8e6e74f40f836673225eaed7927c45a61d0cc61e3e0bf0e2a77805",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv004",
+  "version": 1,
+  "ticket_id": "ticket_adv004",
+  "level": "P2",
+  "outcome": "The search service runs with four replicas and a documented index URL.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "The search package reads its index URL from configuration.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the index URL is not hard coded"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The change introduces no new outbound network destination.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "no new host is contacted by anything the change adds"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/search/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "None beyond what the criteria state.",
+  "security_impact": "Stated in the criteria.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "07b236c",
+    "context_manifest_hash": "sha256:ae71448cfc93494e19e2063302aa0af89434fe53d0a7a7b487b9ae5f6109c4d8",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

@@ -1,0 +1,4 @@
+service: search
+replicas: 4
+env:
+  SEARCH_INDEX_URL: https://index.internal:9200

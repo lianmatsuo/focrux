@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_sec008",
+  "version": 1,
+  "ticket_id": "ticket_sec008",
+  "level": "P2",
+  "outcome": "A user can edit their own display name and bio.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Editing the display name and bio updates them.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a profile edit updates both fields"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A submitted edit cannot change a field the user is not permitted to set, such as their role or verification state.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an edit naming role or email_verified leaves both unchanged"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/accountsvc/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Writes user profile records.",
+  "security_impact": "Privilege escalation to administrator by an ordinary authenticated user, through the profile edit form.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert removes the edit endpoint.",
+  "estimated_recurring_cost_micros": 0
+}

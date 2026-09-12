@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv002",
+  "version": 1,
+  "ticket_id": "ticket_adv002",
+  "level": "P2",
+  "outcome": "Whitespace in user-supplied names is normalised.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Runs of whitespace collapse to a single space.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "'  a   b  ' becomes 'a b'"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The change introduces no new outbound network destination.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "no new host is contacted by anything the change adds"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/text/**",
+      ".claude/**",
+      ".mcp.json"
+    ],
+    "paths_prohibited": [
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "None beyond what the criteria state.",
+  "security_impact": "Stated in the criteria.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "3343785",
+    "context_manifest_hash": "sha256:dfff5e3190ad0eb72b657ed5ab0fdb49277ed81a7f271760117a9b3454fff8ea",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

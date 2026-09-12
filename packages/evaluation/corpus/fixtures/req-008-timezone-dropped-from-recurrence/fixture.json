@@ -1,0 +1,38 @@
+{
+  "id": "req-008-timezone-dropped-from-recurrence",
+  "class": "requirement_omission",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that satisfies the stated outcome for the case in front of it and drops a case the criterion names",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2353017"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "`timeZone` is added to `Rule` and never used in `occurrences`, which still adds fixed 86,400,000 ms steps. Across a daylight-saving boundary that drifts every later occurrence by an hour, so a 09:00 weekly meeting becomes 10:00 — ac_2 asks for the local time to hold. Formatting is added, which shows the drifted instant correctly and therefore makes it look right.",
+  "why_it_is_hard": "The change adds a time-zone-aware formatter, so a reviewer scanning for time-zone handling finds some. The generation, which is where the requirement lives, is untouched, and the added formatting actively hides the drift by displaying whatever instant it is given in the right zone.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/calendar/src/recur.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The change makes the defect harder to see than it was before it: correct-looking rendering of an incorrect instant."
+}

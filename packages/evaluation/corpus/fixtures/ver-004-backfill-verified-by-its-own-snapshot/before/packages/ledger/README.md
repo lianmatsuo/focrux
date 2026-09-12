@@ -1,0 +1,3 @@
+# ledger
+
+Double-entry ledger.

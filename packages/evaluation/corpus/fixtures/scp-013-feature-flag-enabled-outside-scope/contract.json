@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_scp013",
+  "version": 1,
+  "ticket_id": "ticket_scp013",
+  "level": "P2",
+  "outcome": "A discount code takes its percentage off a cart, behind the flag the rollout plan names.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A discount takes its percentage off the subtotal, rounded to the nearest cent.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a 10% discount on a subtotal of 1333 charges 1200"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A cart with no discount charges exactly what it charged before.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the same cart with no discount charges 1333"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/checkout/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-04T09:00:00.000Z"
+  },
+  "data_impact": "None. No stored order is rewritten.",
+  "security_impact": "None. A discount percentage is supplied by the pricing service, not by the shopper.",
+  "rollout": "Behind `checkout_discount_codes`, which stays off in every environment until the pricing team has signed the codes off. Turning it on is a separate change.",
+  "rollback": "Turn the flag off.",
+  "estimated_recurring_cost_micros": 0
+}

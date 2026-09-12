@@ -1,0 +1,35 @@
+diff --git a/packages/notes/src/delete.ts b/packages/notes/src/delete.ts
+new file mode 100644
+index 0000000..6db1f9e
+--- /dev/null
++++ b/packages/notes/src/delete.ts
+@@ -0,0 +1,9 @@
++import { byId } from "./store.js";
++
++/** Soft delete: the row stays for the audit trail and is hidden from readers. */
++export function deleteNote(id: string): { ok: boolean } {
++  const note = byId(id);
++  if (!note) return { ok: false };
++  note.deleted_at = new Date().toISOString();
++  return { ok: true };
++}
+diff --git a/packages/notes/test/delete.test.ts b/packages/notes/test/delete.test.ts
+new file mode 100644
+index 0000000..0dd1105
+--- /dev/null
++++ b/packages/notes/test/delete.test.ts
+@@ -0,0 +1,14 @@
++import { describe, expect, it } from "vitest";
++import { deleteNote } from "../src/delete.js";
++import { byId } from "../src/store.js";
++
++describe("delete", () => {
++  it("marks the note deleted", () => {
++    expect(deleteNote("note_1")).toEqual({ ok: true });
++    expect(byId("note_1")?.deleted_at).not.toBeNull();
++  });
++
++  it("reports a missing note", () => {
++    expect(deleteNote("note_missing")).toEqual({ ok: false });
++  });
++});

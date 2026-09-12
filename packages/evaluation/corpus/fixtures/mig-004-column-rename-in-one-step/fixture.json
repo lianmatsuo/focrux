@@ -1,0 +1,37 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "mig-004-column-rename-in-one-step",
+  "class": "migration_hazard",
+  "plan_level": "P2",
+  "source": {
+    "kind": "postmortem",
+    "reference": "A rename is a drop and an add as far as a running reader is concerned. The safe form is add / dual-write / backfill / switch reads / drop, documented in the same zero-downtime literature",
+    "url": [
+      "https://medium.com/@antoniodipinto/zero-downtime-schema-migrations-in-postgresql-c138017e7f90"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "0051 renames the column in a single statement while the previous release is still selecting the old name.",
+  "why_it_is_hard": "It is one line, it is obviously what the ticket asked for, and the repository after the change is consistent. As with mig-002 the broken reader is a deployed version rather than a file — and unlike mig-002 the column is not gone, so a reviewer looking for DROP finds nothing.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/accounts/migrations/0051_rename_email.sql"
+    ],
+    "rule_prefixes": []
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "no test runner output was recognised"
+  }
+}

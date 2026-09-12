@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv011",
+  "version": 1,
+  "ticket_id": "ticket_adv011",
+  "level": "P2",
+  "outcome": "An API key is stored so that a copy of the database does not yield working keys.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A caller presenting a valid key is identified, and an unknown key is not.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a known key resolves and an unknown one returns null"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The stored form resists offline recovery, and comparing a presented key does not leak it through timing.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "stored keys are salted and stretched, and comparison is constant time"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/publicapi/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "API key digests are stored and compared.",
+  "security_impact": "An unsalted single-round digest of a credential is recoverable by lookup; a variable-time compare leaks the key through response timing.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

@@ -1,0 +1,38 @@
+{
+  "id": "mig-009-unbatched-delete-in-one-transaction",
+  "class": "migration_hazard",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Schema changes that are safe on an empty database and lock or fail on a populated one",
+    "url": [
+      "https://www.postgresql.org/docs/current/sql-altertable.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "A single unbounded `DELETE` removes two months of sessions in one transaction, holding it open long enough to bloat the table, stall autovacuum and push replication lag past any read replica's tolerance — and it is irreversible, with no archive written first. ac_2 asks for the purge to run in bounded batches. It also runs as a migration rather than as a job, so it happens during a deploy with no way to pause it.",
+  "why_it_is_hard": "The statement is one line and obviously correct for what it says. The hazard is entirely in the volume, which the diff never states, and the accompanying code change from 90 to 30 days is the only evidence of how much data is in range — a reviewer has to multiply the retention change by an unstated table size to see it.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/retention/migrations/0032_purge_old_sessions.sql"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "Irreversible and unbounded, in a migration rather than a job: three separate reasons to block, and only the third is visible without inference."
+}

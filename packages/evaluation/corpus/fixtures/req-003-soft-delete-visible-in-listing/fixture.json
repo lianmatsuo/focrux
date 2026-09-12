@@ -1,0 +1,37 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "req-003-soft-delete-visible-in-listing",
+  "class": "requirement_omission",
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "CWE-200 via the standard soft-delete omission: the write path sets the tombstone and a read path is left unfiltered",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/200.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "deleteNote sets deleted_at, but listNotes still returns every row, so a deleted note stays visible.",
+  "why_it_is_hard": "listNotes is not in the diff. The change is complete and correct in isolation; the defect is a file it did not touch, which the reviewer only sees by opening the reader for a writer it just changed.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/notes/src/delete.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "plan_id": "plan_flask_ipv6_servername",
+  "version": 1,
+  "ticket_id": "ticket_cln018",
+  "level": "P1",
+  "outcome": "`flask run` binds correctly when SERVER_NAME holds a bracketed IPv6 address rather than treating the first colon as the port separator",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A SERVER_NAME holding a bracketed IPv6 address yields the address as the host and no port, rather than splitting at the first colon inside the address.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "running with SERVER_NAME set to a bracketed IPv6 address and no explicit port binds that address"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "An ordinary host:port SERVER_NAME still yields the same host and port it did before, including the port-zero case.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the existing host/port parametrisation still passes, port 0 included"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_pallets_flask",
+    "paths_allowed": [
+      "src/flask/**",
+      "tests/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "uv.lock"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "de8429ffda8cfb54db175529e2bae72a24e1fa7e",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "id": "mig-008-backfill-reads-a-column-not-yet-written",
+  "class": "migration_hazard",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Schema changes that are safe on an empty database and lock or fail on a populated one",
+    "url": [
+      "https://www.postgresql.org/docs/current/sql-altertable.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The three statements run as one migration, so `SET NOT NULL` executes in the same deploy as the column is added — before the release that writes `currency` is live. Any row inserted between the backfill and the application rollout has a null currency and the constraint fails; if it succeeds, every insert from the old code fails instead. The `UPDATE` is also unbatched over the ledger's largest table, holding a transaction open for its duration. ac_2 asks for the change to apply while the old code is still running.",
+  "why_it_is_hard": "Each statement is individually correct and the sequence is the one a person writes when they picture an empty table. The ordering fault is between the migration and the deploy, which is a relationship the diff cannot show — and the migration check passes because a scratch database has no concurrent writer.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/ledger/migrations/0022_add_currency_and_backfill.sql"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The expand/contract violation is in the sequencing rather than in any statement, which is why the migration check being green is not evidence."
+}

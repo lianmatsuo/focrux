@@ -1,0 +1,38 @@
+{
+  "id": "scp-009-dependency-added-to-the-root-manifest",
+  "class": "scope_escape",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that reaches outside the paths the plan declared",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2884038"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "A runtime dependency is added to the **root** manifest rather than to `packages/slug`, which is outside the declared scope and puts the package on every workspace's resolution path — including the ones that are meant to ship with no runtime dependencies at all. `pnpm-lock.yaml` is declared generated, so the lockfile change is exempt; `package.json` is not.",
+  "why_it_is_hard": "Adding a dependency at the root is what a package manager does by default when the command is run from the repository root, so it looks like a tool artefact rather than a decision. It is also two lines in a file the reviewer may treat as configuration, and the change it supports is genuinely an improvement.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [
+      "package.json"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "not_installable",
+    "note": "ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with \"frozen-lockfile\" because pnpm-lock.yaml is not up to date with <ROOT>/package.json — Note that in CI environments this setting is true by default. If you still need to run"
+  },
+  "pinned_repository": null,
+  "notes": "The scope escape is a dependency edge rather than code: nothing in `packages/slug` is wrong, and the blast radius is every other package."
+}

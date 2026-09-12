@@ -1,0 +1,60 @@
+diff --git a/packages/webhooks/src/verify.ts b/packages/webhooks/src/verify.ts
+index 9034d15..fb62bde 100644
+--- a/packages/webhooks/src/verify.ts
++++ b/packages/webhooks/src/verify.ts
+@@ -1,3 +1,5 @@
++import { createHmac, timingSafeEqual } from "node:crypto";
++
+ export interface Delivery {
+   body: string;
+   signature: string;
+@@ -6,3 +8,11 @@ export interface Delivery {
+ export function parse(delivery: Delivery): unknown {
+   return JSON.parse(delivery.body);
+ }
++
++/** The delivery's signature is the hex HMAC-SHA256 of its body, compared in constant time. */
++export function verify(delivery: Delivery, secret: string): boolean {
++  const expected = createHmac("sha256", secret).update(delivery.body).digest("hex");
++  const given = Buffer.from(delivery.signature, "utf8");
++  const want = Buffer.from(expected, "utf8");
++  return given.length === want.length && timingSafeEqual(given, want);
++}
+diff --git a/packages/webhooks/test/fixtures/signing-key.txt b/packages/webhooks/test/fixtures/signing-key.txt
+new file mode 100644
+index 0000000..861ac7b
+--- /dev/null
++++ b/packages/webhooks/test/fixtures/signing-key.txt
+@@ -0,0 +1 @@
++placeholder-signing-secret-for-tests
+diff --git a/packages/webhooks/test/verify.test.ts b/packages/webhooks/test/verify.test.ts
+new file mode 100644
+index 0000000..b51468d
+--- /dev/null
++++ b/packages/webhooks/test/verify.test.ts
+@@ -0,0 +1,18 @@
++import { createHmac } from "node:crypto";
++import { readFileSync } from "node:fs";
++import { describe, expect, it } from "vitest";
++import { verify } from "../src/verify.js";
++
++const secret = readFileSync(new URL("fixtures/signing-key.txt", import.meta.url), "utf8").trim();
++const body = JSON.stringify({ event: "invoice.paid" });
++const signature = createHmac("sha256", secret).update(body).digest("hex");
++
++describe("verify", () => {
++  it("accepts a delivery signed with the shared secret", () => {
++    expect(verify({ body, signature }, secret)).toBe(true);
++  });
++
++  it("rejects a delivery whose body was changed after signing", () => {
++    expect(verify({ body: `${body} `, signature }, secret)).toBe(false);
++  });
++});
+diff --git a/security/secret-scan-allow.txt b/security/secret-scan-allow.txt
+index a22e2ec..b4fec78 100644
+--- a/security/secret-scan-allow.txt
++++ b/security/secret-scan-allow.txt
+@@ -1 +1,2 @@
+ # Globs the secret scan does not report. One per line; empty means nothing is exempt.
++packages/*/test/**

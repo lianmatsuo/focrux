@@ -1,0 +1,47 @@
+Focrux — a loop that takes a ticket on your repository to a pull request.
+
+Licensed under the Apache License, Version 2.0. The unmodified upstream text is
+in LICENSE, fetched from https://www.apache.org/licenses/LICENSE-2.0.txt.
+
+  Copyright 2026 Lian Matsuo
+
+  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License. You may obtain a copy of
+  the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+  License for the specific language governing permissions and limitations under
+  the License.
+
+Contributions are accepted under the Developer Certificate of Origin 1.1: every
+commit carries a Signed-off-by line, and there is no contributor licence
+agreement. The certificate's text and what signing it asserts are in
+CONTRIBUTING.md.
+
+Third-party material
+
+packages/ui/src/motion.css contains transitions from transitions.dev
+(https://transitions.dev). They are not licensed under the Apache License,
+Version 2.0. They are used under the transitions.dev terms, and any use of
+them is governed by those terms: https://transitions.dev/terms.html
+
+The Focrux name, its logo and its artwork are not licensed under the Apache
+License, Version 2.0: the files in apps/desktop/public/brand/. All rights in
+them are reserved.
+
+packages/evaluation/corpus/fixtures/ and packages/evaluation/sample/fixtures/
+(unchanged copies of six of those fixtures) are licensed under CC-BY-4.0, not
+the Apache License, Version 2.0. The unmodified upstream text is in
+packages/evaluation/corpus/LICENSE, fetched from
+https://creativecommons.org/licenses/by/4.0/legalcode. The fixture format
+around it — fixture.json, contract.json, checks.json, and the fixture-format
+documentation — is Apache-2.0 like the rest of this repository.
+
+Everything that runs on one machine is here. The records of how this was built
+and measured — the dated evaluation rounds, the reviews, the design and vision
+documents, the ticket store — are kept in a private archive; the method
+documents they were produced under are here, beside the code.

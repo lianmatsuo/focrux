@@ -1,0 +1,43 @@
+{
+  "id": "ver-001-activation-email-asserted-against-mock",
+  "class": "verification_defect",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Mocking the collaborator under test so the assertion proves a call rather than the effect; a widely documented failure shape",
+    "url": [
+      "https://microsoft.github.io/code-with-engineering-playbook/automated-testing/unit-testing/mocking/",
+      "https://news.ycombinator.com/item?id=27729189"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a — no upstream code",
+    "code_copied": false
+  },
+  "defect": "ac_2 requires an activation email to be DELIVERED. The shipped test mocks sendEmail and asserts it was called once; the real sendEmail swallows transport failures, so no delivery is ever established.",
+  "why_it_is_hard": "The unit check is green and the assertion looks like it names the criterion. The swallow is in send.ts, which the diff does not touch, so the reviewer must independently open a file outside the change to see that a call is not a delivery.",
+  "expected_detection": {
+    "mode": "coverage",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [],
+    "rule_prefixes": [],
+    "statuses": [
+      "not_met"
+    ],
+    "strengths": [
+      "proxy",
+      "asserted_only"
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "notes": "Detection is scored at coverage level, not blocking: asserted_only is advisory at P1 by policy, so counting only blocks would score the specified behaviour as a miss.",
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "plan_id": "plan_pydantic_mutablesequence",
+  "version": 1,
+  "ticket_id": "ticket_cln023",
+  "level": "P1",
+  "outcome": "A field annotated with a bare `MutableSequence` validates to a list, the way the other bare sequence aliases already do",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A field annotated with a bare `collections.abc.MutableSequence` validates a list input to a list.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "validating a list against a bare MutableSequence field yields a list, not a generic sequence wrapper"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The parameterised form and the other sequence aliases keep the behaviour they had.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the existing list and sequence type tests still pass"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_pydantic",
+    "paths_allowed": [
+      "pydantic/**",
+      "tests/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "uv.lock"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "1fb7121d99c903c6decc0debcc78b113fc17d2f4",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

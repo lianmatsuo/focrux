@@ -1,0 +1,48 @@
+{
+  "plan_id": "plan_cln003",
+  "version": 1,
+  "ticket_id": "ticket_cln003",
+  "level": "P1",
+  "outcome": "The health check reports the upstream version alongside liveness.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "The health check reports whether the upstream answered.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "ok is true when ping returns pong"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The health check reports the upstream version.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "version is the string the upstream returned"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/upstream/src/health.ts",
+      "packages/upstream/test/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "4f49979",
+    "context_manifest_hash": "sha256:44ebe8752ce10c4a4ef0597dbb6b26a24a7ff637138098f2c86922efb1d3deee",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

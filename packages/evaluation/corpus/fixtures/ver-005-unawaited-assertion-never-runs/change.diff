@@ -1,0 +1,48 @@
+diff --git a/packages/exports/src/csv.ts b/packages/exports/src/csv.ts
+index e88e1f7..5c11199 100644
+--- a/packages/exports/src/csv.ts
++++ b/packages/exports/src/csv.ts
+@@ -1,9 +1,16 @@
+ export type Row = Record<string, string>;
+ 
++/** RFC 4180: a field containing a comma, quote or newline is quoted and its quotes doubled. */
++function escape(value: string): string {
++  if (!/[",
++]/.test(value)) return value;
++  return `"${value.replace(/"/g, '""')}"`;
++}
++
+ export async function toCsv(rows: AsyncIterable<Row>, columns: string[]): Promise<string> {
+   const lines = [columns.join(",")];
+   for await (const row of rows) {
+-    lines.push(columns.map((c) => row[c] ?? "").join(","));
++    lines.push(columns.map((c) => escape(row[c] ?? "")).join(","));
+   }
+   return lines.join("
+ ");
+diff --git a/packages/exports/test/csv.test.ts b/packages/exports/test/csv.test.ts
+new file mode 100644
+index 0000000..fcaf204
+--- /dev/null
++++ b/packages/exports/test/csv.test.ts
+@@ -0,0 +1,20 @@
++import { describe, expect, it } from "vitest";
++import { toCsv } from "../src/csv.js";
++
++async function* rows(items: Record<string, string>[]) {
++  for (const item of items) yield item;
++}
++
++describe("toCsv", () => {
++  it("writes a header and a row", async () => {
++    const out = await toCsv(rows([{ name: "Ada" }]), ["name"]);
++    expect(out).toBe("name
++Ada");
++  });
++
++  it("escapes a field containing a comma", () => {
++    // No await: the promise is passed to expect, which compares a Promise to a
++    // string, and the rejection is never surfaced.
++    expect(toCsv(rows([{ name: "Lovelace, Ada" }]), ["name"])).resolves;
++  });
++});

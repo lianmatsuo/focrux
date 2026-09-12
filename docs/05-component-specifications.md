@@ -1,0 +1,125 @@
+# Component Specifications
+
+One entry per real component in this repository. **Owns** is what only this component writes. **Consumes** is what it reads, calls or links against. **Emits** is what it writes, returns or hands off to the next component.
+
+## `apps/cli` — the `focrux` command
+
+One binary carries every command: `doctor`, `baseline`, `review`, `inspect`, `verdict`, `run`, `admit`, `edit`, `approve`, `list`, `sync`, `serve`, `mcp`, `agent`, `stops`, `escapes` and `principle`. `tooling/package` bundles it into the design-partner tarball and the open-source tree, linking `@focrux/contracts`, `@focrux/planning`, `@focrux/review`, `@focrux/runner` and `@focrux/workspace` ([D-075](11-open-decisions.md), [ADR-0032](adr/0032-open-source-the-local-cli-and-the-reviewer.md)).
+
+**Owns:** the ticket store under `.focrux/` — admission, contracts, drafts, approval and edit history; `focrux serve`, the queue over that store: it fetches the base ref, reads open pull requests through `sync`, decides who waits by set arithmetic over approved scope, re-levels open branches behind the base, starts runs up to the configured concurrency, drafts labelled tracker issues into `plan_review`, and, under `merge: loop`, merges the head pull request once [D-041](11-open-decisions.md)'s conditions hold ([D-108](11-open-decisions.md)); the loopback tool endpoint `focrux serve` hosts and `focrux mcp` / `focrux agent` reach, one capability token per role, scoped to reads plus `admit`, `edit`, `sync` and pause/resume — never approve, publish or merge ([D-109](11-open-decisions.md)); the stops/escapes ledger and the baseline stopwatch ([D-038](11-open-decisions.md)).
+
+**Consumes:** `@focrux/contracts`, `@focrux/review`, `@focrux/workspace`, `@focrux/runner` and `@focrux/planning`; local `git` and `gh`; the person's own coding-agent and reviewer credentials — Focrux never reads, stores or forwards one.
+
+**Emits:** `ReviewArtifact` and `ExecutionAttempt` records, ticket state transitions, the stop and verdict ledgers, and, with `--publish`, a branch and a pull request for a person to merge.
+
+**Trust boundary:** a model's drafted contract or proposed scope is data until a person's `approve` confirms it; only then does a scope glob become an action parameter ([ADR-0023](adr/0023-untrusted-context-boundary.md), [D-072](11-open-decisions.md)).
+
+Decided, not built: planning mode, the interview, specs as a committed folder ([D-101](11-open-decisions.md), [D-102](11-open-decisions.md), [D-103](11-open-decisions.md)); the precondition `merge: loop` needs before use (SCP-229, [D-041](11-open-decisions.md)).
+
+## `apps/desktop` — the Focrux desktop
+
+A local Electron host and a shared React renderer over the bundled CLI ([ADR-0033](adr/0033-focrux-local-desktop-and-subscription-providers.md)) — process composition, not one app importing another's source.
+
+**Owns:** the native shell — validated IPC between host and renderer, native dialogs, fixed CLI subprocess argv, provider sign-in through a fixed terminal command per provider; the contract editor, the one durable edit surface the desktop offers, against one workspace projection ([D-095](11-open-decisions.md), [ADR-0034](adr/0034-desktop-editing-and-workspace-projection.md)); the local profile/job journal in Electron's own user-data directory.
+
+**Consumes:** the bundled `@focrux/cli` and its write-guard hook, a pinned Node 22.22.0 runtime, `@focrux/ui` tokens and components, each repository's own `.focrux/` store — read, never a second source of truth. Claude Code and Codex authenticate on the person's own subscription login; an API key is optional ([D-093](11-open-decisions.md)).
+
+**Emits:** nothing canonical — tickets and evidence stay in the repository's own store; the desktop writes only its local profile/job journal, and a native package under `apps/desktop/release`.
+
+**Trust boundary:** the desktop reads code and never edits it; diffs are read-only and "open" hands off to the person's own editor ([D-015](11-open-decisions.md), [ADR-0018](adr/0018-defer-custom-ide-until-evidence-gates.md)).
+
+Decided, not built: the phone's surfaces, which follow pairing ([D-097](11-open-decisions.md)).
+
+## `packages/contracts` — `@focrux/contracts`
+
+Versioned Zod schemas and inferred types — files, not tables — for every artifact the loop passes between its own components. The dependency floor: every other package here builds on it, and it depends on none of them.
+
+**Owns:** `PlanContract` (the immutable outcome, criteria, scope and base, [ADR-0016](adr/0016-minimal-machine-maintained-planning.md)), `Ticket`, `ChangeSet`, `CheckResult`, `ReviewArtifact`, `ExecutionAttempt`, `RunBundle`, `MaterializationManifest`, `PermissionProfile`, `LimitsTable`, `SecretIndex` (materialized secrets indexed by the sha256 of file and value, [D-012](11-open-decisions.md)), the queue's scheduling primitives, and risk derivation (`derivePlannedRisk` from declared scope, `deriveActualRisk` from the sealed diff — a level may rise, never fall).
+
+**Consumes:** nothing in this repository.
+
+**Emits:** the typed schemas and inferred types every other package imports; no runtime behaviour of its own. Not published to a package registry — it ships inlined in the CLI bundle.
+
+Decided, not built: grouping a large ticket's plan into an execution graph, and a size derived from it ([D-100](11-open-decisions.md), [D-104](11-open-decisions.md)).
+
+## `packages/review` — `@focrux/review`
+
+Independent review: checks, findings, coverage and structured verdicts, over three model transports (the Anthropic SDK, a local `claude` binary, a local `codex` binary).
+
+**Owns:** the blocking matrix and routing, which sends a finding the executor can close back to it as `remediable` within a round limit ([docs/04](04-ticket-workspace-and-review.md#the-blocking-matrix), [D-051](11-open-decisions.md)); stable finding keys (`hash(rule_id | criterion_id | file | symbol)`); waivers and measured rule authority; review independence, with the executor's narrative hidden at every level ([D-037](11-open-decisions.md)).
+
+**Consumes:** the approved plan, the sealed change set, deterministic check results, and files it selects itself from a bounded read-only surface that excludes materialized secrets and repository-supplied agent configuration. Never the executor's narrative or transcript, at any level — repository and issue content arrives only inside trust-tagged blocks, data rather than instruction ([ADR-0023](adr/0023-untrusted-context-boundary.md), [D-035](11-open-decisions.md)).
+
+**Emits:** the `ReviewArtifact` — structured per-criterion verdicts and findings, never parsed prose; deterministic check results outrank a model's claim about them.
+
+Decided, not built: review per node of an execution graph, routing findings other review tools leave on the pull request, and a reviewer of a different model family at P3 ([D-107](11-open-decisions.md), [D-088](11-open-decisions.md), [D-037](11-open-decisions.md)).
+
+## `packages/workspace` — `@focrux/workspace`
+
+The local worktree provider, and the harder half of it: making the worktree runnable.
+
+**Owns:** one isolated worktree and branch per attempt chain from an exact base commit, with leases and stale reclaim; the materialization diagnostic, which proposes a manifest from the checkout and refuses by name, before an attempt starts, a repository that cannot be materialized ([ADR-0025](adr/0025-worktree-environment-contract.md)); the install/verify strategy for a monorepo member, keeping the workspace root — where the lockfile and the install live — and the package root — whose scripts are the checks — apart. Supported: GitHub, standard git worktrees, pnpm, npm, yarn and bun repositories and monorepos, against a declared manifest ([D-013](11-open-decisions.md)).
+
+**Consumes:** the checkout it is pointed at. `exec.ts` runs every process as argv, never a shell string.
+
+**Emits:** a materialized worktree and a first-run diagnostic report; `focrux-materialisation` runs the [ADR-0025](adr/0025-worktree-environment-contract.md) diagnostic on its own as a standalone measurement.
+
+A remediation round shares its predecessor's worktree and lease rather than provisioning a second one — Git refuses to check one branch out in two worktrees — so the unit is the attempt chain, not the attempt.
+
+## `packages/runner` — `@focrux/runner`
+
+The half of execution that is not the agent.
+
+**Owns:** the permission profile (command allow-list, deny-list, an environment built from an allow-list, a pinned provider base URL); one coding-agent adapter per provider, each asserting the agent loaded nothing originating in the repository; quarantine of every known agent-configuration path out of the worktree before handover and back after ([ADR-0030](adr/0030-neutralise-repository-supplied-agent-configuration.md)); the ceilings the runner enforces rather than requests of the model — wall clock, commands, iterations, tokens and cost, each with a typed stop reason; the prohibited-action list, checked against commands and against the sealed paths; the sealed change set, with materialized secrets removed by content hash; immutable, content-addressed run bundles with a computed replayability tier ([ADR-0026](adr/0026-replay-claim-tiering.md)); delivery — push and pull request through local `git`/`gh`, holding the credential so the agent never sees a token; the remediation loop: contract, worktree, agent, seal, checks, review, routing, pull request.
+
+**Consumes:** the approved plan, the materialized worktree, the executor's own tool calls.
+
+**Emits:** the `ExecutionAttempt` record, the run bundle, the pull request.
+
+Decided, not built: a stall detector replacing the ceilings above ([D-096](11-open-decisions.md)); subagents started from Focrux-defined roles, scope-guarded and invisible to review ([D-106](11-open-decisions.md)); a merge step that accepts unsigned commits and leaves signing to the repository's own rule ([D-091](11-open-decisions.md), SCP-280).
+
+## `packages/planning` — `@focrux/planning`
+
+The contract draft, and the measurement of what a person did to it.
+
+**Owns:** `draftContract` — one model call that turns an issue into a proposed outcome, two to four criteria and a one-to-eight-glob scope, never executed and never approved by drafting alone ([D-071](11-open-decisions.md), [D-072](11-open-decisions.md)); `issueAuthoredAttempts`, which reports rather than filters every line of an issue that claims the work is already done or addresses the drafter; `contractEditCount`, which counts the fields a person changed between the contract as first rendered and the one approved ([D-072](11-open-decisions.md)).
+
+**Consumes:** an issue or a Markdown file, read as external, trust-tagged data — never as instruction — and the repository's own file tree, two levels deep, for proposed globs to be checked against; nothing else of the repository ([ADR-0023](adr/0023-untrusted-context-boundary.md)).
+
+**Emits:** the validated draft and its provenance (model, cost, prompt version); the approved contract is written by `apps/cli`, not this package.
+
+## `packages/ui` — `@focrux/ui`
+
+Shared React primitives and design tokens: buttons, badges, panels, fields, notices, empty states, focus-contained native dialogs, and the desktop's design tokens and motion primitives ([D-097](11-open-decisions.md)).
+
+**Owns:** the component and token set; no filesystem, IPC, provider, database or application-state dependency of its own.
+
+**Consumes:** nothing beyond React.
+
+**Emits:** components imported from `@focrux/ui` and tokens from `@focrux/ui/tokens.css`, consumed by `apps/desktop`.
+
+## `packages/evaluation` — the corpus and the regression suite
+
+Scoped here to the seeded-defect corpus and the fixed regression suite drawn from it; the rest of this package's harness is outside this document.
+
+**Owns:** the corpus — fixtures under `corpus/fixtures`, each a directory of `fixture.json`, `contract.json`, `checks.json`, `before/`/`after/` trees or a pinned real repository and commit pair, and a generated `change.diff`; `expected_detection`, fixed before a fixture is ever run and never edited after; the regression suite, a fixed subset of the corpus that runs when the reviewer prompt, the blocking matrix or the default model or provider changes, gating on two bars — no `must_not_approve` fixture ends `approve`, and every cited credential is redacted — with every other reading taken against the previous suite run on the same model ([D-010](11-open-decisions.md)). The fixture format is Apache-2.0 and the fixtures CC-BY-4.0, published as `plantedbugs` ([D-075](11-open-decisions.md)).
+
+**Consumes:** a directory named by `FOCRUX_EVAL_CORPUS_DIR`, or the packaged corpus beside this package — refused, never silently substituted, when the named directory is absent; for pinned fixtures, a prepared clone under `.local/corpus-cache`.
+
+**Emits:** `runs.json`, `summary.json`, `report.md` and `rule-authority.json`, and, spawning the built CLI binary itself once per fixture per repeat, the same review artifacts a real run produces.
+
+## `tooling/package` — the tarball and the open-source tree
+
+**Owns:** the CLI tarball a design partner installs — one bundled file, the runner's write-guard hook beside it, a version manifest and a licence notice, archived with a published SHA-256 ([D-046](11-open-decisions.md), `pack.mjs`); assembly of the public repository's tree from a named commit, carrying every file except the private set named in `PRIVATE_PATHS`, each rule with its own reason, and scanned before every write for internal references — a `.local/` run directory, an evidence-archive name, a path into the private set — that must be allow-listed by reason or the assembly refuses ([D-075](11-open-decisions.md), `assemble-open.mjs`); the public corpus assembly (`assemble-corpus.mjs`); tarball verification and draft-release scripting consumed by `.github/workflows/release.yml`; the public repository's own CI checks (protected paths, regression delta).
+
+**Consumes:** the built workspace; a named commit — assembly is reproducible from a sha, never from an uncommitted edit.
+
+**Emits:** `release/focrux-<version>.tgz` and its digest; the assembled open-source tree; the assembled public corpus tree.
+
+## `tooling/skills` — executor skill guidance
+
+**Owns:** a vendored, pinned engineering-skill bundle with its own licence and source manifest; `build.mjs`, which compiles the selected skill directories into generated, hashed guidance text.
+
+**Consumes:** nothing at runtime — it is a build-time step.
+
+**Emits:** `packages/runner/src/skill-content.ts`, the generated module the runner appends to an execution brief for up to three explicitly selected skills, pinned and hashed on the attempt record — never native skill discovery, never repository-supplied instructions ([D-094](11-open-decisions.md)).

@@ -1,0 +1,13 @@
+[
+  {
+    "check_id": "check_ut",
+    "name": "unit",
+    "kind": "unit",
+    "status": "passed",
+    "summary": "675 passed (48 files)",
+    "command": "pnpm run test-unit",
+    "detail": "Measured at the pinned head commit on 2026-08-28, not declared, after this fixture's own setup_commands (`pnpm install --frozen-lockfile` then `pnpm run build`) \u2014 vite's unit tests import the workspace's own vite package and cannot resolve it unbuilt.",
+    "duration_ms": 6320,
+    "source": "file"
+  }
+]

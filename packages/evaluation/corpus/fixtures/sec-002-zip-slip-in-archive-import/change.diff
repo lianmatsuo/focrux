@@ -1,0 +1,35 @@
+diff --git a/packages/import/src/extract.ts b/packages/import/src/extract.ts
+new file mode 100644
+index 0000000..5fc6097
+--- /dev/null
++++ b/packages/import/src/extract.ts
+@@ -0,0 +1,15 @@
++import { mkdirSync, writeFileSync } from "node:fs";
++import { dirname, join } from "node:path";
++import { readEntries } from "./tar.js";
++
++/** Unpack an uploaded content archive into the import directory. */
++export function extract(archive: Buffer, into: string): string[] {
++  const written: string[] = [];
++  for (const entry of readEntries(archive)) {
++    const target = join(into, entry.name);
++    mkdirSync(dirname(target), { recursive: true });
++    writeFileSync(target, entry.body);
++    written.push(target);
++  }
++  return written;
++}
+diff --git a/packages/import/test/extract.test.ts b/packages/import/test/extract.test.ts
+new file mode 100644
+index 0000000..bc739e9
+--- /dev/null
++++ b/packages/import/test/extract.test.ts
+@@ -0,0 +1,8 @@
++import { describe, expect, it } from "vitest";
++import { extract } from "../src/extract.js";
++
++describe("extract", () => {
++  it("writes nothing for an empty archive", () => {
++    expect(extract(Buffer.alloc(0), "/tmp/import")).toEqual([]);
++  });
++});

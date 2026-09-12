@@ -1,0 +1,19 @@
+diff --git a/packages/accounts/migrations/0031_drop_legacy_email.sql b/packages/accounts/migrations/0031_drop_legacy_email.sql
+new file mode 100644
+index 0000000..fa20f91
+--- /dev/null
++++ b/packages/accounts/migrations/0031_drop_legacy_email.sql
+@@ -0,0 +1,2 @@
++-- 0031: legacy_email is no longer read.
++ALTER TABLE users DROP COLUMN legacy_email;
+diff --git a/packages/accounts/src/users.ts b/packages/accounts/src/users.ts
+index 54057bc..8cd8695 100644
+--- a/packages/accounts/src/users.ts
++++ b/packages/accounts/src/users.ts
+@@ -1,5 +1,5 @@
+ import { query } from "./db.js";
+ 
+ export async function findUser(id: string) {
+-  return query("SELECT id, email, legacy_email FROM users WHERE id = $1", [id]);
++  return query("SELECT id, email FROM users WHERE id = $1", [id]);
+ }

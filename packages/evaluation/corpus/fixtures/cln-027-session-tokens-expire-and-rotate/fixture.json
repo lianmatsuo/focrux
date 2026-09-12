@@ -1,0 +1,30 @@
+{
+  "id": "cln-027-session-tokens-expire-and-rotate",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The correct sibling of sec-004-timing-unsafe-signature-compare, and of the auth findings the reviewer raises on clean auth changes (round 2's finding that a token carried no expiry, and the clean loop's one block on cln-006 for a signing secret that fell back to empty): tokens expire, keys rotate with a time-bounded previous-key window, a missing secret refuses to start, and comparison uses the platform primitive.",
+    "url": [
+      "https://nodejs.org/api/crypto.html#cryptotimingsafeequala-b"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. Every criterion is met and directly verified by a shipped test.",
+  "why_it_is_hard": "Auth is where the reviewer's stopping findings cluster: round 2's hard-core sheet raised a token-never-expires finding, and the clean loop's one block on cln-006 was an empty-secret signing fallback. This one closes every trap those findings name - expiry enforced, no empty-secret fallback, crypto.timingSafeEqual rather than a hand-rolled compare - so stopping it means finding something new.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-09-01",
+  "authored_before_reviewer": false,
+  "notes": "Authored rather than drawn from a merged commit, deliberately: the end-to-end loop needs a before/ tree to branch from, and no pinned fixture has one. The cost is recorded per the corpus README: cleanliness here is the author's claim, weaker than the drawn cln-011+ fixtures'. Measurement gap found and closed 2026-09-01, pre-merge: the shared corpus runtime/ carried no @types/node or typescript, so this tree (and twelve pre-existing trees using node builtins) could not typecheck under it while declaring typecheck green; both were added to runtime/, every affected tree now typechecks exit 0, and the full runnable sweep confirmed no fixture's install/run status changed.",
+  "runtime": {
+    "status": "runs",
+    "note": "8 passed (8) in 1 passed (1)"
+  }
+}

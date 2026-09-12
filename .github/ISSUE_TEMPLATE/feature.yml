@@ -1,0 +1,59 @@
+name: Product feature
+about: Deliver a user-visible capability through a planned ticket
+labels: ["type:feature"]
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and problem statement
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and affected components
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+      description: >
+        Each criterion states what must be PROVEN, not where the proof will live:
+        expected_verification {kind: test | query | metric | artifact | manual, assertion}.
+        Do not name a test path — at approval it usually does not exist. The binding to
+        actual evidence is recorded during review as a CriterionEvidenceBinding.
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Security, data, cost, and rollout risks
+    validations:
+      required: true
+  - type: textarea
+    id: user_behaviour
+    attributes:
+      label: What does the user do differently?
+      description: >
+        State the before and after as behaviour, not as a system property. If the honest
+        answer is "nothing yet, this is substrate", say so — that is a valid answer and a
+        signal about sequencing.
+    validations:
+      required: true
+  - type: dropdown
+    id: trust_boundary
+    attributes:
+      label: Does this put untrusted content in front of a model or an action?
+      description: Repository content, issue bodies, connector payloads and test output are untrusted (ADR-0023).
+      options:
+        - "No"
+        - "Yes — trust tiers and instruction/data separation are covered in the criteria"
+    validations:
+      required: true

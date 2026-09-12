@@ -1,0 +1,55 @@
+{
+  "plan_id": "plan_cln028",
+  "version": 1,
+  "ticket_id": "ticket_cln028",
+  "level": "P1",
+  "outcome": "Bulk invites attempt every address and report what happened to each.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Every address is attempted even when earlier ones fail.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "with the second of four addresses failing, the other three are sent"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The result names each failed address with the reason.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the failed address appears in failures with the sender's error message"
+      }
+    },
+    {
+      "id": "ac_3",
+      "text": "An empty list succeeds with nothing sent and nothing failed.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "inviting [] returns { sent: [], failures: [] }"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/invites/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000028",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-01T09:00:00Z"
+  }
+}

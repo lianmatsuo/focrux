@@ -1,0 +1,37 @@
+{
+  "plan_id": "plan_vue_post_flush",
+  "version": 1,
+  "ticket_id": "ticket_cln012",
+  "level": "P1",
+  "outcome": "Flushing a very large array of post-flush callbacks runs all of them instead of overflowing the call stack",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Queueing a post-flush callback array large enough to exceed the argument limit of a spread call runs every callback in it.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "queuePostFlushCb with one million callbacks, awaited to the next tick, invokes all one million"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The same holds when the large array is queued while a post flush is already in progress, so it is merged into the active queue rather than starting a new one.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "queueing the large array from inside a post-flush callback and flushing again invokes all one million"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vuejs_core",
+    "paths_allowed": ["packages/runtime-core/src/**", "packages/runtime-core/__tests__/**"],
+    "paths_prohibited": [".github/**", "**/.env*"],
+    "generated_paths": ["pnpm-lock.yaml"],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "71f9ff58a2a8748b2c1ec26c55c89f7343b86110",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:00:00.000Z"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "id": "reg-005-fs-cpsync-replaces-a-hand-rolled-copy",
+  "class": "unstated_regression",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "commit",
+    "reference": "vitejs/vite@a2df7781",
+    "url": [
+      "https://github.com/vitejs/vite/commit/a2df77812814b927880bc4d68aafa8c8fa47daf0",
+      "https://github.com/vitejs/vite/pull/21081",
+      "https://github.com/vitejs/vite/issues/21065"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "Replacing the hand-rolled recursive copy with `fs.cpSync` inherits two Node bugs the deleted code did not have: on Windows it writes files with non-ASCII paths to the wrong location and then crashes (nodejs/node#58768), and `dereference: true` — which this call needs and does not set — is itself broken (nodejs/node#59168). vite reverted it in #21081, fixing issues #21065 and #21077, and said it can be re-applied once the fixes land in every supported Node version. The revert is the ground truth; nothing about the defect was written here.",
+  "why_it_is_hard": "The change deletes twenty lines and adds five, replacing bespoke code with a standard-library call — the direction a reviewer is trained to approve. The eslint-disable comment even states the compatibility reasoning, which reads as evidence the author checked. What it cannot show is that the platform function is less correct than the code it replaces, on an operating system the reviewer is not running.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/create-vite/src/index.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "675 passed (675) in 48 passed (48)"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/vitejs/vite",
+    "licence": "MIT",
+    "base_commit": "246df134dd58441e1e40dd361cf42419d05ea7a5",
+    "head_commit": "a2df77812814b927880bc4d68aafa8c8fa47daf0",
+    "subject": "refactor: use `fs.cpSync` (#21019)",
+    "reference": "https://github.com/vitejs/vite/commit/a2df77812814b927880bc4d68aafa8c8fa47daf0",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      [
+        "pnpm",
+        "run",
+        "build"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "run",
+      "test-unit"
+    ]
+  },
+  "notes": "The fourth repository in the corpus and the first whose defect is in a dependency's behaviour rather than in the diff. Nothing about it is visible from the changed lines."
+}

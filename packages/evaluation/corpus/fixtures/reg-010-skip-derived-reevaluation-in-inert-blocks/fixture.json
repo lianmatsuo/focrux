@@ -1,0 +1,68 @@
+{
+  "id": "reg-010-skip-derived-reevaluation-in-inert-blocks",
+  "class": "unstated_regression",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "commit",
+    "reference": "sveltejs/svelte#17852, reverted by #17869",
+    "url": [
+      "https://github.com/sveltejs/svelte/pull/17852",
+      "https://github.com/sveltejs/svelte/pull/17869"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "Fifteen lines in the derived-signal path stop a derived from re-evaluating while the effect block owning it is inert, with a regression test that fails without the change and passes with it. Svelte merged it and reverted it: 'because it isn't a real fix' — the cause was elsewhere and #17868 fixed it there. The suppression sat in the reactivity core, where guarding a symptom changes when every derived in the application recomputes. Nobody here decided any of this.",
+  "why_it_is_hard": "This is the hardest shape in the class, because the change looks better than most correct ones: a narrow diff, a changeset, and a runtime test demonstrating exactly the bug it claims to fix. It is checkable against its own criteria and it satisfies them. Judging it needs the question the plan does not ask — is inertness the reason this derived is stale, or the place the staleness happened to be visible — and the diff cannot answer that.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [
+      "packages/svelte/src/internal/client/reactivity/deriveds.js"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-29",
+  "authored_before_reviewer": false,
+  "notes": "Candidate 1 in corpus/REVERT-CANDIDATES.md. The reverting maintainer links the real fix, so the ground truth is not merely 'this was withdrawn' but 'the cause was somewhere else'. Setup note: the suite is `vitest run` at the workspace root and needs `pnpm build` first; the svelte package itself has no test script, so a filtered `pnpm --filter svelte test` exits 0 having run nothing. runtime-browser needs playwright's chromium-headless-shell. Baseline measured 2026-08-29: the PR's own runtime sample PASSES at the base commit — it does not discriminate, so the change shipped with a test that would have gone green without it. That deepens rather than weakens the fixture: svelte's 'isn't a real fix' extends to the evidence that was offered for it, and the reviewer in round 3 found the mechanism (stale value marked CLEAN) without any of this.",
+  "pinned_repository": {
+    "url": "https://github.com/sveltejs/svelte",
+    "licence": "MIT",
+    "base_commit": "25a1c5368be77b1014c3ff8b79cf9b1fe7f706f5",
+    "head_commit": "e3f06f9fc7ea0703bc89f94fd82ae4b7855e7a0a",
+    "subject": "fix: skip derived re-evaluation inside inert effect blocks (#17852)",
+    "reference": "https://github.com/sveltejs/svelte/commit/e3f06f9fc7ea0703bc89f94fd82ae4b7855e7a0a",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      [
+        "pnpm",
+        "exec",
+        "playwright",
+        "install",
+        "chromium-headless-shell"
+      ],
+      [
+        "pnpm",
+        "build"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "test"
+    ]
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "7349 passed | 61 skipped (7410) in 31 passed (31)"
+  }
+}

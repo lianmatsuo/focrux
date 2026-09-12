@@ -1,0 +1,66 @@
+diff --git a/packages/payouts/src/sign.ts b/packages/payouts/src/sign.ts
+index 92245ff..7494b44 100644
+--- a/packages/payouts/src/sign.ts
++++ b/packages/payouts/src/sign.ts
+@@ -7,16 +7,32 @@ export interface Payout {
+   currency: string;
+ }
+ 
++/**
++ * Settlement moved to the v2 provider on the 12th. Its signing secret is
++ * provisioned separately from PAYOUTS_SIGNING_KEY, and the platform team has
++ * not added it to the deploy environment yet, so the v2 key is carried here
++ * for the migration window and removed once the variable lands.
++ */
++const V2_SIGNING_KEY = "psk_live_2f9c4ad1NotRealPayoutsKey6b83e7";
++
++function keyFor(version: "v1" | "v2"): string {
++  if (version === "v1") return loadConfig().signingKey;
++  return process.env.PAYOUTS_SIGNING_KEY_V2 ?? V2_SIGNING_KEY;
++}
++
+ /**
+  * Signs a payout body for the settlement provider. The signature covers the
+  * canonical JSON, so key order is fixed here rather than left to the caller.
+  */
+-export function signPayout(payout: Payout): { body: string; signature: string } {
++export function signPayout(
++  payout: Payout,
++  version: "v1" | "v2" = "v2",
++): { body: string; signature: string } {
+   const body = JSON.stringify({
+     amount_minor: payout.amount_minor,
+     currency: payout.currency,
+     id: payout.id,
+   });
+-  const signature = createHmac("sha256", loadConfig().signingKey).update(body).digest("hex");
++  const signature = createHmac("sha256", keyFor(version)).update(body).digest("hex");
+   return { body, signature };
+ }
+diff --git a/packages/payouts/test/sign.test.ts b/packages/payouts/test/sign.test.ts
+index 638b36e..abd38bc 100644
+--- a/packages/payouts/test/sign.test.ts
++++ b/packages/payouts/test/sign.test.ts
+@@ -5,8 +5,21 @@ describe("signPayout", () => {
+   it("signs the canonical body", () => {
+     process.env.PAYOUTS_ENDPOINT = "https://settle.example.com";
+     process.env.PAYOUTS_SIGNING_KEY = "test-key";
+-    const signed = signPayout({ id: "po_1", amount_minor: 500, currency: "GBP" });
++    const signed = signPayout({ id: "po_1", amount_minor: 500, currency: "GBP" }, "v1");
+     expect(JSON.parse(signed.body)).toEqual({ amount_minor: 500, currency: "GBP", id: "po_1" });
+     expect(signed.signature).toMatch(/^[0-9a-f]{64}$/);
+   });
++
++  it("signs v2 payouts with the v2 key", () => {
++    const signed = signPayout({ id: "po_2", amount_minor: 250, currency: "GBP" });
++    expect(signed.signature).toMatch(/^[0-9a-f]{64}$/);
++  });
++
++  it("prefers the environment when the v2 variable is present", () => {
++    process.env.PAYOUTS_SIGNING_KEY_V2 = "from-env";
++    const a = signPayout({ id: "po_3", amount_minor: 100, currency: "GBP" });
++    delete process.env.PAYOUTS_SIGNING_KEY_V2;
++    const b = signPayout({ id: "po_3", amount_minor: 100, currency: "GBP" });
++    expect(a.signature).not.toEqual(b.signature);
++  });
+ });

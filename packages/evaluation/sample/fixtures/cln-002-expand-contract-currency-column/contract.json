@@ -1,0 +1,60 @@
+{
+  "plan_id": "plan_cln002",
+  "version": 1,
+  "ticket_id": "ticket_cln002",
+  "level": "P2",
+  "outcome": "Ledger entries record the currency they were posted in.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A new ledger entry records its currency.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "postEntry writes the currency column"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Entries written before this change are still readable, defaulting to usd.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "currencyOf returns usd for a row with a null currency"
+      }
+    },
+    {
+      "id": "ac_3",
+      "text": "The migration takes no lock that blocks writes: the index is built CONCURRENTLY and the added column is nullable with a default rather than NOT NULL.",
+      "expected_verification": {
+        "kind": "artifact",
+        "assertion": "the migration file contains CREATE INDEX CONCURRENTLY and no NOT NULL on the added column"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/ledger/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "Adds one nullable column. The backfill is a separate migration.",
+  "security_impact": "None.",
+  "rollout": "Expand now; backfill and constrain in 0013 and 0014 after this is deployed.",
+  "rollback": "Drop the column; the prior release does not read it.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "d5a3769",
+    "context_manifest_hash": "sha256:358c2dd7e53d8bb9d7ede28a9d61d91935158a34c9c4f11e6c7be2e56f04e438",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "plan_id": "plan_cln001",
+  "version": 1,
+  "ticket_id": "ticket_cln001",
+  "level": "P1",
+  "outcome": "The catalogue listing returns one page at a time.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "listItems returns 20 items by default and reports the total.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the default call returns 20 items and a total of 60"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A requested page returns the items at that offset.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "page 3 begins at the 41st item"
+      }
+    },
+    {
+      "id": "ac_3",
+      "text": "A page size outside 1..100 is clamped rather than honoured.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "page sizes of 5000 and 0 clamp to 100 and 1"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/catalog/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "832f439",
+    "context_manifest_hash": "sha256:727d6d3fe52a4073a1d2fbc0c7d5e35727715bc715fa032de769d81e0a9b8d7f",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

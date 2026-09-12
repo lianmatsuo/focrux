@@ -1,0 +1,51 @@
+{
+  "plan_id": "plan_prettier_stable_paren_comments",
+  "version": 1,
+  "ticket_id": "ticket_reg008",
+  "level": "P2",
+  "outcome": "Formatting a parenthesized expression that carries a trailing comment is stable across repeated runs",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Formatting a parenthesized sequence expression with a trailing comment twice produces the same output the second time as the first.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the previously unstable parenthesized-trailing-comment case formats identically on a second pass"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The parenthesized-trailing-comment case is removed from the list of known-failing format tests rather than left excluded.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the parenthesized-trailing-comment fixture no longer appears in failed-format-tests.js and its snapshot is stable"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_prettier",
+    "paths_allowed": [
+      "src/language-js/**",
+      "tests/format/js/**",
+      "tests/config/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "yarn.lock"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "75c46513c913aba30563031e517f2f1f3f350527",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-29T10:00:00.000Z"
+  },
+  "data_impact": "None. Source formatting only.",
+  "security_impact": "None.",
+  "rollout": "Ships with the package.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

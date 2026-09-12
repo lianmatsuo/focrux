@@ -1,0 +1,19 @@
+diff --git a/packages/accounts/migrations/0051_rename_email.sql b/packages/accounts/migrations/0051_rename_email.sql
+new file mode 100644
+index 0000000..ef68575
+--- /dev/null
++++ b/packages/accounts/migrations/0051_rename_email.sql
+@@ -0,0 +1,2 @@
++-- 0051: give the column the name the API uses.
++ALTER TABLE users RENAME COLUMN email TO email_address;
+diff --git a/packages/accounts/src/email.ts b/packages/accounts/src/email.ts
+index 82211e9..654a580 100644
+--- a/packages/accounts/src/email.ts
++++ b/packages/accounts/src/email.ts
+@@ -1,5 +1,5 @@
+ import { query } from "./db.js";
+ 
+ export async function emailOf(id: string) {
+-  return query("SELECT email FROM users WHERE id = $1", [id]);
++  return query("SELECT email_address FROM users WHERE id = $1", [id]);
+ }

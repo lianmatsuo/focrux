@@ -1,0 +1,45 @@
+{
+  "plan_id": "plan_pydantic_secret_none",
+  "version": 1,
+  "ticket_id": "ticket_cln022",
+  "level": "P1",
+  "outcome": "A secret-typed field holding `None` serializes as null instead of raising",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Serializing a model whose optional secret field is `None` produces null rather than an error.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "dumping a model with an Optional[SecretStr] field set to None succeeds and yields None"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A secret field holding an actual value still serializes to its masked form, so nothing about the redaction changes.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "dumping a populated secret field still yields the masked representation, not the plaintext"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_pydantic",
+    "paths_allowed": [
+      "pydantic/**",
+      "tests/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "uv.lock"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "24b9b3370685390c7d0265613dc073e142ac6db6",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

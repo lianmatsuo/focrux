@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_scp015",
+  "version": 1,
+  "ticket_id": "ticket_scp015",
+  "level": "P1",
+  "outcome": "A webhook delivery is only handled when its signature matches the shared secret.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A delivery signed with the shared secret verifies.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a body signed with the secret verifies as true"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A delivery whose body changed after signing does not verify.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the same signature against a modified body verifies as false"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/webhooks/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-04T09:00:00.000Z"
+  }
+}

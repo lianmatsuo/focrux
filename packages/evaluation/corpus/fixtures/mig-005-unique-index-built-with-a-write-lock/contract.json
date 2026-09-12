@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_mig005",
+  "version": 1,
+  "ticket_id": "ticket_mig005",
+  "level": "P2",
+  "outcome": "Two products cannot be created with the same code.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Codes are compared without regard to case or surrounding whitespace.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "two codes differing only in case are treated as duplicates"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The uniqueness constraint can be added to a catalogue that already holds rows, without blocking writes while it is built.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the migration applies to a populated skus table without taking a write-blocking lock"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/catalog/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Adds an index. Rejects future duplicate codes; existing duplicates block the migration.",
+  "security_impact": "None.",
+  "rollout": "Migration applied ahead of the application release.",
+  "rollback": "Dropping the index restores the previous behaviour.",
+  "estimated_recurring_cost_micros": 0
+}

@@ -1,0 +1,30 @@
+{
+  "defective": false,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "class": "clean",
+  "id": "cln-007-rolling-window-rate-limit",
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The correct counterpart of req-002: a rolling window, with the boundary burst that breaks the fixed-window version as an explicit test",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/770.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. The window is rolling and the boundary case has a test.",
+  "why_it_is_hard": "Sits directly next to req-002. The two differ by one expression, and the clean one carries the very test the defective one lacks.",
+  "runtime": {
+    "status": "runs",
+    "note": "4 passed (4) in 1 passed (1)"
+  }
+}

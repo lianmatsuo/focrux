@@ -1,0 +1,69 @@
+diff --git a/packages/reporting-csv/src/csv.ts b/packages/reporting-csv/src/csv.ts
+new file mode 100644
+index 0000000..30b9d35
+--- /dev/null
++++ b/packages/reporting-csv/src/csv.ts
+@@ -0,0 +1,18 @@
++import { streamRows } from "@fixture/reporting-query";
++
++/** RFC 4180: a field containing a comma, a quote or a newline is quoted. */
++function field(value: string): string {
++  return /[",\r\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
++}
++
++/**
++ * Render every matching row as CSV for download. Records are separated by CRLF
++ * per RFC 4180, so a newline inside a quoted field is not a record boundary.
++ */
++export function exportCsv(): string {
++  const records = ["id,amount"];
++  for (const batch of streamRows()) {
++    for (const row of batch) records.push(`${field(row.id)},${field(String(row.amount))}`);
++  }
++  return records.join("\r\n");
++}
+diff --git a/packages/reporting-csv/test/csv.test.ts b/packages/reporting-csv/test/csv.test.ts
+new file mode 100644
+index 0000000..03f4f49
+--- /dev/null
++++ b/packages/reporting-csv/test/csv.test.ts
+@@ -0,0 +1,21 @@
++import { describe, expect, it } from "vitest";
++import { exportCsv } from "../src/csv.js";
++import { countRows, streamRows } from "@fixture/reporting-query";
++
++const records = () => exportCsv().split("\r\n");
++
++describe("csv export", () => {
++  it("has a header", () => {
++    expect(records()[0]).toBe("id,amount");
++  });
++
++  it("contains every row, not one page of them", () => {
++    expect(records()).toHaveLength(countRows() + 1);
++  });
++
++  it("quotes a field containing a comma, a quote or a newline", () => {
++    const awkward = [...streamRows()].flat().find((row) => /[",\n]/.test(row.id));
++    expect(awkward, "the fixture should carry one awkward id").toBeDefined();
++    expect(records().at(-1)).toBe('"row_320,""odd""\nname",320');
++  });
++});
+diff --git a/packages/reporting-query/src/query.ts b/packages/reporting-query/src/query.ts
+index 89468ad..9cc2a2b 100644
+--- a/packages/reporting-query/src/query.ts
++++ b/packages/reporting-query/src/query.ts
+@@ -18,6 +18,13 @@ export function findRows(page = 1): Row[] {
+   return rows.slice(start, start + PAGE_SIZE);
+ }
+ 
++/** Unpaginated read, for exports. Streams in batches so nothing is held whole. */
++export function* streamRows(batch = PAGE_SIZE): Generator<Row[]> {
++  for (let start = 0; start < rows.length; start += batch) {
++    yield rows.slice(start, start + batch);
++  }
++}
++
+ export function countRows(): number {
+   return rows.length;
+ }

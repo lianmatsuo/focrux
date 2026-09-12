@@ -1,0 +1,34 @@
+diff --git a/packages/format/src/money.ts b/packages/format/src/money.ts
+index b251880..d56d96f 100644
+--- a/packages/format/src/money.ts
++++ b/packages/format/src/money.ts
+@@ -1,8 +1,11 @@
+-/** Render minor units as a decimal string with two places: 123456 -> "1234.56". */
++/**
++ * Render minor units as a decimal string with two places and thousands separators, for display:
++ * 123456 -> "1,234.56". The separators are what the invoice PDF and the dashboard show.
++ */
+ export function formatMoney(minor: number): string {
+   const sign = minor < 0 ? "-" : "";
+   const abs = Math.abs(minor);
+-  const major = Math.floor(abs / 100);
++  const major = Math.floor(abs / 100).toLocaleString("en-US");
+   const cents = String(abs % 100).padStart(2, "0");
+   return `${sign}${major}.${cents}`;
+ }
+diff --git a/packages/format/test/money.test.ts b/packages/format/test/money.test.ts
+index d563fa8..b01555c 100644
+--- a/packages/format/test/money.test.ts
++++ b/packages/format/test/money.test.ts
+@@ -1,8 +1,9 @@
+ import { expect, it } from "vitest";
+ import { formatMoney } from "../src/money.js";
+ 
+-it("renders minor units with two decimal places", () => {
+-  expect(formatMoney(123456)).toBe("1234.56");
++it("renders minor units with two decimal places and thousands separators", () => {
++  expect(formatMoney(123456)).toBe("1,234.56");
+   expect(formatMoney(5)).toBe("0.05");
+   expect(formatMoney(-250)).toBe("-2.50");
++  expect(formatMoney(100000000)).toBe("1,000,000.00");
+ });

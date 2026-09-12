@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_sec004",
+  "version": 1,
+  "ticket_id": "ticket_sec004",
+  "level": "P1",
+  "outcome": "Only deliveries genuinely from the provider are processed.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A delivery signed with the shared secret is accepted.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a correctly signed body verifies"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Signature comparison takes the same time whatever the supplied value, so no part of the expected signature can be recovered from timing.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the comparison is constant time in the length of the signature"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/webhooks/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "2817ecf",
+    "context_manifest_hash": "sha256:fbb02b327010443f82b933391cbbe72e61f8e8709e1a2debed914a740c601160",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

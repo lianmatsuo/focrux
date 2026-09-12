@@ -1,0 +1,38 @@
+{
+  "id": "req-007-csv-import-skips-header-detection",
+  "class": "requirement_omission",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that satisfies the stated outcome for the case in front of it and drops a case the criterion names",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2353017"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "A header row is not detected, so a file beginning `email,name` reports line 1 as an invalid address — ac_2 asks for the header to be recognised and skipped rather than rejected. Every real export from a spreadsheet has one, so the first row of a typical import always lands in `rejected`.",
+  "why_it_is_hard": "The change does the harder half of the work — validation and per-line rejection reasons — and the missing half is the mundane one. The rejection is also not silent: it reports `invalid_email` at line 1, which reads like correct behaviour on a genuinely bad row, so the failure looks like a user error rather than a defect.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/importer/src/contacts.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The omission produces a plausible-looking wrong answer rather than a crash, which is the harder thing for a reviewer to notice."
+}

@@ -1,0 +1,108 @@
+name: Release
+
+# The install channel D-046 names for a design partner: one private tarball, a
+# SHA-256 beside it, and build provenance attested by CI — attached to a draft
+# release on this private repository, which the founder verifies and hands over
+# out of band. Nothing here reaches an installed copy: there is no auto-update
+# (D-046), so a newer version is a new tarball and a message.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The version to pack; must equal apps/cli/package.json"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # The gate build.yml applies to every pull request, run again on the exact
+      # commit being released rather than trusted from an earlier run.
+      - name: Build, typecheck, test and lint
+        run: pnpm exec turbo run build typecheck test lint
+
+      # The tag (or the dispatch input) and the CLI's own manifest must agree:
+      # `focrux --version` reads the manifest, and the archive is named after it.
+      - name: Resolve the version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            version="$INPUT_VERSION"
+          else
+            version="${GITHUB_REF_NAME#v}"
+          fi
+          manifest="$(node -p 'require("./apps/cli/package.json").version')"
+          if [ "$version" != "$manifest" ]; then
+            echo "::error::the release names version '$version' but apps/cli/package.json carries '$manifest'"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Pack the tarball and its SHA-256
+        run: node tooling/package/pack.mjs
+
+      # The archive's contents in the log, and a refusal before anything is
+      # attested or attached if the runner's write-guard hook is not among
+      # them: without it an installed `focrux run` stops at its first tool call.
+      - name: List the tarball and check it carries the write-guard hook
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: node tooling/package/verify-tarball.mjs "release/focrux-$VERSION.tgz"
+
+      # Build provenance (D-046): an attestation binding the tarball's digest to
+      # this workflow, this commit and this run. It is stored with the repository,
+      # so `gh attestation verify <tarball> --repo <owner>/<repo>` checks it for
+      # anyone with read access — the founder before a handover, not the partner.
+      # GitHub refused this on the first tagged run (2026-09-02) with
+      # "Feature not available for user-owned private repositories", so the
+      # step runs only when the repository is public. Skipping it, rather than
+      # letting it fail, keeps a genuine attestation failure loud once it can
+      # run. Until then the signed tag and the published SHA-256 are the
+      # provenance (D-046).
+      - if: ${{ !github.event.repository.private }}
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: release/focrux-${{ steps.version.outputs.version }}.tgz
+
+      # A draft: the release exists for the founder to download, verify and hand
+      # over, and nothing is announced. One draft per version — a second run for
+      # the same version replaces that draft's assets, notes and target rather
+      # than leaving another draft beside it, and a version already published is
+      # refused. On a tag push the tag must already exist; on a dispatch the
+      # draft targets the dispatched commit and its tag is created only if the
+      # draft is ever published.
+      - name: Draft the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+          TARGET: ${{ github.event_name == 'workflow_dispatch' && github.sha || '' }}
+        run: node tooling/package/draft-release.mjs "$VERSION" "release/focrux-$VERSION.tgz" "$TARGET"

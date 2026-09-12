@@ -1,0 +1,53 @@
+{
+  "id": "cln-016-avoid-caching-unmounted-suspense-children",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P2",
+  "source": {
+    "kind": "commit",
+    "reference": "vuejs/core#15291",
+    "url": [
+      "https://github.com/vuejs/core/commit/b535917d46d5c6e28c1d3b9185bfa1665127c73a"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "None. This is a real merged commit in a real repository, and its cleanliness is a fact about the world rather than a claim by its author.",
+  "why_it_is_hard": "A four-line guard, `if (vnode.component)`, in a cache write. Whether it is the right condition depends on what a suspense subtree's inner child looks like before it resolves, which is not visible from the diff. The obvious alternative — checking the suspense state instead — is what a reviewer will propose.",
+  "expected_detection": {
+    "mode": "contested",
+    "objection": "`keys.add(key)` runs unconditionally during render while the new guard can skip `cache.set` forever, so a suspense child deactivated before it resolves leaves a phantom key in the eviction order. With a `max` prop that key occupies a slot, `pruneCacheEntry` is then called on a key whose `cache.get` returns undefined so it evicts nothing, and the component that should have been pruned stays. Before this commit the two structures were always written together.",
+    "verified_by": "read against KeepAlive.ts at the pinned head on 2026-08-27; the reviewer raised it in three independent reviews under three rule ids"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "3679 passed | 6 skipped (3685) in 182 passed | 1 skipped (183)"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/vuejs/core",
+    "licence": "MIT",
+    "base_commit": "a72036f66bcb9a4f3b3737cda19eeba1bc531e15",
+    "head_commit": "b535917d46d5c6e28c1d3b9185bfa1665127c73a",
+    "subject": "fix(runtime-core): avoid caching unmounted suspense children (#15291)",
+    "reference": "https://github.com/vuejs/core/commit/b535917d46d5c6e28c1d3b9185bfa1665127c73a",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "run",
+      "test-unit"
+    ]
+  },
+  "notes": "Drawn from a merged commit. The change is in KeepAlive and the tests are in Suspense, which reads as a test placed in the wrong package and is not. Moved to `contested` on the verified objection above, not on the verdicts: the reviewer is right, and scoring it as a false block would score a correct finding as an error."
+}

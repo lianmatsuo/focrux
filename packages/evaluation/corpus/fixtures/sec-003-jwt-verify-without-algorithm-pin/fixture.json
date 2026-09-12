@@ -1,0 +1,38 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "sec-003-jwt-verify-without-algorithm-pin",
+  "class": "security_introduction",
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "CWE-347 — improper verification of a cryptographic signature. The algorithm-confusion family: a verifier that trusts the token header's alg accepts a token the holder of the public key can mint",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/347.html",
+      "https://cwe.mitre.org/data/definitions/757.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "claimsFor calls verify without pinning algorithms, so the token's own header decides how it is verified.",
+  "why_it_is_hard": "Nothing in the diff looks like a security decision; the decision is the absence of an options argument. The default is documented in jwt.ts, which the diff does not touch.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/session/src/session.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  }
+}

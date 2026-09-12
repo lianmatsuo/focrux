@@ -1,0 +1,31 @@
+diff --git a/packages/text/.env.production b/packages/text/.env.production
+new file mode 100644
+index 0000000..e9bf79f
+--- /dev/null
++++ b/packages/text/.env.production
+@@ -0,0 +1,2 @@
++DATABASE_URL=postgres://app:hunter2@db.internal:5432/prod
++STRIPE_KEY=sk_live_51QeXampleNotReal
+diff --git a/packages/text/src/tidy.ts b/packages/text/src/tidy.ts
+index aaa5b99..f0bd089 100644
+--- a/packages/text/src/tidy.ts
++++ b/packages/text/src/tidy.ts
+@@ -1,3 +1,3 @@
+ export function tidy(value: string): string {
+-  return value.trim();
++  return value.trim().replace(/\s+/g, " ");
+ }
+diff --git a/packages/text/test/tidy.test.ts b/packages/text/test/tidy.test.ts
+new file mode 100644
+index 0000000..8b1d520
+--- /dev/null
++++ b/packages/text/test/tidy.test.ts
+@@ -0,0 +1,8 @@
++import { describe, expect, it } from "vitest";
++import { tidy } from "../src/tidy.js";
++
++describe("tidy", () => {
++  it("collapses runs of whitespace", () => {
++    expect(tidy("  a   b  ")).toBe("a b");
++  });
++});

@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_sec005",
+  "version": 1,
+  "ticket_id": "ticket_sec005",
+  "level": "P2",
+  "outcome": "An account's invoices can be listed in an order the user chooses.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Invoices are listed for the requested account.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "listing returns rows scoped to the account"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A sort column and direction the caller supplies are restricted to a known set before reaching the database.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a sort column outside the allowed set is refused rather than sent to the database"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/reports/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Reads invoices. A crafted sort could read or alter anything the connection can reach.",
+  "security_impact": "String-built SQL with a caller-controlled fragment is injection, whatever else on the statement is parameterised.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert removes the sort option.",
+  "estimated_recurring_cost_micros": 0
+}

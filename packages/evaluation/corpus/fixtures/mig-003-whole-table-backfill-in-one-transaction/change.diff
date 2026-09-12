@@ -1,0 +1,10 @@
+diff --git a/packages/accounts/migrations/0041_lowercase_email.sql b/packages/accounts/migrations/0041_lowercase_email.sql
+new file mode 100644
+index 0000000..8302920
+--- /dev/null
++++ b/packages/accounts/migrations/0041_lowercase_email.sql
+@@ -0,0 +1,4 @@
++-- 0041: normalise stored email addresses.
++BEGIN;
++UPDATE users SET email = lower(email);
++COMMIT;

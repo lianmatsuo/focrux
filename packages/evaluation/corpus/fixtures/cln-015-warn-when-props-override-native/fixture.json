@@ -1,0 +1,51 @@
+{
+  "id": "cln-015-warn-when-props-override-native",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P1",
+  "source": {
+    "kind": "commit",
+    "reference": "vuejs/core#12125",
+    "url": [
+      "https://github.com/vuejs/core/commit/22b53eafecf56a9fb97f00b8e8b69c90a073d2d4"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "None. This is a real merged commit in a real repository, and its cleanliness is a fact about the world rather than a claim by its author.",
+  "why_it_is_hard": "The check is `key in Object.getPrototypeOf(this)`, which is easy to argue should be `hasOwnProperty` or should walk the whole chain. Both alternatives are wrong here and the reviewer has to work out why before deciding the line is fine.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "3667 passed | 6 skipped (3673) in 182 passed | 1 skipped (183)"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/vuejs/core",
+    "licence": "MIT",
+    "base_commit": "02421cdbc4da5dd2eaf39e6c51aa790f9310db62",
+    "head_commit": "22b53eafecf56a9fb97f00b8e8b69c90a073d2d4",
+    "subject": "fix(custom-element): warn when props override native properties (#12125)",
+    "reference": "https://github.com/vuejs/core/commit/22b53eafecf56a9fb97f00b8e8b69c90a073d2d4",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "run",
+      "test-unit"
+    ]
+  },
+  "notes": "Drawn from a merged commit. A development-only warning, so the change has no runtime effect in production and the criteria have to be written about the warning rather than about behaviour."
+}

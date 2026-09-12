@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_mig001",
+  "version": 1,
+  "ticket_id": "ticket_mig001",
+  "level": "P2",
+  "outcome": "An activated account records when it was verified.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A verified account's verification time is readable from the users table.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "verifiedAt returns a timestamp after verifyAccount"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The migration applies to the existing populated users table without failing and without blocking writes to it.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the migration succeeds against a users table that already has rows, and takes no lock that blocks writes"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/accounts/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "Adds one column to users. No data is removed.",
+  "security_impact": "None.",
+  "rollout": "Migration runs during deploy, before the new code is released.",
+  "rollback": "Drop the column; the prior release does not read it.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "c402ff6",
+    "context_manifest_hash": "sha256:23cc7d3e5e0e97a90d0ad66673aced48a199545e0c458295c3eed01a888c9c17",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

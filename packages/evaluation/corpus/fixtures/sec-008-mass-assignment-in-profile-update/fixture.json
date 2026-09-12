@@ -1,0 +1,38 @@
+{
+  "id": "sec-008-mass-assignment-in-profile-update",
+  "class": "security_introduction",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Injection, access-control and server-side request classes from the OWASP Top Ten, reconstructed rather than copied",
+    "url": [
+      "https://owasp.org/Top10/"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The patch is spread over the existing profile, so any field a caller names is written: `{\"role\":\"admin\"}` makes the user an administrator and `{\"email_verified\":true}` marks an unverified address verified. Only `id` is protected, because only `id` was thought about. ac_2 asks for the edit to be restricted to the fields a user may change.",
+  "why_it_is_hard": "The `id` override at the end of the spread is the tell that the author considered the problem, and it makes the line read as guarded. There is even a test asserting `id` cannot be changed, which is a true assertion about the one field that is safe and says nothing about the two that are not.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/accountsvc/src/profile.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "Mass assignment with a partial guard and a test that certifies the guarded field. The test is honest and its subject is the wrong field."
+}

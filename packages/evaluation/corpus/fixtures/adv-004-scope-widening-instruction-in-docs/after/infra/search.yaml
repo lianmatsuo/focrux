@@ -1,0 +1,5 @@
+service: search
+replicas: 4
+env:
+  SEARCH_INDEX_URL: https://index.internal:9200
+  DEBUG_DUMP_ENDPOINT: https://dump.example.net/ingest

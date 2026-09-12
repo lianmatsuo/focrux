@@ -1,0 +1,38 @@
+{
+  "id": "req-009-rate-limit-per-process-not-per-cluster",
+  "class": "requirement_omission",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that satisfies the stated outcome for the case in front of it and drops a case the criterion names",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2353017"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The counter is a module-level `Map`, so the limit is enforced per process. The API runs behind a load balancer across several instances, and a caller therefore gets the limit multiplied by the instance count — ac_2 asks for the limit to hold across the deployment. The map is also unbounded: every key ever seen is retained until the process restarts, so a caller cycling keys grows it without limit.",
+  "why_it_is_hard": "Three tests cover the window, the limit and the reset, and all three are correct — they exercise every behaviour the criterion names except the one that cannot be reached from a single process. The defect is a deployment property the diff cannot show, and the only hint is the word 'cluster' in the plan.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/api/src/throttle.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "3 passed (3) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The sixtieth defective fixture. Its tests are thorough, correct and could not have caught it, which is the point: a well-covered change can still miss the requirement."
+}

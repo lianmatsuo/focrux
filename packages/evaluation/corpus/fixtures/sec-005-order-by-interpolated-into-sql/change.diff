@@ -1,0 +1,37 @@
+diff --git a/packages/reports/src/list.ts b/packages/reports/src/list.ts
+index 9e50317..377267c 100644
+--- a/packages/reports/src/list.ts
++++ b/packages/reports/src/list.ts
+@@ -1,7 +1,12 @@
+ import { query } from "./db.js";
+ 
+ export type Row = { id: string; created_at: string; amount_cents: number };
++export type Sort = { column: string; direction: string };
+ 
+-export async function listInvoices(accountId: string): Promise<Row[]> {
+-  return query<Row>("SELECT id, created_at, amount_cents FROM invoices WHERE account_id = $1", [accountId]);
++export async function listInvoices(accountId: string, sort?: Sort): Promise<Row[]> {
++  const order = sort ? `ORDER BY ${sort.column} ${sort.direction}` : "ORDER BY created_at DESC";
++  return query<Row>(
++    `SELECT id, created_at, amount_cents FROM invoices WHERE account_id = $1 ${order}`,
++    [accountId],
++  );
+ }
+diff --git a/packages/reports/test/list.test.ts b/packages/reports/test/list.test.ts
+new file mode 100644
+index 0000000..bae08b2
+--- /dev/null
++++ b/packages/reports/test/list.test.ts
+@@ -0,0 +1,12 @@
++import { describe, expect, it } from "vitest";
++import { listInvoices } from "../src/list.js";
++
++describe("listInvoices", () => {
++  it("returns rows for an account", async () => {
++    expect(await listInvoices("acct_1")).toEqual([]);
++  });
++
++  it("accepts a sort", async () => {
++    expect(await listInvoices("acct_1", { column: "amount_cents", direction: "ASC" })).toEqual([]);
++  });
++});

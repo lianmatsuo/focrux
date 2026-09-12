@@ -1,0 +1,41 @@
+diff --git a/packages/http/src/fetch.ts b/packages/http/src/fetch.ts
+new file mode 100644
+index 0000000..5361793
+--- /dev/null
++++ b/packages/http/src/fetch.ts
+@@ -0,0 +1,14 @@
++import { rawFetch, type FetchResult } from "./raw.js";
++
++const TIMEOUT_MS = 5_000;
++
++/** Fetch with a five-second ceiling. */
++export async function fetchWithTimeout(url: string): Promise<FetchResult> {
++  const controller = new AbortController();
++  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
++  try {
++    return await rawFetch(url, controller.signal);
++  } finally {
++    clearTimeout(timer);
++  }
++}
+diff --git a/packages/http/test/fetch.test.ts b/packages/http/test/fetch.test.ts
+new file mode 100644
+index 0000000..6577e6d
+--- /dev/null
++++ b/packages/http/test/fetch.test.ts
+@@ -0,0 +1,15 @@
++import { describe, expect, it, vi } from "vitest";
++import { fetchWithTimeout } from "../src/fetch.js";
++
++describe("fetchWithTimeout", () => {
++  it("arms a five-second abort", async () => {
++    const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
++    await fetchWithTimeout("https://example.com/a");
++    expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 5000);
++    setTimeoutSpy.mockRestore();
++  });
++
++  it("returns the body", async () => {
++    expect((await fetchWithTimeout("https://example.com/b")).status).toBe(200);
++  });
++});

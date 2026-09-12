@@ -1,0 +1,6 @@
+{
+  "_comment": "The public corpus commit the regression-suite CI job clones and dry-runs. Read with `gh api repos/lianmatsuo/plantedbugs/commits/main -q .sha`; bump by hand when the corpus changes.",
+  "repository": "https://github.com/lianmatsuo/plantedbugs",
+  "commit": "090513ce126699e5c5af08438f153eb0af7ae28a",
+  "date": "2026-09-04"
+}

@@ -1,0 +1,37 @@
+{
+  "plan_id": "plan_vue_trim_number",
+  "version": 1,
+  "ticket_id": "ticket_cln011",
+  "level": "P1",
+  "outcome": "When a v-model binding carries both .trim and .number, the number conversion is applied to the trimmed value rather than to the raw one",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "With both modifiers set, emitting a non-numeric string delivers the trimmed string to the listener, not the untrimmed one.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "emitting '  hello  ' with modelModifiers { trim: true, number: true } calls the listener with 'hello'"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The existing behaviour of each modifier on its own is unchanged: .number alone still converts a numeric string to a number, and .trim alone still trims only string arguments.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the pre-existing componentEmits tests for .number and for .trim continue to pass"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vuejs_core",
+    "paths_allowed": ["packages/runtime-core/src/**", "packages/runtime-core/__tests__/**"],
+    "paths_prohibited": [".github/**", "**/.env*"],
+    "generated_paths": ["pnpm-lock.yaml"],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "cd1974562357dd73101d048f207a694a4e5310ec",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:00:00.000Z"
+  }
+}

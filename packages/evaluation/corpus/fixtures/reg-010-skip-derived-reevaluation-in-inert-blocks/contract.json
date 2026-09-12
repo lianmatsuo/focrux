@@ -1,0 +1,51 @@
+{
+  "plan_id": "plan_svelte_inert_derived",
+  "version": 1,
+  "ticket_id": "ticket_reg010",
+  "level": "P2",
+  "outcome": "A derived declared inside an if-block does not re-evaluate while that block is inert",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A derived owned by an effect block that has become inert is not re-evaluated when its dependencies change.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the if-block-const-inert-derived runtime sample passes, and fails without the change"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The existing scheduling behaviour introduced by recent changes to the scheduler is left intact rather than reverted.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the runtime and runtime-runes suites pass unchanged"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_svelte",
+    "paths_allowed": [
+      "packages/svelte/src/internal/client/**",
+      "packages/svelte/tests/**",
+      ".changeset/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 5
+  },
+  "base": {
+    "base_commit": "25a1c5368be77b1014c3ff8b79cf9b1fe7f706f5",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-29T10:00:00.000Z"
+  },
+  "data_impact": "None. Client runtime only.",
+  "security_impact": "None.",
+  "rollout": "Ships with the package.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

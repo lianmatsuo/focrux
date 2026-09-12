@@ -1,0 +1,42 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "Scored at coverage level, and also blocking-eligible at P2 — asserted_only blocks at P2 and above.",
+  "id": "ver-002-idempotency-asserted-against-stub",
+  "class": "verification_defect",
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Stubbing the collaborator whose behaviour the criterion is about. The dedup criterion is proven against a mock that answers correctly while the real hasCapture always returns false",
+    "url": [
+      "https://microsoft.github.io/code-with-engineering-playbook/automated-testing/unit-testing/mocking/"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "ac_2 requires a retried capture to charge once. The test mocks the store so hasCapture answers truthfully; the real hasCapture always returns false, so every retry captures again.",
+  "why_it_is_hard": "The test is a good test of capture()'s logic and a useless test of the criterion. The lie is in store.ts, unchanged by the diff, three lines under a comment that reads like an implementation note.",
+  "expected_detection": {
+    "mode": "coverage",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [],
+    "rule_prefixes": [],
+    "statuses": [
+      "not_met"
+    ],
+    "strengths": [
+      "proxy",
+      "asserted_only"
+    ]
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  }
+}

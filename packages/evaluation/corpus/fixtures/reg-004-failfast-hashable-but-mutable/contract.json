@@ -1,0 +1,45 @@
+{
+  "plan_id": "plan_pydantic_failfast_hash",
+  "version": 1,
+  "ticket_id": "ticket_reg004",
+  "level": "P1",
+  "outcome": "`FailFast` can be used as a dictionary key and in sets, like the other metadata classes",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A `FailFast` instance can be placed in a set and used as a dictionary key.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "constructing a FailFast and adding it to a set succeeds"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Two `FailFast` instances configured the same way are interchangeable as keys.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "two FailFast instances with equal fail_fast values map to the same dictionary entry"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_pydantic",
+    "paths_allowed": [
+      "pydantic/**",
+      "tests/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "uv.lock"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "a2a6577d4c329dd574a45dbb01a8feaa16b1ad3d",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

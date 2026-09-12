@@ -1,0 +1,110 @@
+diff --git a/packages/contacts/README.md b/packages/contacts/README.md
+index 2dee7ad..d6dce1a 100644
+--- a/packages/contacts/README.md
++++ b/packages/contacts/README.md
+@@ -1,3 +1,4 @@
+ # contacts
+ 
+-The contact book: create and list.
++The contact book: create, list, archive and restore. Archived contacts leave
++the default listing and nothing is destroyed.
+diff --git a/packages/contacts/src/contacts.ts b/packages/contacts/src/contacts.ts
+index 8b489f2..db9c3af 100644
+--- a/packages/contacts/src/contacts.ts
++++ b/packages/contacts/src/contacts.ts
+@@ -2,6 +2,8 @@ export interface Contact {
+   id: string;
+   name: string;
+   email: string;
++  /** Set while the contact is archived; null otherwise. */
++  archived_at: string | null;
+ }
+ 
+ const contacts = new Map<string, Contact>();
+@@ -13,11 +15,28 @@ export function reset(): void {
+ }
+ 
+ export function create(name: string, email: string): Contact {
+-  const contact: Contact = { id: `c_${nextId++}`, name, email };
++  const contact: Contact = { id: `c_${nextId++}`, name, email, archived_at: null };
+   contacts.set(contact.id, contact);
+   return contact;
+ }
+ 
+-export function list(): Contact[] {
+-  return [...contacts.values()];
++export function archive(id: string, at = new Date()): boolean {
++  const contact = contacts.get(id);
++  if (!contact || contact.archived_at !== null) return false;
++  contact.archived_at = at.toISOString();
++  return true;
++}
++
++export function restore(id: string): boolean {
++  const contact = contacts.get(id);
++  if (!contact || contact.archived_at === null) return false;
++  contact.archived_at = null;
++  return true;
++}
++
++export function list(options: { includeArchived?: boolean } = {}): Contact[] {
++  // Copies, not live references: mutating a listed contact must not bypass the
++  // archive/restore transitions.
++  const all = [...contacts.values()].map((contact) => ({ ...contact }));
++  return options.includeArchived ? all : all.filter((contact) => contact.archived_at === null);
+ }
+diff --git a/packages/contacts/test/contacts.test.ts b/packages/contacts/test/contacts.test.ts
+new file mode 100644
+index 0000000..28e2513
+--- /dev/null
++++ b/packages/contacts/test/contacts.test.ts
+@@ -0,0 +1,49 @@
++import { beforeEach, describe, expect, it } from "vitest";
++import { archive, create, list, reset, restore } from "../src/contacts.js";
++
++describe("archiving", () => {
++  beforeEach(reset);
++
++  it("removes an archived contact from the default listing", () => {
++    const kept = create("Ada", "ada@example.test");
++    const gone = create("Ben", "ben@example.test");
++    expect(list()).toHaveLength(2);
++    expect(archive(gone.id)).toBe(true);
++    expect(list().map((contact) => contact.id)).toEqual([kept.id]);
++  });
++
++  it("surfaces archived contacts behind the explicit flag, beside the active ones", () => {
++    const active = create("Ada", "ada@example.test");
++    const archived = create("Ben", "ben@example.test");
++    archive(archived.id, new Date("2026-09-01T00:00:00Z"));
++    const everyone = list({ includeArchived: true });
++    expect(everyone.map((contact) => contact.id).sort()).toEqual([active.id, archived.id].sort());
++    expect(everyone.find((contact) => contact.id === archived.id)?.archived_at).toBe(
++      "2026-09-01T00:00:00.000Z",
++    );
++    expect(everyone.find((contact) => contact.id === active.id)?.archived_at).toBeNull();
++  });
++
++  it("returns copies: mutating a listed contact does not bypass restore()", () => {
++    const contact = create("Ada", "ada@example.test");
++    archive(contact.id);
++    const listed = list({ includeArchived: true })[0]!;
++    listed.archived_at = null;
++    expect(list()).toHaveLength(0);
++  });
++
++  it("restores a contact with its fields intact", () => {
++    const contact = create("Ada", "ada@example.test");
++    archive(contact.id);
++    expect(restore(contact.id)).toBe(true);
++    const [restored] = list();
++    expect(restored).toMatchObject({ name: "Ada", email: "ada@example.test", archived_at: null });
++  });
++
++  it("refuses to archive twice or restore the unarchived", () => {
++    const contact = create("Ada", "ada@example.test");
++    expect(restore(contact.id)).toBe(false);
++    expect(archive(contact.id)).toBe(true);
++    expect(archive(contact.id)).toBe(false);
++  });
++});

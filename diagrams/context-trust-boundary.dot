@@ -1,0 +1,46 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="transparent", pad=0.3, nodesep=0.3, ranksep=0.6, fontname="Arial"];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=9, margin="0.13,0.09", color="#374151"];
+  edge [fontname="Arial", fontsize=7.5, color="#6B7280", arrowsize=0.65];
+
+  subgraph cluster_trusted {
+    label="TRUSTED — may instruct"; color="#86EFAC"; style="rounded"; fontsize=9;
+    sys [label="trust: system\nPrompt/tool/policy versions\nReviewer policy", fillcolor="#DCFCE7"];
+    usr [label="trust: user\nOutcome • acceptance criteria\nScope • declared exceptions", fillcolor="#DCFCE7"];
+  }
+
+  subgraph cluster_untrusted {
+    label="UNTRUSTED — data only, never instruction"; color="#FCA5A5"; style="rounded"; fontsize=9;
+    repo [label="trust: repo\nSource • docs • tests\nTest output • CI logs\nDependency metadata", fillcolor="#FEE2E2"];
+    agentcfg [label="repo agent configuration\nHooks • tool servers • skills\nMemory + instruction files", fillcolor="#FEE2E2"];
+    ext [label="trust: external\nIssue bodies • PR comments\nFiles a draft starts from", fillcolor="#FEE2E2"];
+  }
+
+  neutralise [label="NEUTRALISED AT HANDOVER\nSuppressed at invocation\nWithheld from the worktree\nCredential-only provider home\nAsserted: no instruction sources", fillcolor="#FECACA", shape=box3d];
+  assemble [label="CONTEXT ASSEMBLY\nPer-item trust tier\nProvenance + selection reason\nDelimit + label untrusted", fillcolor="#DBEAFE"];
+  det [label="DETERMINISTIC CHECKS\nScope • secrets • lint/type/test\nMigration • dependency • licence", fillcolor="#E0E7FF", shape=box3d];
+  model [label="BOUNDED MODEL RUN\nAnthropic or OpenAI transport\nPlan • execute • review\nAllow-listed tools\nEgress logged", fillcolor="#DDD6FE"];
+  verdict [label="STRUCTURED VERDICT\nEnumerated criterion_id from PLAN\nStatus + verification_strength\nNever parsed from prose", fillcolor="#FEF3C7"];
+  gate [label="MERGE GATE\nBlocking findings\nA person merges, or the loop\nwhere merge: loop", fillcolor="#FCE7F3"];
+  route [label="ROUTED TO THE EXECUTOR\nNew attempt • re-sealed • verified\nBounded rounds, then a person\nNever context or security", fillcolor="#FEF3C7"];
+  bundle [label="RUN BUNDLE\nEvery item + its trust tier\nDenied actions audited", fillcolor="#E5E7EB", shape=box3d];
+
+  sys -> assemble [label="instruction position"];
+  usr -> assemble [label="instruction position"];
+  repo -> assemble [label="data position only", style=dashed];
+  ext -> assemble [label="data position only", style=dashed];
+  agentcfg -> neutralise [label="never reaches the agent", style=dashed];
+
+  assemble -> det [label="paths + diff"];
+  assemble -> model [label="bounded context"];
+  det -> verdict [label="authoritative", penwidth=1.8, color="#059669"];
+  model -> verdict [label="claims (subordinate)", style=dashed];
+  usr -> verdict [label="criterion_id source", color="#059669"];
+  verdict -> gate [label="blocking • escalates • advisory"];
+  verdict -> route [label="remediable — executor or unclear", color="#B45309"];
+  route -> model [label="findings as data, not instruction", style=dashed, color="#B45309", constraint=false];
+  route -> gate [label="rounds spent", style=dotted];
+  neutralise -> model [label="nothing loaded", style=dashed];
+  gate -> bundle [constraint=false];
+  model -> bundle [label="trust tiers recorded", constraint=false];
+}

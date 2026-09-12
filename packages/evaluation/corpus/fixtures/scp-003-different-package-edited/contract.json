@@ -1,0 +1,39 @@
+{
+  "plan_id": "plan_scp003",
+  "version": 1,
+  "ticket_id": "ticket_scp003",
+  "level": "P1",
+  "outcome": "Whitespace in user-supplied names is normalised.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Runs of whitespace collapse to a single space.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "'  a   b  ' becomes 'a b'"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/text/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "6c7fe3d",
+    "context_manifest_hash": "sha256:4463a7c48f4f19f56603995f78ed028097fb55f7c79310edda1ed4edbec17b97",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

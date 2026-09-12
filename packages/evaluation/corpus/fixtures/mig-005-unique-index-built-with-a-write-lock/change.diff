@@ -1,0 +1,39 @@
+diff --git a/packages/catalog/migrations/0012_unique_sku_code.sql b/packages/catalog/migrations/0012_unique_sku_code.sql
+new file mode 100644
+index 0000000..f3e274d
+--- /dev/null
++++ b/packages/catalog/migrations/0012_unique_sku_code.sql
+@@ -0,0 +1,2 @@
++-- Codes must be unique: two SKUs with the same code break fulfilment routing.
++CREATE UNIQUE INDEX idx_skus_code ON skus (code);
+diff --git a/packages/catalog/src/sku.ts b/packages/catalog/src/sku.ts
+index 111ba8a..9a383c5 100644
+--- a/packages/catalog/src/sku.ts
++++ b/packages/catalog/src/sku.ts
+@@ -3,3 +3,8 @@ export type Sku = { id: number; code: string; name: string };
+ export function normaliseCode(code: string): string {
+   return code.trim().toUpperCase();
+ }
++
++/** Codes are compared case-insensitively, so they are stored normalised. */
++export function isDuplicateCode(existing: string[], code: string): boolean {
++  return existing.map(normaliseCode).includes(normaliseCode(code));
++}
+diff --git a/packages/catalog/test/sku.test.ts b/packages/catalog/test/sku.test.ts
+new file mode 100644
+index 0000000..41447fe
+--- /dev/null
++++ b/packages/catalog/test/sku.test.ts
+@@ -0,0 +1,12 @@
++import { describe, expect, it } from "vitest";
++import { isDuplicateCode, normaliseCode } from "../src/sku.js";
++
++describe("sku codes", () => {
++  it("normalises case and whitespace", () => {
++    expect(normaliseCode("  ab-1 ")).toBe("AB-1");
++  });
++
++  it("detects a duplicate regardless of case", () => {
++    expect(isDuplicateCode(["AB-1"], "ab-1")).toBe(true);
++  });
++});

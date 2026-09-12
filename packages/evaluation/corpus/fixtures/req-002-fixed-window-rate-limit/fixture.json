@@ -1,0 +1,38 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "req-002-fixed-window-rate-limit",
+  "class": "requirement_omission",
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "CWE-770 (allocation without limits) and the well-documented fixed-window burst: a counter keyed to the wall-clock minute permits 2x the limit across the boundary",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/770.html",
+      "https://blog.cloudflare.com/counting-things-a-lot-of-different-things/"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The limiter counts within a fixed clock minute, so 100 requests at :59 and 100 more at :00 both pass — 200 inside a two-second span.",
+  "why_it_is_hard": "Both shipped tests pass and the code reads exactly like the criterion. The failure needs two requests either side of a minute boundary, which no test in the change generates.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/gate/src/limit.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  }
+}

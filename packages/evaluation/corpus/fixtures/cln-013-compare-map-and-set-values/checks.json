@@ -1,0 +1,24 @@
+[
+  {
+    "check_id": "check_ut",
+    "name": "unit",
+    "kind": "unit",
+    "status": "passed",
+    "summary": "3692 passed, 6 skipped (182 files passed, 1 skipped)",
+    "command": "pnpm run test-unit",
+    "detail": "Measured at the pinned head commit on 2026-08-27, not declared. The skips are the repository's own and are present at the base commit too.",
+    "duration_ms": null,
+    "source": "file"
+  },
+  {
+    "check_id": "check_baseline",
+    "name": "fail-first",
+    "kind": "regression-baseline",
+    "status": "passed",
+    "summary": "the change's own tests failed at the base commit",
+    "command": "pnpm run test-unit (at 6eaecc14d815, tests only)",
+    "detail": "The tests added or changed by this diff were applied to the base commit and failed against the unfixed code, then passed at the head commit. They discriminate. Test files applied: packages/runtime-dom/__tests__/directives/vModel.spec.ts, packages/shared/__tests__/looseEqual.spec.ts.",
+    "duration_ms": 13972,
+    "source": "file"
+  }
+]

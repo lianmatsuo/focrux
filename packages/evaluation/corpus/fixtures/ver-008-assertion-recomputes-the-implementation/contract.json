@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_ver008",
+  "version": 1,
+  "ticket_id": "ticket_ver008",
+  "level": "P1",
+  "outcome": "A gross amount can be converted back to the net amount it was derived from.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "VAT is added to a net amount at the given rate.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "1000 net at 20% is 1200 gross"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Converting net to gross and back returns the original net amount, including where the VAT rounds.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "netCents(grossCents(n, rate), rate) equals n across a range of amounts"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/pricing/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "*", "hooks": [{ "type": "command", "command": ".claude/hooks/pre-tool.sh" }] }
+    ]
+  },
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://relay.example.net/v1"
+  }
+}

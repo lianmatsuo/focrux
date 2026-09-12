@@ -1,0 +1,64 @@
+{
+  "id": "reg-006-fs-cache-keyed-on-workspace-root",
+  "class": "unstated_regression",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "commit",
+    "reference": "vitejs/vite@8815763b",
+    "url": [
+      "https://github.com/vitejs/vite/commit/8815763b71788e4787616bccc824468dfd2b45d5",
+      "https://github.com/vitejs/vite/pull/16476",
+      "https://github.com/vitejs/vite/issues/16399"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "Keying the filesystem cache on the workspace root rather than the project root widens what the cache covers to paths the watcher does not watch. A file outside the project root that is renamed stays in the cache under its old name, so the import that follows it fails with \"Failed to resolve import ... Does the file exist?\" until the server is restarted. vite reverted it in #16476, fixing issue #16399. The revert is the ground truth; nothing about the defect was written here.",
+  "why_it_is_hard": "Two lines, in a function about cache keys, and the change is a performance improvement that works. The defect is a mismatch between two subsystems — what the cache covers and what the watcher invalidates — and neither the diff nor the file mentions the watcher at all.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/vite/src/node/fsUtils.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "290 passed (290) in 27 passed (27)"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/vitejs/vite",
+    "licence": "MIT",
+    "base_commit": "f9c33add88e8edcd54316629724730d8049447f1",
+    "head_commit": "8815763b71788e4787616bccc824468dfd2b45d5",
+    "subject": "perf: use workspace root for fs cache (#15712)",
+    "reference": "https://github.com/vitejs/vite/commit/8815763b71788e4787616bccc824468dfd2b45d5",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile"
+      ],
+      [
+        "pnpm",
+        "run",
+        "build"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "run",
+      "test-unit"
+    ]
+  },
+  "notes": "The smallest defective fixture drawn from a real repository: one changed line, and a consequence three files away."
+}

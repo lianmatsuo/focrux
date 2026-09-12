@@ -1,0 +1,37 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "scp-004-expansion-budget-exceeded",
+  "class": "scope_escape",
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The expansion budget rule: inside the same package and within expansion_budget_files it is an advisory finding; beyond the budget execution halts",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/1120.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "Five files are touched inside the declared package but outside paths_allowed, against an expansion budget of three.",
+  "why_it_is_hard": "Each file on its own is within the rule that makes expansion advisory. Only the count violates the contract, so a reviewer reasoning file by file never sees it.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [],
+    "files": [
+      "packages/text/docs/note-1.md"
+    ],
+    "rule_prefixes": [
+      "scope."
+    ]
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  }
+}

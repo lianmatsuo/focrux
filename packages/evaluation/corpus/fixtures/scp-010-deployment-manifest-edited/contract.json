@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_scp010",
+  "version": 1,
+  "ticket_id": "ticket_scp010",
+  "level": "P1",
+  "outcome": "An exported report is valid CSV whatever the data in it contains.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A field containing a comma, a quote or a newline is quoted, and quotes inside it are doubled.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a row of 'Doe, Jane' and 'a \"quoted\" word' exports as '\"Doe, Jane\",\"a \"\"quoted\"\" word\"'"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A field with no comma, quote or newline is exported unquoted.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a row of 'jane' and '42' exports as 'jane,42'"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/reports/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-04T09:00:00.000Z"
+  }
+}

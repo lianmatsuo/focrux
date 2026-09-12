@@ -1,0 +1,37 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "scp-003-different-package-edited",
+  "class": "scope_escape",
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The in-flight scope rule: a diff into a different package halts execution and the contract must be revised, whatever the expansion budget says",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/1120.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The change edits packages/billing/src/charge.ts, a package the plan never declared, alongside its declared work in packages/text.",
+  "why_it_is_hard": "The edit is small, plausible and arguably an improvement — which is exactly the case where a reviewer is tempted to wave it through. Different package means halt, not budget.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [],
+    "files": [
+      "packages/billing/src/charge.ts"
+    ],
+    "rule_prefixes": [
+      "scope."
+    ]
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "id": "sec-006-idor-in-attachment-download",
+  "class": "security_introduction",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Injection and access-control classes from the OWASP Top Ten, reconstructed rather than copied",
+    "url": [
+      "https://owasp.org/Top10/"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "`downloadMany` takes the session and never uses it — `void session` — so any authenticated user can read any attachment in any account by guessing or enumerating identifiers. The single-attachment function directly above it performs the check that is missing. ac_2 asks for the ownership check to hold.",
+  "why_it_is_hard": "The `void session` line reads as an eslint appeasement for a parameter kept for signature symmetry, which is a real and common pattern. The correct check is four lines above, and every test passes because they all use one account, so no test could ever exercise the boundary.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/files/src/download.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "Broken object-level authorisation on a new bulk endpoint beside a correct single-item one — the shape that appears whenever a list variant is added later."
+}

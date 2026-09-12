@@ -1,0 +1,60 @@
+{
+  "id": "reg-003-ts-type-assertions-in-expressions",
+  "class": "unstated_regression",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "commit",
+    "reference": "core@e6544ac2",
+    "url": [
+      "https://github.com/vuejs/core/commit/e6544ac292b5b473274f87cdb83ebeac3e7e61a4",
+      "https://github.com/vuejs/core/pull/14062",
+      "https://github.com/vuejs/core/issues/14060"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "Skipping the leading text of the first identifier when the expression's AST node is a TypeScript node drops characters that are not part of a type assertion. The non-null assertion operator `!` is one: templates using it stopped compiling, and projects failed their build. vuejs/core reverted this in #14062, closing issue #14060 (\"Regression in 3.5.23: fails to parse ! in typescript\"). The revert is the ground truth; nothing about the defect was written here.",
+  "why_it_is_hard": "`TS_NODE_TYPES` is an existing exported constant and the guard reads as reusing the codebase's own notion of a TypeScript node. The bug is that the set is broader than the case being fixed, and the consequence — a whole operator ceasing to compile — is invisible from a diff that adds a conditional and a passing test.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/compiler-core/src/transforms/transformExpression.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "3427 passed | 6 skipped (3433) in 180 passed | 1 skipped (181)"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/vuejs/core",
+    "licence": "MIT",
+    "base_commit": "75d44c718981f91843e197265cc68e82fe2532dd",
+    "head_commit": "e6544ac292b5b473274f87cdb83ebeac3e7e61a4",
+    "subject": "fix(compiler-core): correctly handle ts type assertions in expressions (#13397)",
+    "reference": "https://github.com/vuejs/core/commit/e6544ac292b5b473274f87cdb83ebeac3e7e61a4",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "run",
+      "test-unit"
+    ]
+  },
+  "notes": "Shipped in a release and found by users building real projects. The repository's own suite passes."
+}

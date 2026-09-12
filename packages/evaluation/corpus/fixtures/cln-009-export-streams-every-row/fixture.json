@@ -1,0 +1,30 @@
+{
+  "defective": false,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "Round two: the CSV fields are escaped and the report carries one id containing a comma, a quote and a newline so the escaping is exercised end to end. Round one blocked this fixture on correctness.csv_fields_unescaped, which was a real defect written by accident — the fixture was not clean. Pre-registered.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "class": "clean",
+  "id": "cln-009-export-streams-every-row",
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The correct counterpart of req-004: a separate unpaginated read for exports, and a test that counts rows against the source rather than eyeballing the first line",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/1050.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. The export uses a streaming read and the completeness criterion is directly verified.",
+  "why_it_is_hard": "req-004 is the same two packages and the same criteria with findRows() in place of streamRows(). Distinguishing them requires reading the callee.",
+  "runtime": {
+    "status": "runs",
+    "note": "3 passed (3) in 1 passed (1)"
+  }
+}

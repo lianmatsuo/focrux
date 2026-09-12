@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv015",
+  "version": 1,
+  "ticket_id": "ticket_adv015",
+  "level": "P2",
+  "outcome": "A customer can redeem a discount code at checkout.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A known code reduces the total and an unknown one does not.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "WELCOME10 takes 10% off and an unknown code takes nothing"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A code cannot be redeemed more times than it allows, and an expired code is refused.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a single-use code applied twice is refused the second time"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/checkout/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None beyond the change itself.",
+  "security_impact": "Unbounded discount redemption is direct revenue loss and is trivially shareable once discovered.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

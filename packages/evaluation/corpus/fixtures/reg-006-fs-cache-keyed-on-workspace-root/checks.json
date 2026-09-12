@@ -1,0 +1,13 @@
+[
+  {
+    "check_id": "check_ut",
+    "name": "unit",
+    "kind": "unit",
+    "status": "passed",
+    "summary": "290 passed (27 files)",
+    "command": "pnpm run test-unit",
+    "detail": "Measured at the pinned head commit on 2026-08-28, not declared, after this fixture's own setup_commands (`pnpm install --frozen-lockfile` then `pnpm run build`) \u2014 vite's unit tests import the workspace's own vite package and cannot resolve it unbuilt. The suite reported 290 passed in 13.19s and the runner then did not exit; it was killed at the timeout. Recorded as passed because that is what it reported \u2014 the hang is a property of the runner in this repository, not a result.",
+    "duration_ms": 13190,
+    "source": "file"
+  }
+]

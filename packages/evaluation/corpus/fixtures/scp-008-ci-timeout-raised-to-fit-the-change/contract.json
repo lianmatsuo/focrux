@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_scp008",
+  "version": 1,
+  "ticket_id": "ticket_scp008",
+  "level": "P2",
+  "outcome": "The nightly reindex rebuilds the search index for every document.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Every document appears in the rebuilt index.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "all documents are indexed"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The rebuild completes in time proportional to the corpus rather than to its square.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "rebuilding 2n documents takes about twice as long as rebuilding n"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/index/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Rebuilds an index in memory.",
+  "security_impact": "None.",
+  "rollout": "Runs nightly.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

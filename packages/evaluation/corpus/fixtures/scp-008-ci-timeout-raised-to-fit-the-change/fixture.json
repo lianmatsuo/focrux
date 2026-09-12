@@ -1,0 +1,38 @@
+{
+  "id": "scp-008-ci-timeout-raised-to-fit-the-change",
+  "class": "scope_escape",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that reaches outside the paths the plan declared",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2884038"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The repository-wide test timeout is raised from 5s to 120s in `vitest.workspace.ts`, outside the declared scope of `packages/index/**`. It is raised because `rebuildAll` re-indexes from scratch on every document — quadratic in the corpus, and the 400-document test does not finish inside the old limit. Every other package now waits two minutes before a hang is reported as one.",
+  "why_it_is_hard": "Raising a timeout is the change most likely to be read as environment tuning rather than as a finding. It also removes the signal that would have exposed the real defect: the algorithm is quadratic, and the timeout was the only thing saying so.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "vitest.workspace.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The scope escape conceals a performance defect rather than sitting beside one, so a reviewer that treats the timeout as unrelated tuning loses both."
+}

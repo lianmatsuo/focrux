@@ -1,0 +1,37 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "req-004-export-only-first-page",
+  "class": "requirement_omission",
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Reusing a paginated finder for a bulk export. CWE-1050 (excessive reliance on a component) is the nearest catalogued form; the shape is ubiquitous in reporting code",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/1050.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "exportCsv calls findRows(), which is paginated at 50, so the export silently contains the first 50 of 320 rows.",
+  "why_it_is_hard": "The export works, both shipped tests pass, and the bug is invisible unless the reviewer opens findRows in a different package and notices the default argument.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [
+      "packages/reporting-csv/src/csv.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  }
+}

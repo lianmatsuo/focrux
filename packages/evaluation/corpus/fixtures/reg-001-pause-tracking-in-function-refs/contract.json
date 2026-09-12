@@ -1,0 +1,45 @@
+{
+  "plan_id": "plan_vue_function_ref_tracking",
+  "version": 1,
+  "ticket_id": "ticket_reg001",
+  "level": "P1",
+  "outcome": "Invoking a function template ref does not register the surrounding render as a dependency of whatever the callback reads",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A function template ref that reads reactive state while being invoked does not cause the surrounding component to re-render when that state changes.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a component whose function ref reads a ref does not re-render when that ref is written"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The ref callback still receives the element or component instance it received before, and still runs on the renders it ran on before.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the existing template-ref tests still pass"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vuejs_core",
+    "paths_allowed": [
+      "packages/runtime-core/src/**",
+      "packages/runtime-core/__tests__/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "e450973eabc0038f398344b981acd8759c246c50",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

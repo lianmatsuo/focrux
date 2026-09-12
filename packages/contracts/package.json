@@ -1,0 +1,44 @@
+{
+  "name": "@focrux/contracts",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./executor-skills": {
+      "types": "./dist/executor-skills.d.ts",
+      "default": "./dist/executor-skills.js"
+    },
+    "./materialisation-entry": {
+      "types": "./dist/materialisation-entry.d.ts",
+      "default": "./dist/materialisation-entry.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit --declaration false --declarationMap false --sourceMap false",
+    "test": "vitest run",
+    "lint": "eslint src test"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@focrux/tsconfig": "workspace:*",
+    "@eslint/js": "catalog:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "vitest": "catalog:"
+  }
+}

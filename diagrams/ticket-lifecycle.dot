@@ -1,0 +1,57 @@
+digraph G {
+  labelloc="b";
+  label="Solid: a state Stage 3 can put a ticket into. Dashed: drawn, and not reachable yet — the mechanism does not exist.";
+  graph [rankdir=LR, bgcolor="transparent", pad=0.25, nodesep=0.22, ranksep=0.55, fontname="Arial"];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=8.5, margin="0.11,0.075", color="#374151", fillcolor="#EEF2FF"];
+  edge [fontname="Arial", fontsize=7.5, color="#6B7280", arrowsize=0.62];
+
+  draft [label="DRAFT", style="rounded,filled,dashed", color="#9CA3AF"];
+  spec [label="SPECIFYING", style="rounded,filled,dashed", color="#9CA3AF"];
+  plan [label="PLAN_REVIEW", fillcolor="#EDE9FE"];
+  ready [label="READY", fillcolor="#DCFCE7"];
+  provision [label="PROVISIONING"];
+  execute [label="EXECUTING", fillcolor="#CFFAFE"];
+  verify [label="VERIFYING", fillcolor="#FEF3C7"];
+  review [label="INDEPENDENT_REVIEW", fillcolor="#EDE9FE"];
+  pr [label="PR_OPEN"];
+  merged [label="MERGED"];
+  closed [label="CLOSED", fillcolor="#E5E7EB"];
+  done [label="DONE", fillcolor="#BBF7D0", style="rounded,filled,dashed", color="#9CA3AF"];
+  deployed [label="DEPLOYED\n(opt-in)", fillcolor="#DCFCE7", style="rounded,filled,dashed", color="#9CA3AF"];
+  observe [label="OBSERVING\n(opt-in)", fillcolor="#DBEAFE", style="rounded,filled,dashed", color="#9CA3AF"];
+  changes [label="CHANGES_REQUESTED", fillcolor="#FED7AA"];
+  invalid [label="PLAN_INVALID", fillcolor="#FDE68A", style="rounded,filled,dashed", color="#9CA3AF"];
+  blocked [label="BLOCKED", fillcolor="#FECACA"];
+  failed [label="FAILED", fillcolor="#FECACA"];
+  cancelled [label="CANCELLED", fillcolor="#E5E7EB"];
+  inconclusive [label="INCONCLUSIVE", fillcolor="#E5E7EB", style="rounded,filled,dashed", color="#9CA3AF"];
+  rollback [label="ROLLED_BACK", fillcolor="#FECACA", style="rounded,filled,dashed", color="#9CA3AF"];
+
+  draft -> spec -> plan -> ready -> provision -> execute -> verify -> review -> pr -> merged -> done;
+  merged -> deployed [label="opt-in"];
+  deployed -> observe;
+  observe -> done [label="observed"];
+  plan -> changes [label="reject"];
+  review -> changes [label="blocking finding"];
+  changes -> spec [label="revise contract"];
+  changes -> ready [label="new attempt"];
+  ready -> invalid [label="scope-overlapping change"];
+  invalid -> spec [label="revalidate"];
+  ready -> blocked [label="waits: a dependency unmerged, or a scope a ticket ahead holds"];
+  blocked -> ready [label="what it waited on merged"];
+  blocked -> cancelled;
+  provision -> failed;
+  execute -> failed;
+  verify -> failed;
+  failed -> ready [label="new attempt"];
+  failed -> pr [label="handed off by a person, read by sync"];
+  pr -> closed [label="closed without merging, read by sync"];
+  pr -> changes [label="closed without merging, on a d-073 verdict"];
+  closed -> ready [label="new attempt"];
+  spec -> cancelled;
+  execute -> cancelled;
+  observe -> inconclusive [label="window expired"];
+  inconclusive -> done [label="close"];
+  deployed -> rollback [label="health failure"];
+  rollback -> spec [label="reassess"];
+}

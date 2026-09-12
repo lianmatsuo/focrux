@@ -1,0 +1,37 @@
+diff --git a/packages/ledger/migrations/0021_backfill_currency.sql b/packages/ledger/migrations/0021_backfill_currency.sql
+new file mode 100644
+index 0000000..8509991
+--- /dev/null
++++ b/packages/ledger/migrations/0021_backfill_currency.sql
+@@ -0,0 +1,2 @@
++-- 0021: backfill the currency column added in 0012.
++UPDATE ledger_entries SET currency = 'usd' WHERE currency IS NULL LIMIT 1000;
+diff --git a/packages/ledger/src/backfill.ts b/packages/ledger/src/backfill.ts
+new file mode 100644
+index 0000000..e5337da
+--- /dev/null
++++ b/packages/ledger/src/backfill.ts
+@@ -0,0 +1,5 @@
++import { readFileSync } from "node:fs";
++
++export function backfillSql(): string {
++  return readFileSync(new URL("../migrations/0021_backfill_currency.sql", import.meta.url), "utf8");
++}
+diff --git a/packages/ledger/test/backfill.test.ts b/packages/ledger/test/backfill.test.ts
+new file mode 100644
+index 0000000..f59829a
+--- /dev/null
++++ b/packages/ledger/test/backfill.test.ts
+@@ -0,0 +1,12 @@
++import { describe, expect, it } from "vitest";
++import { backfillSql } from "../src/backfill.js";
++
++describe("currency backfill", () => {
++  it("matches the reviewed statement", () => {
++    expect(backfillSql()).toMatchInlineSnapshot(`
++      "-- 0021: backfill the currency column added in 0012.
++      UPDATE ledger_entries SET currency = 'usd' WHERE currency IS NULL LIMIT 1000;
++      "
++    `);
++  });
++});

@@ -1,0 +1,41 @@
+diff --git a/packages/subs/migrations/0010_subscription_plan_fk.sql b/packages/subs/migrations/0010_subscription_plan_fk.sql
+new file mode 100644
+index 0000000..ca807b7
+--- /dev/null
++++ b/packages/subs/migrations/0010_subscription_plan_fk.sql
+@@ -0,0 +1,4 @@
++-- Subscriptions referenced plans that no longer exist after the plan cleanup.
++ALTER TABLE subscriptions
++  ADD CONSTRAINT subscriptions_plan_id_fkey
++  FOREIGN KEY (plan_id) REFERENCES plans (id);
+diff --git a/packages/subs/src/plan.ts b/packages/subs/src/plan.ts
+index 1c72ff6..dc962bc 100644
+--- a/packages/subs/src/plan.ts
++++ b/packages/subs/src/plan.ts
+@@ -3,3 +3,8 @@ export type Subscription = { id: number; account_id: string; plan_id: string };
+ export function isActive(sub: Subscription): boolean {
+   return sub.plan_id !== "cancelled";
+ }
++
++/** A subscription's plan must exist; the constraint is enforced in the schema. */
++export function referencesKnownPlan(sub: Subscription, planIds: Set<string>): boolean {
++  return planIds.has(sub.plan_id);
++}
+diff --git a/packages/subs/test/plan.test.ts b/packages/subs/test/plan.test.ts
+new file mode 100644
+index 0000000..0f2390f
+--- /dev/null
++++ b/packages/subs/test/plan.test.ts
+@@ -0,0 +1,12 @@
++import { describe, expect, it } from "vitest";
++import { isActive, referencesKnownPlan } from "../src/plan.js";
++
++describe("plan", () => {
++  it("treats a cancelled plan as inactive", () => {
++    expect(isActive({ id: 1, account_id: "a", plan_id: "cancelled" })).toBe(false);
++  });
++
++  it("recognises a known plan", () => {
++    expect(referencesKnownPlan({ id: 1, account_id: "a", plan_id: "pro" }, new Set(["pro"]))).toBe(true);
++  });
++});

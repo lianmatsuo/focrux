@@ -1,0 +1,39 @@
+diff --git a/packages/payments/src/capture.ts b/packages/payments/src/capture.ts
+new file mode 100644
+index 0000000..b77192f
+--- /dev/null
++++ b/packages/payments/src/capture.ts
+@@ -0,0 +1,7 @@
++import { addCapture, hasCapture } from "./store.js";
++
++export function capture(event_id: string, amount: number): { ok: true; deduped: boolean } {
++  if (hasCapture(event_id)) return { ok: true, deduped: true };
++  addCapture({ event_id, amount });
++  return { ok: true, deduped: false };
++}
+diff --git a/packages/payments/test/capture.test.ts b/packages/payments/test/capture.test.ts
+new file mode 100644
+index 0000000..0a3146d
+--- /dev/null
++++ b/packages/payments/test/capture.test.ts
+@@ -0,0 +1,20 @@
++import { describe, expect, it, vi } from "vitest";
++
++const hasCapture = vi.fn((id: string) => id === "evt_seen");
++const addCapture = vi.fn();
++vi.mock("../src/store.js", () => ({ hasCapture, addCapture, allCaptures: () => [] }));
++
++const { capture } = await import("../src/capture.js");
++
++describe("capture", () => {
++  it("records a new capture", () => {
++    expect(capture("evt_new", 100)).toEqual({ ok: true, deduped: false });
++    expect(addCapture).toHaveBeenCalledTimes(1);
++  });
++
++  it("does not record a capture it has already seen", () => {
++    addCapture.mockClear();
++    expect(capture("evt_seen", 100)).toEqual({ ok: true, deduped: true });
++    expect(addCapture).not.toHaveBeenCalled();
++  });
++});

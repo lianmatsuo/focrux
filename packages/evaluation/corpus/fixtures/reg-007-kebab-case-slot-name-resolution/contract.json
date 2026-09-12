@@ -1,0 +1,50 @@
+{
+  "plan_id": "plan_vue_kebab_slot_names",
+  "version": 1,
+  "ticket_id": "ticket_reg007",
+  "level": "P2",
+  "outcome": "A camelCase slot reference resolves against a kebab-case slot name written in an in-DOM template",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A component referencing a slot by camelCase name renders the slot an in-DOM template declared in kebab-case.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a camelCase slot reference renders content declared under the kebab-case name"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "An exact slot-name match takes precedence over the kebab-case fallback.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "where both an exact and a kebab-case name exist, the exact one is rendered"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vuejs_core",
+    "paths_allowed": [
+      "packages/runtime-core/src/**",
+      "packages/runtime-core/__tests__/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "0596a5f59128ed629910e60c80bfc6fbb9d38ebd",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-29T10:00:00.000Z"
+  },
+  "data_impact": "None. Client-side rendering behaviour.",
+  "security_impact": "None.",
+  "rollout": "Ships with the package.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

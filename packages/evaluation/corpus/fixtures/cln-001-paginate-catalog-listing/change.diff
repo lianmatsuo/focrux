@@ -1,0 +1,70 @@
+diff --git a/packages/catalog/src/catalog.ts b/packages/catalog/src/catalog.ts
+index d5e6dfc..e958fbb 100644
+--- a/packages/catalog/src/catalog.ts
++++ b/packages/catalog/src/catalog.ts
+@@ -4,12 +4,30 @@ export interface Item {
+   price_micros: number;
+ }
+ 
++export interface ItemPage {
++  items: Item[];
++  page: number;
++  page_size: number;
++  total: number;
++}
++
++const DEFAULT_PAGE_SIZE = 20;
++const MAX_PAGE_SIZE = 100;
++
+ const items: Item[] = Array.from({ length: 60 }, (_, i) => ({
+   sku: `sku_${i}`,
+   name: `Item ${i}`,
+   price_micros: 1_000 * i,
+ }));
+ 
+-export function listItems(): Item[] {
+-  return items;
++export function listItems(page = 1, pageSize = DEFAULT_PAGE_SIZE): ItemPage {
++  const size = Math.min(Math.max(1, Math.trunc(pageSize)), MAX_PAGE_SIZE);
++  const index = Math.max(1, Math.trunc(page));
++  const start = (index - 1) * size;
++  return {
++    items: items.slice(start, start + size),
++    page: index,
++    page_size: size,
++    total: items.length,
++  };
+ }
+diff --git a/packages/catalog/test/catalog.test.ts b/packages/catalog/test/catalog.test.ts
+new file mode 100644
+index 0000000..5f5e584
+--- /dev/null
++++ b/packages/catalog/test/catalog.test.ts
+@@ -0,0 +1,27 @@
++import { describe, expect, it } from "vitest";
++import { listItems } from "../src/catalog.js";
++
++describe("listItems", () => {
++  it("returns the default page size", () => {
++    const page = listItems();
++    expect(page.items).toHaveLength(20);
++    expect(page.page).toBe(1);
++    expect(page.total).toBe(60);
++  });
++
++  it("returns the requested page", () => {
++    expect(listItems(3).items[0]?.sku).toBe("sku_40");
++  });
++
++  it("clamps a page size above the maximum", () => {
++    expect(listItems(1, 5000).page_size).toBe(100);
++  });
++
++  it("clamps a page size below one", () => {
++    expect(listItems(1, 0).page_size).toBe(1);
++  });
++
++  it("returns an empty page past the end rather than throwing", () => {
++    expect(listItems(99).items).toEqual([]);
++  });
++});

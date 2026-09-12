@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_sec006",
+  "version": 1,
+  "ticket_id": "ticket_sec006",
+  "level": "P2",
+  "outcome": "A user can download several of their attachments in one request.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Attachments the user owns are returned.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a bulk download returns the requested attachments"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "An attachment belonging to another account is not returned, whichever endpoint asks for it.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a bulk download including another account's attachment id does not return its bytes"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/files/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Reads stored attachment content.",
+  "security_impact": "Cross-account read of arbitrary uploaded files, reachable by any authenticated user.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert removes the bulk endpoint.",
+  "estimated_recurring_cost_micros": 0
+}

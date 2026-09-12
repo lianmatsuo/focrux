@@ -1,0 +1,158 @@
+cat >> /Users/nobody/.focrux/worktrees/focrux-adversarial-review-7eea98-0a500fe1e40b/att_064fd34d7d54861c/packages/runner/test/loop.test.ts <<'TESTS'
+
+/**
+ * A transport overload is not a failed ticket (SCP-172).
+ *
+ * The agent here is a real process the runner spawns, and what it writes is the
+ * shape measured on this repository: retry notices against HTTP 529
+ * `overloaded`, the synthetic assistant message the agent leaves in place of a
+ * turn, and a non-zero exit with no command run. Everything between the exit
+ * and the record is the loop's own — the seal, the attempts file, the wait and
+ * the second attempt.
+ */
+describe("an agent that exited because the model transport gave up", () => {
+  const approving = {
+    review: (async () => ({
+      artifact: makeReview({
+        review_id: "rev_0000000000000009",
+        decision: "approve",
+        verification_strength: "directly_verified",
+      }),
+      bundle: { prompt_version: "reviewer_v2", system_prompt: "s", turns: [], files_read: [], rejected_verdicts: [] },
+    })) as never,
+  };
+
+  const recorded = (config: { state_root: string }, contract: PlanContract) =>
+    (
+      JSON.parse(
+        readFileSync(join(config.state_root, `${contract.ticket_id}.attempts.json`), "utf8"),
+      ) as { attempts: ExecutionAttempt[] }
+    ).attempts;
+
+  it("waits and runs one more attempt from the same base, which completes the run", async () => {
+    const repo = makeRepo();
+    const contract = makeContract();
+    contract.base.base_commit = repo.head;
+    const agent = fakeAgent([
+      { kind: "overloaded", status: 529, retries: 10 },
+      { kind: "succeed", file: "src/feature.ts", contents: "export const total = (n) => n.length;\n" },
+    ]);
+    const config = TicketRunConfigSchema.parse({ ...makeConfig(repo.dir), agent_binary: agent.binary });
+    const waited: number[] = [];
+
+    const result = await runTicket({
+      config,
+      contract,
+      sleep: async (ms) => {
+        waited.push(ms);
+      },
+      hooks: approving,
+    });
+
+    // The run completed: the ticket is not failed for a minute of API weather.
+    expect(result.outcome).toBe("approved");
+    // Two attempts of one agent, the second in the worktree the first used —
+    // the same base, not a fresh provisioning.
+    const invocations = agent.invocations();
+    expect(invocations).toHaveLength(2);
+    expect(invocations[1]?.cwd).toBe(invocations[0]?.cwd);
+    expect(waited).toEqual([TRANSPORT_RETRY_DELAY_MS]);
+
+    const attempts = recorded(config, contract);
+    expect(attempts).toHaveLength(2);
+    const [first, second] = attempts;
+
+    expect(first?.termination.reason).toBe("transport_unavailable");
+    expect(first?.termination.detail).toContain("529");
+    expect(first?.termination.detail).toContain("Overloaded");
+    expect(second?.termination.reason).toBe("completed");
+
+    // The retry is a normal attempt: its own id, continuing the one it answers,
+    // on the same run and against the same base commit.
+    expect(second?.attempt_id).not.toBe(first?.attempt_id);
+    expect(second?.continues_attempt_id).toBe(first?.attempt_id);
+    expect(second?.root_attempt_id).toBe(first?.root_attempt_id);
+    expect(second?.base_commit).toBe(first?.base_commit);
+    expect(second?.remediation_round).toBe(0);
+
+    // And it is counted, not written off: the run's accounting carries both
+    // attempts' tokens, commands, iterations and cost.
+    expect(first?.usage.input_tokens).toBe(12);
+    expect(first?.usage.commands).toBe(0);
+    expect(first?.usage.iterations).toBe(1);
+    expect(second?.usage.input_tokens).toBe(20);
+    expect(second?.usage.commands).toBe(1);
+    expect(second?.usage.iterations).toBe(1);
+    expect(attempts.reduce((total, attempt) => total + attempt.usage.cost_micros, 0)).toBe(2_000);
+    // The work of the second attempt is what was sealed and reviewed.
+    expect(second?.changeset_id).not.toBeNull();
+    expect(result.final_review?.decision).toBe("approve");
+  }, 90_000);
+
+  it("fails the ticket on a second transport failure in a row, with both attempts on the record", async () => {
+    const repo = makeRepo();
+    const contract = makeContract();
+    contract.base.base_commit = repo.head;
+    const agent = fakeAgent([{ kind: "overloaded", status: 529, retries: 10 }]);
+    const config = TicketRunConfigSchema.parse({ ...makeConfig(repo.dir), agent_binary: agent.binary });
+    const waited: number[] = [];
+
+    const result = await runTicket({
+      config,
+      contract,
+      sleep: async (ms) => {
+        waited.push(ms);
+      },
+      hooks: approving,
+    });
+
+    // `terminated` is the outcome the ticket lifecycle records as `failed`.
+    expect(result.outcome).toBe("terminated");
+    // The note names the transport, not a generic agent exit.
+    expect(result.detail).toContain("transport_unavailable");
+    expect(result.detail).toContain("529");
+    expect(result.detail).toContain("Overloaded");
+    expect(result.detail).not.toContain("the agent exited 1");
+
+    // Two attempts, and no third: one retry is the budget.
+    expect(agent.invocations()).toHaveLength(2);
+    expect(waited).toEqual([TRANSPORT_RETRY_DELAY_MS]);
+    const attempts = recorded(config, contract);
+    expect(attempts).toHaveLength(2);
+    expect(attempts.map((attempt) => attempt.termination.reason)).toEqual([
+      "transport_unavailable",
+      "transport_unavailable",
+    ]);
+    expect(attempts[1]?.continues_attempt_id).toBe(attempts[0]?.attempt_id);
+  }, 90_000);
+
+  it("does not retry an ordinary agent failure, which is still agent_error", async () => {
+    const repo = makeRepo();
+    const contract = makeContract();
+    contract.base.base_commit = repo.head;
+    const agent = fakeAgent([{ kind: "agent_error" }]);
+    const config = TicketRunConfigSchema.parse({ ...makeConfig(repo.dir), agent_binary: agent.binary });
+    const waited: number[] = [];
+
+    const result = await runTicket({
+      config,
+      contract,
+      sleep: async (ms) => {
+        waited.push(ms);
+      },
+      hooks: approving,
+    });
+
+    expect(result.outcome).toBe("terminated");
+    expect(result.detail).toContain("agent_error");
+    // One attempt, no wait, no second run of the agent.
+    expect(agent.invocations()).toHaveLength(1);
+    expect(waited).toEqual([]);
+    const attempts = recorded(config, contract);
+    expect(attempts).toHaveLength(1);
+    expect(attempts[0]?.termination.reason).toBe("agent_error");
+    expect(attempts[0]?.termination.detail).toContain("exited 1");
+  }, 90_000);
+});
+TESTS
+echo appended

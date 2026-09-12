@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_ver001",
+  "version": 1,
+  "ticket_id": "ticket_ver001",
+  "level": "P1",
+  "outcome": "New users receive an activation email when they sign up.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A signup creates exactly one user record.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "one user record exists after a single signup"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A signup results in exactly one activation email being delivered to the new address.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "exactly one activation message reaches the transport for a single signup"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/notifications/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "70d8b7e",
+    "context_manifest_hash": "sha256:c974ab2f977e29c71700c36a019bb259f9de5373469ed3e3f9134a91723fa5b3",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

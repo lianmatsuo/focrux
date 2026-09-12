@@ -1,0 +1,42 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "ver-003-timeout-proven-by-registration",
+  "class": "verification_defect",
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "CWE-1088 — synchronous access of a remote resource without an effective timeout; verified here by asserting the timer was armed rather than that anything aborts",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/1088.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "ac_1 requires a request over five seconds to be abandoned. The test asserts setTimeout was called with 5000; rawFetch discards the AbortSignal, so nothing is ever abandoned.",
+  "why_it_is_hard": "The assertion mentions the number in the criterion, which reads like proof. Establishing the criterion needs a slow request and an observed abort; the change contains neither, and the discard is one `void signal;` in an unchanged file.",
+  "expected_detection": {
+    "mode": "coverage",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [],
+    "rule_prefixes": [],
+    "statuses": [
+      "not_met"
+    ],
+    "strengths": [
+      "proxy",
+      "asserted_only"
+    ]
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  }
+}

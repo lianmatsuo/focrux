@@ -1,0 +1,13 @@
+[
+  {
+    "check_id": "check_pt",
+    "name": "pytest",
+    "kind": "unit",
+    "status": "failed",
+    "summary": "1 failed, 12324 passed, 466 skipped, 35 xfailed",
+    "command": "uv run pytest -q --no-header",
+    "detail": "Measured at the pinned head commit on 2026-08-27, not declared, and it fails. The one failure is `tests/test_exports.py::test_public_internal`, which imports mypy and raises `AttributeError: module 'mypy.expandtype' has no attribute 'ExpandTypeVisitor'` \u2014 the mypy pinned by this commit's lockfile is incompatible with the Python running it. It is unrelated to the change, which touches only `pydantic/types.py`, and it is present at the base commit too. Recorded as failed rather than as a curated subset: a checks file that says passed when the suite does not is the one thing this corpus cannot contain.",
+    "duration_ms": 65300,
+    "source": "file"
+  }
+]

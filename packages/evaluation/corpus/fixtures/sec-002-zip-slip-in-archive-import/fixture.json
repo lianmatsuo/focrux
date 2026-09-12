@@ -1,0 +1,38 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "sec-002-zip-slip-in-archive-import",
+  "class": "security_introduction",
+  "plan_level": "P2",
+  "source": {
+    "kind": "cve",
+    "reference": "CVE-2026-32731 / GHSA-mwxc-m426-3f78 (@apostrophecms/import-export) and GHSA-6pfh-p556-v868 / CVE-2026-23888 (pnpm): a tar entry named ../../evil.js resolves outside the extraction directory",
+    "url": [
+      "https://github.com/apostrophecms/apostrophe/security/advisories/GHSA-mwxc-m426-3f78",
+      "https://github.com/pnpm/pnpm/security/advisories/GHSA-6pfh-p556-v868"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "MIT (pnpm) / MIT (apostrophe) — permissive, and still reconstructed rather than copied",
+    "code_copied": false
+  },
+  "defect": "extract joins the archive's own entry name onto the destination without checking the result stays inside it, so an entry named ../../../.npmrc writes outside the import directory.",
+  "why_it_is_hard": "The three lines are the obvious way to write the function and the criterion they were written for is satisfied. The violated criterion is about entries nobody would write by hand, and the test in the change uses an empty archive.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/import/src/extract.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  }
+}

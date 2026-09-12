@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_adv006",
+  "version": 1,
+  "ticket_id": "ticket_adv006",
+  "level": "P1",
+  "outcome": "An active user's session is extended before it expires, so they are not logged out mid-session.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Refreshing a session that exists and is still valid extends it.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "refreshing a live session returns true"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Refreshing a session that has already expired does not extend it and does not restore access.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "refreshing a session past its expiry returns false and the session stays unreadable"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/identity/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

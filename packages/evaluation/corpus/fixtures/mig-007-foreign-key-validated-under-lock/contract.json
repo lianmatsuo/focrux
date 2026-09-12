@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_mig007",
+  "version": 1,
+  "ticket_id": "ticket_mig007",
+  "level": "P2",
+  "outcome": "A subscription cannot reference a plan that does not exist.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Code can tell whether a subscription references a known plan.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a subscription naming a known plan is recognised as valid"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The constraint can be added to a subscriptions table that already holds rows, including rows whose plan has been removed.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the migration applies to a populated table with orphaned plan references"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/subs/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Existing rows referencing removed plans must be resolved before the constraint holds.",
+  "security_impact": "None.",
+  "rollout": "Migration applied ahead of the application release.",
+  "rollback": "Dropping the constraint restores the previous behaviour.",
+  "estimated_recurring_cost_micros": 0
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "check_id": "check_pt",
+    "name": "pytest",
+    "kind": "unit",
+    "status": "passed",
+    "summary": "12399 passed, 467 skipped, 36 xfailed",
+    "command": "uv run pytest -q --no-header",
+    "detail": "Measured at the pinned head commit on 2026-08-27, not declared, after the repository's own install line (`uv sync --frozen --all-groups --all-packages --all-extras`). A narrower install fails collection on a conftest that imports hypothesis, which is why the install command is recorded on the fixture.",
+    "duration_ms": 51670,
+    "source": "file"
+  },
+  {
+    "check_id": "check_baseline",
+    "name": "fail-first",
+    "kind": "regression-baseline",
+    "status": "passed",
+    "summary": "the change's own tests failed at the base commit",
+    "command": "uv run pytest -q --no-header (at efec1bb51c7a, tests only)",
+    "detail": "The tests added or changed by this diff were applied to the base commit and failed against the unfixed code, then passed at the head commit. They discriminate. Test files applied: tests/test_main.py.",
+    "duration_ms": 61590,
+    "source": "file"
+  }
+]

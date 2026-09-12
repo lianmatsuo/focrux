@@ -1,0 +1,45 @@
+{
+  "plan_id": "plan_pydantic_url_eq",
+  "version": 1,
+  "ticket_id": "ticket_cln020",
+  "level": "P1",
+  "outcome": "Comparing a pydantic URL with a type that knows how to compare itself to one gives that type's answer rather than an unconditional False",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Comparing a URL to an object of a foreign class that defines equality against URLs yields that class's answer.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a foreign class whose __eq__ accepts a URL compares equal to one, in both operand orders"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Comparing two URLs of the same class still compares by value, and comparing to an unrelated object is still not equal.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the existing URL equality and inequality tests still pass"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_pydantic",
+    "paths_allowed": [
+      "pydantic/**",
+      "tests/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "uv.lock"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "ce84b307de84b1a14638223f68f8866f55c286ad",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

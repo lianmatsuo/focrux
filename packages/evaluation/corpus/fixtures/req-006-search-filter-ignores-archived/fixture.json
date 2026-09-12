@@ -1,0 +1,38 @@
+{
+  "id": "req-006-search-filter-ignores-archived",
+  "class": "requirement_omission",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that satisfies the stated outcome for the case in front of it and drops a case the criterion names",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2353017"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The `includeArchived` option is declared in the type and never read, so archived documents are returned from every search — ac_2 asks for them to be excluded unless asked for. The first test even asserts the archived document is returned, which locks the wrong behaviour in.",
+  "why_it_is_hard": "The option appears in the signature, in the type, and in the plan, so a reviewer scanning for it finds it. Only reading the filter body shows it is never consulted, and the test that would have caught it instead asserts the defect as expected output.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/search/src/query.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "A declared-but-unread option is the shape that survives review most often, because the type signature satisfies a search for the requirement."
+}

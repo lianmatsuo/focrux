@@ -1,0 +1,50 @@
+{
+  "plan_id": "plan_vite_fs_cache",
+  "version": 1,
+  "ticket_id": "ticket_vite_fs_cache",
+  "level": "P2",
+  "outcome": "The filesystem cache covers the whole workspace so a monorepo does not re-stat files it has already seen.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Files under the workspace root are served from the cache rather than re-stat'ed.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a repeated resolution of a workspace file does not stat it again"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A file that changes on disk is invalidated from the cache, wherever in the workspace it sits.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "renaming a file outside the project root but inside the workspace invalidates its cache entry"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vitejs_vite",
+    "paths_allowed": [
+      "packages/*/src/**",
+      "packages/*/__tests__/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "f9c33add88e8edcd54316629724730d8049447f1",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. An in-memory cache in the dev server.",
+  "security_impact": "None.",
+  "rollout": "Ships with the dev server.",
+  "rollback": "git revert restores project-root keying.",
+  "estimated_recurring_cost_micros": 0
+}

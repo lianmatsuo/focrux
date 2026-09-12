@@ -1,0 +1,3 @@
+# gateway
+
+HTTP error mapping.

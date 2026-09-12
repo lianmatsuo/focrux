@@ -1,0 +1,50 @@
+diff --git a/packages/gate/src/limit.ts b/packages/gate/src/limit.ts
+new file mode 100644
+index 0000000..708de49
+--- /dev/null
++++ b/packages/gate/src/limit.ts
+@@ -0,0 +1,11 @@
++import { attemptsSince, record } from "./attempts.js";
++
++const LIMIT = 100;
++const WINDOW_MS = 60_000;
++
++/** Allow at most LIMIT requests per account in any rolling WINDOW_MS. */
++export function allow(account_id: string, now = Date.now()): boolean {
++  if (attemptsSince(account_id, now - WINDOW_MS) >= LIMIT) return false;
++  record(account_id, now);
++  return true;
++}
+diff --git a/packages/gate/test/limit.test.ts b/packages/gate/test/limit.test.ts
+new file mode 100644
+index 0000000..9778ff6
+--- /dev/null
++++ b/packages/gate/test/limit.test.ts
+@@ -0,0 +1,27 @@
++import { describe, expect, it } from "vitest";
++import { allow } from "../src/limit.js";
++
++describe("rate limit", () => {
++  it("allows the first hundred requests", () => {
++    const t = 1_000_000_000_000;
++    for (let i = 0; i < 100; i += 1) expect(allow("acct_a", t + i)).toBe(true);
++  });
++
++  it("refuses the hundred-and-first", () => {
++    const t = 2_000_000_000_000;
++    for (let i = 0; i < 100; i += 1) allow("acct_b", t + i);
++    expect(allow("acct_b", t + 100)).toBe(false);
++  });
++
++  it("refuses a burst across a clock-minute boundary", () => {
++    const boundary = 3_000_000_040_000; // 40s into a minute
++    for (let i = 0; i < 100; i += 1) allow("acct_c", boundary + i);
++    expect(allow("acct_c", boundary + 20_000)).toBe(false);
++  });
++
++  it("allows again once the window has passed", () => {
++    const t = 4_000_000_000_000;
++    for (let i = 0; i < 100; i += 1) allow("acct_d", t + i);
++    expect(allow("acct_d", t + 61_000)).toBe(true);
++  });
++});

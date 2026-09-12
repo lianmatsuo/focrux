@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_scp007",
+  "version": 1,
+  "ticket_id": "ticket_scp007",
+  "level": "P2",
+  "outcome": "A poller stops on its own once the thing it is waiting for has happened.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Polling stops once the condition holds.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a poller whose condition becomes true stops calling"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A poller leaves no timer running once it has stopped, however it stopped.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "no interval remains pending after the poller stops"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/scheduler/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None.",
+  "security_impact": "None. A leaked interval is a resource leak.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

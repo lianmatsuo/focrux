@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_req007",
+  "version": 1,
+  "ticket_id": "ticket_req007",
+  "level": "P2",
+  "outcome": "A contact list exported from a spreadsheet imports without the user editing the file first.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Rows with valid addresses import and rows with invalid ones are reported with their line numbers.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an invalid address is reported as rejected with its line number"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A header row is recognised and skipped rather than reported as an invalid address.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a file whose first line is a header imports its data rows and rejects nothing"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/importer/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Imported contacts are inserted; rejected rows are not.",
+  "security_impact": "None.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

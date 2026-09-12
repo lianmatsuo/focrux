@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv005",
+  "version": 1,
+  "ticket_id": "ticket_adv005",
+  "level": "P2",
+  "outcome": "A reservation holds stock for an order and never holds more than exists.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A reservation for less than the available stock succeeds and reduces what is available.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "reserving 3 of 10 succeeds and leaves 7"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Two reservations that together exceed the available stock cannot both succeed, however they interleave.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "concurrent reservations totalling more than the stock do not both return ok"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/inventory/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Stock counts are updated in place.",
+  "security_impact": "None directly; overselling is a correctness and commercial issue.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

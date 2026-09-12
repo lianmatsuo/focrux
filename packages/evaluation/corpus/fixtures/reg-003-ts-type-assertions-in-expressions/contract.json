@@ -1,0 +1,45 @@
+{
+  "plan_id": "plan_vue_ts_assertions",
+  "version": 1,
+  "ticket_id": "ticket_reg003",
+  "level": "P1",
+  "outcome": "A template expression containing a TypeScript type assertion compiles to the same code as the expression without it",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An expression with a leading type assertion compiles without the assertion appearing in the generated code.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a template expression using `as` compiles to code that does not contain the assertion"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Expressions that contain no type assertion compile exactly as they did before.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the existing expression-transform snapshots are unchanged"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vuejs_core",
+    "paths_allowed": [
+      "packages/*/src/**",
+      "packages/*/__tests__/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "75d44c718981f91843e197265cc68e82fe2532dd",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

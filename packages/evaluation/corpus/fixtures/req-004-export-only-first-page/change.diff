@@ -1,0 +1,32 @@
+diff --git a/packages/reporting-csv/src/csv.ts b/packages/reporting-csv/src/csv.ts
+new file mode 100644
+index 0000000..34ee464
+--- /dev/null
++++ b/packages/reporting-csv/src/csv.ts
+@@ -0,0 +1,8 @@
++import { findRows } from "@fixture/reporting-query";
++
++/** Render every matching row as CSV for download. */
++export function exportCsv(): string {
++  const header = "id,amount";
++  const body = findRows().map((row) => `${row.id},${row.amount}`);
++  return [header, ...body].join("\n");
++}
+diff --git a/packages/reporting-csv/test/csv.test.ts b/packages/reporting-csv/test/csv.test.ts
+new file mode 100644
+index 0000000..ca23171
+--- /dev/null
++++ b/packages/reporting-csv/test/csv.test.ts
+@@ -0,0 +1,12 @@
++import { describe, expect, it } from "vitest";
++import { exportCsv } from "../src/csv.js";
++
++describe("csv export", () => {
++  it("has a header", () => {
++    expect(exportCsv().split("\n")[0]).toBe("id,amount");
++  });
++
++  it("renders rows", () => {
++    expect(exportCsv().split("\n")[1]).toBe("row_0,0");
++  });
++});

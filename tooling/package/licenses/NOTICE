@@ -1,0 +1,6 @@
+Two licences apply to the published corpus, chosen by the founder on 2026-09-03:
+LICENSE-FORMAT.txt (Apache-2.0) covers the fixture format — the shape of fixture.json,
+contract.json and checks.json, and the fixture-format README — as code; LICENSE-FIXTURES.txt
+(CC-BY-4.0) covers the fixture content itself — the before/ and after/ trees, change.diff, and the
+pinned-repository declarations — as data. Both texts are the unmodified upstream licences fetched
+from their canonical sources (apache.org and creativecommons.org).

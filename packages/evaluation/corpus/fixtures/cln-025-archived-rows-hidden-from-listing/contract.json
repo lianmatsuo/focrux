@@ -1,0 +1,55 @@
+{
+  "plan_id": "plan_cln025",
+  "version": 1,
+  "ticket_id": "ticket_cln025",
+  "level": "P1",
+  "outcome": "Archived contacts disappear from listings without their history being destroyed.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Archiving a contact removes it from the default listing.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a contact archived between two list() calls appears in the first and not the second"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "An explicit includeArchived flag returns archived contacts, marked as archived.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "list({ includeArchived: true }) returns the archived contact with archived_at set"
+      }
+    },
+    {
+      "id": "ac_3",
+      "text": "Archiving is reversible and destroys nothing.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "restore() returns the contact to the default listing with its fields intact"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/contacts/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000025",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-01T09:00:00Z"
+  }
+}

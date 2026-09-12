@@ -1,0 +1,38 @@
+{
+  "id": "sec-007-ssrf-in-webhook-url-validation",
+  "class": "security_introduction",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Injection, access-control and server-side request classes from the OWASP Top Ten, reconstructed rather than copied",
+    "url": [
+      "https://owasp.org/Top10/"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The check is a deny-list of four literal hostnames, so `https://169.254.169.254/` (cloud instance metadata), `https://10.0.0.5/`, `https://[::ffff:127.0.0.1]/`, `https://2130706433/` and any DNS name the customer controls that resolves to a private address all pass. ac_2 asks for private and link-local ranges to be refused. Validating the string also cannot bind the address that is finally connected to, so a name that resolves differently on the second lookup defeats it regardless.",
+  "why_it_is_hard": "The function looks like it was written by someone who had thought about SSRF: it checks the scheme, it names loopback, it has a test for loopback. Everything it does is correct and the set of things it does not do is the vulnerability. The deeper point — that a string check cannot bind a later connection — is not visible in the diff at all.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/integrations/src/endpoint.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "A partial mitigation is harder than none: the presence of a deny-list is evidence the author considered the class, which is exactly what makes a reviewer stop looking."
+}

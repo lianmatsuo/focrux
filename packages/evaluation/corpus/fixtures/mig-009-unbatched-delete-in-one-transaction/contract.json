@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_mig009",
+  "version": 1,
+  "ticket_id": "ticket_mig009",
+  "level": "P2",
+  "outcome": "Sessions are kept for thirty days rather than ninety.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "The retention window is thirty days and a session older than it is expired.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a session two months old is expired under the new window"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Removing the sessions that are now out of policy does not hold a single long transaction over the table.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the purge runs in bounded batches rather than one statement"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/retention/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Permanently deletes sixty days of session records with no archive.",
+  "security_impact": "Sessions are an audit trail; deleting them removes evidence as well as data.",
+  "rollout": "Runs during the deploy that applies the migration.",
+  "rollback": "None. The rows are gone.",
+  "estimated_recurring_cost_micros": 0
+}

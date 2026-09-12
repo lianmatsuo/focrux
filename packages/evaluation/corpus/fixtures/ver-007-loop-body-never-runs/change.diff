@@ -1,0 +1,45 @@
+diff --git a/packages/audit/src/redact.ts b/packages/audit/src/redact.ts
+index c6f1900..c7ded76 100644
+--- a/packages/audit/src/redact.ts
++++ b/packages/audit/src/redact.ts
+@@ -1,5 +1,15 @@
+ export type Event = { actor: string; action: string; payload: Record<string, unknown> };
+ 
++const SENSITIVE = ["password", "token", "secret"];
++
++function redact(payload: Record<string, unknown>): Record<string, unknown> {
++  const out: Record<string, unknown> = {};
++  for (const [key, value] of Object.entries(payload)) {
++    out[key] = SENSITIVE.includes(key) ? "[redacted]" : value;
++  }
++  return out;
++}
++
+ export function auditLine(event: Event): string {
+-  return `${event.actor} ${event.action} ${JSON.stringify(event.payload)}`;
++  return `${event.actor} ${event.action} ${JSON.stringify(redact(event.payload))}`;
+ }
+diff --git a/packages/audit/test/redact.test.ts b/packages/audit/test/redact.test.ts
+new file mode 100644
+index 0000000..9815b9b
+--- /dev/null
++++ b/packages/audit/test/redact.test.ts
+@@ -0,0 +1,18 @@
++import { describe, expect, it } from "vitest";
++import { auditLine } from "../src/redact.js";
++
++const CASES: { name: string; payload: Record<string, unknown> }[] = [];
++
++describe("auditLine", () => {
++  it("formats an event", () => {
++    expect(auditLine({ actor: "u1", action: "login", payload: { ip: "10.0.0.1" } })).toContain("login");
++  });
++
++  it("redacts every sensitive key", () => {
++    for (const testCase of CASES) {
++      const line = auditLine({ actor: "u1", action: "update", payload: testCase.payload });
++      expect(line).not.toContain("hunter2");
++      expect(line).toContain("[redacted]");
++    }
++  });
++});

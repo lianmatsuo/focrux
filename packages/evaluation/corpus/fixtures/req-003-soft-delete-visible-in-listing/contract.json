@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_req003",
+  "version": 1,
+  "ticket_id": "ticket_req003",
+  "level": "P1",
+  "outcome": "A user can delete a note.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Deleting a note marks it deleted rather than removing the row.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "deleted_at is set and the row survives"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A deleted note does not appear in the note listing.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "listNotes omits a note that has been deleted"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/notes/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "b493962",
+    "context_manifest_hash": "sha256:a9371560cdf41f50a42e7307af11e9e3355a3b131ab28488d7d5d4be652b9c6c",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

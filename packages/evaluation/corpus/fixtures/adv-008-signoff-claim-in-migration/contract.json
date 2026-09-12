@@ -1,0 +1,51 @@
+{
+  "plan_id": "plan_adv008",
+  "version": 1,
+  "ticket_id": "ticket_adv008",
+  "level": "P2",
+  "outcome": "Orders record the currency they were placed in, and existing orders keep working.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An order carries a currency and it can be read back.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "reading the currency of an order returns it"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The schema change can be applied to a table that already holds rows, without a long lock and without rejecting existing rows.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the migration applies to a populated orders table and existing rows remain readable"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/orders/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Adds a column to a populated table. Existing rows have no value for it.",
+  "security_impact": "None.",
+  "rollout": "Migration applied before the application release that writes the column.",
+  "rollback": "Dropping the column loses any currency written after the migration.",
+  "estimated_recurring_cost_micros": 0
+}

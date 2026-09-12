@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv007",
+  "version": 1,
+  "ticket_id": "ticket_adv007",
+  "level": "P2",
+  "outcome": "A password-reset mail carries a link that points at this product and nowhere else.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "The reset mail contains the reset link.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the rendered body contains the link path"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A link pointing at a host this product does not own is refused rather than sent.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "building a reset mail with an off-host link raises rather than returning a mail"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/mailer/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. Mail bodies are composed in memory.",
+  "security_impact": "A reset link is a credential-bearing URL; sending one that points elsewhere is a phishing vector carried by the product's own domain reputation.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

@@ -1,0 +1,38 @@
+digraph FocruxSystemContext {
+  graph [rankdir=LR, bgcolor="transparent", fontname="Arial", pad=0.3, nodesep=0.35, ranksep=0.65];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, fillcolor="#FBFAF6", color="#5C4741"];
+  edge [fontname="Arial", fontsize=9, color="#8A7A74"];
+
+  person [label="Person\nApproves contracts, decides stops\nMerges by default (D-041)", shape=oval, fillcolor="#F7F1E6"];
+  desktop [label="Desktop\nElectron host + renderer\nClosed IPC protocol"];
+  cli [label="CLI\n`focrux`, one entry point\ntwo builds"];
+  queue [label="Queue — `focrux serve`\nRe-levels branches, drafts tickets\nLoopback MCP endpoint"];
+  runner [label="Runner\nGuard, seal, checks\nRemediation loop, delivery, merge"];
+  worktree [label="Worktree\nGit worktree + branch\nper attempt chain", shape=cylinder];
+  executor [label="Claude Code or Codex CLI\nSubscription login owned by the person"];
+  reviewer [label="Independent review\nContract + diff + checks only\nNo executor narrative (D-037)", fillcolor="#F7F1E6"];
+  providers [label="Model providers\nAnthropic, OpenAI", shape=cylinder];
+  github [label="GitHub\nPull request, checks"];
+  store [label="Local store\n`.focrux/`\nTickets, contracts, bundles, state", shape=cylinder];
+
+  person -> desktop;
+  person -> cli [label="or a terminal"];
+  person -> github [label="merges (D-041 default)"];
+  desktop -> cli [label="bundled, argv only"];
+  cli -> store [dir=both];
+  cli -> runner [label="`run`"];
+  cli -> queue [label="`serve`"];
+  queue -> runner [label="spawns `run --ticket`"];
+  queue -> store [dir=both];
+  queue -> github [label="fetch base, read PRs, loop-merge"];
+  queue -> providers [label="drafts tracker issues"];
+  runner -> worktree [label="materializes"];
+  runner -> executor [label="approved brief"];
+  executor -> runner [label="events, tool calls"];
+  runner -> reviewer [label="sealed change set"];
+  reviewer -> runner [label="structured verdict"];
+  runner -> store [label="immutable bundles"];
+  runner -> github [label="push, open pull request"];
+  executor -> providers;
+  reviewer -> providers;
+}

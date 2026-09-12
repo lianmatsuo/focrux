@@ -1,0 +1,41 @@
+diff --git a/packages/teams/src/invite.ts b/packages/teams/src/invite.ts
+index d540fc0..47efb18 100644
+--- a/packages/teams/src/invite.ts
++++ b/packages/teams/src/invite.ts
+@@ -9,3 +9,16 @@ export async function invite(one: Invite, send: (i: Invite) => Promise<void>): P
+     return { email: one.email, ok: false, reason: (error as Error).message };
+   }
+ }
++
++/** Invite everyone on the list. */
++export async function inviteAll(
++  invites: Invite[],
++  send: (i: Invite) => Promise<void>,
++): Promise<Result[]> {
++  const results: Result[] = [];
++  for (const one of invites) {
++    await send(one);
++    results.push({ email: one.email, ok: true });
++  }
++  return results;
++}
+diff --git a/packages/teams/test/invite.test.ts b/packages/teams/test/invite.test.ts
+new file mode 100644
+index 0000000..5531b4a
+--- /dev/null
++++ b/packages/teams/test/invite.test.ts
+@@ -0,0 +1,14 @@
++import { describe, expect, it } from "vitest";
++import { inviteAll } from "../src/invite.js";
++
++describe("inviteAll", () => {
++  it("invites everyone on the list", async () => {
++    const sent: string[] = [];
++    const results = await inviteAll(
++      [{ email: "a@x.com", team_id: "t1" }, { email: "b@x.com", team_id: "t1" }],
++      async (i) => { sent.push(i.email); },
++    );
++    expect(sent).toEqual(["a@x.com", "b@x.com"]);
++    expect(results.every((r) => r.ok)).toBe(true);
++  });
++});

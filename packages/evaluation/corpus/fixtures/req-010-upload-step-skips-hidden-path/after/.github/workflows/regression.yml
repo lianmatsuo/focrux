@@ -1,0 +1,26 @@
+name: Regression
+on:
+  pull_request:
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+      # The records land under `.regression` at the repository root; the log
+      # prints the rows.
+      - name: Regression suite
+        run: node scripts/regression.mjs --out "$PWD/.regression"
+      # The run's own records, kept: the summary the rows come from and every
+      # review beside it, so a contributor whose row moved can read the review
+      # that moved it without running the suite again. `always()`, because the
+      # run that most needs its records kept is the one that just failed.
+      - name: Upload the regression run's records
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: regression-run
+          path: .regression
+          if-no-files-found: error

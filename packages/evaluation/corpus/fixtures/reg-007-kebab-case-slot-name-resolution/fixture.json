@@ -1,0 +1,59 @@
+{
+  "id": "reg-007-kebab-case-slot-name-resolution",
+  "class": "unstated_regression",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "commit",
+    "reference": "vuejs/core#14302, reverted by #14331",
+    "url": [
+      "https://github.com/vuejs/core/pull/14302",
+      "https://github.com/vuejs/core/pull/14331"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "Resolving a camelCase slot reference against a kebab-case slot name changes how every slot lookup behaves, not only the in-DOM-template case the change was about. vuejs/core merged it and reverted it, citing a failing ecosystem-ci run across downstream projects; the revert is the ground truth and nothing about the defect was written here.",
+  "why_it_is_hard": "The change is small, closes a real reported issue, ships 116 lines of new tests, and those tests pass. It is correct against its own stated intent. What it breaks is not visible in the diff and not mentioned in the plan: the fallback runs on the shared slot-resolution path used by every component, including KeepAlive, so a component that legitimately has no slot of that name now finds one.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/runtime-core/src/component.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-29",
+  "authored_before_reviewer": false,
+  "notes": "Candidate 3 in corpus/REVERT-CANDIDATES.md. The revert's stated reason is a downstream ecosystem-ci failure rather than a single named bug, which is a weaker signal than an issue number but still a recoverable one: the change was withdrawn because it broke consumers, not because anybody changed their mind.",
+  "pinned_repository": {
+    "url": "https://github.com/vuejs/core",
+    "licence": "MIT",
+    "base_commit": "0596a5f59128ed629910e60c80bfc6fbb9d38ebd",
+    "head_commit": "7e554bf8975a6522cde00c261e8c6f1bffff1c24",
+    "subject": "fix(runtime-core): resolve kebab-case slot names from in-DOM templates (#14302)",
+    "reference": "https://github.com/vuejs/core/commit/7e554bf8975a6522cde00c261e8c6f1bffff1c24",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "run",
+      "test-unit"
+    ]
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "3479 passed | 6 skipped (3485) in 181 passed | 1 skipped (182)"
+  }
+}

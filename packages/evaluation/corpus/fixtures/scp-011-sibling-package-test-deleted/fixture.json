@@ -1,0 +1,38 @@
+{
+  "id": "scp-011-sibling-package-test-deleted",
+  "class": "scope_escape",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that reaches outside the paths the plan declared, here by deleting a file in a package the plan never named",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/1120.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The change deletes packages/catalog/test/format.test.ts, a passing test in a package the plan never declared, alongside its declared work in packages/search.",
+  "why_it_is_hard": "It is the quietest shape a scope escape can take. A deletion has no added lines to read, no comment to give away a motive, and no failure to report: the suite gets shorter and greener, and the coverage that goes with it belonged to a package whose owners are not on this change. Every other reading of the diff is of a correct ranking change.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [],
+    "files": [
+      "packages/catalog/test/format.test.ts"
+    ],
+    "rule_prefixes": [
+      "scope."
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-09-04",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The escape is a deletion, which no other fixture in this class is: the deleted test passes both before and after the change, so removing the escape leaves the suite green and nothing but the contract says the deletion was not this change's to make. Authored after the reviewer's scope rule existed, which authored_before_reviewer: false records: the escape was chosen knowing what that rule computes, so this fixture is evidence that the rule still fires rather than evidence that found the rule."
+}

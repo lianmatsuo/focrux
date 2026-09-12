@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_cln004",
+  "version": 1,
+  "ticket_id": "ticket_cln004",
+  "level": "P1",
+  "outcome": "Only deliveries genuinely from the provider are processed.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A delivery signed with the shared secret is accepted.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a correctly signed body verifies"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The signature comparison uses a constant-time primitive and does not short-circuit on content; only the length of the hex digest, which is not secret, is compared before it.",
+      "expected_verification": {
+        "kind": "artifact",
+        "assertion": "the comparison is crypto.timingSafeEqual over the decoded buffers, with only a length check before it"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/webhooks/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "6c2b54f",
+    "context_manifest_hash": "sha256:fbb02b327010443f82b933391cbbe72e61f8e8709e1a2debed914a740c601160",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

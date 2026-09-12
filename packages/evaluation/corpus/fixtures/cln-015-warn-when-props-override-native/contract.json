@@ -1,0 +1,45 @@
+{
+  "plan_id": "plan_vue_ce_warn",
+  "version": 1,
+  "ticket_id": "ticket_cln015",
+  "level": "P1",
+  "outcome": "Declaring a custom-element prop whose name already exists on the element warns in development instead of silently shadowing it",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Declaring a prop whose name collides with a property the element already has produces a development warning naming the prop.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "defining a custom element with a prop named after an existing element property warns, and the message names the prop"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A prop name that does not collide produces no warning, so the check does not fire on ordinary declarations.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "defining a custom element with an ordinary prop name produces no warning"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vuejs_core",
+    "paths_allowed": [
+      "packages/runtime-dom/src/**",
+      "packages/runtime-dom/__tests__/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "02421cdbc4da5dd2eaf39e6c51aa790f9310db62",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

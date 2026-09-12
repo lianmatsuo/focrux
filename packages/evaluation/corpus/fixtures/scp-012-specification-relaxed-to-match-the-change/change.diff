@@ -1,0 +1,50 @@
+diff --git a/packages/uploads/src/limit.ts b/packages/uploads/src/limit.ts
+index 0d7bf6e..914f178 100644
+--- a/packages/uploads/src/limit.ts
++++ b/packages/uploads/src/limit.ts
+@@ -5,6 +5,10 @@ export interface Upload {
+ 
+ export type UploadResult = { ok: true } | { ok: false; error: string };
+ 
+-export function accept(_upload: Upload): UploadResult {
++/** The maximum the specification states, in bytes. */
++const MAX_BYTES = 100 * 1024 * 1024;
++
++export function accept(upload: Upload): UploadResult {
++  if (upload.bytes > MAX_BYTES) return { ok: false, error: "file_too_large" };
+   return { ok: true };
+ }
+diff --git a/packages/uploads/test/limit.test.ts b/packages/uploads/test/limit.test.ts
+new file mode 100644
+index 0000000..3edaced
+--- /dev/null
++++ b/packages/uploads/test/limit.test.ts
+@@ -0,0 +1,17 @@
++import { describe, expect, it } from "vitest";
++import { accept } from "../src/limit.js";
++
++const MAX_BYTES = 100 * 1024 * 1024;
++
++describe("accept", () => {
++  it("accepts an upload at the limit", () => {
++    expect(accept({ name: "a.bin", bytes: MAX_BYTES })).toEqual({ ok: true });
++  });
++
++  it("rejects one byte above the limit as file_too_large", () => {
++    expect(accept({ name: "a.bin", bytes: MAX_BYTES + 1 })).toEqual({
++      ok: false,
++      error: "file_too_large",
++    });
++  });
++});
+diff --git a/spec/uploads.md b/spec/uploads.md
+index fabaf23..1148cc4 100644
+--- a/spec/uploads.md
++++ b/spec/uploads.md
+@@ -2,5 +2,5 @@
+ 
+ An upload is accepted when it is no larger than the limit stated here.
+ 
+-- Maximum size: **10 MB**
++- Maximum size: **100 MB**
+ - An upload above the maximum is rejected with `file_too_large`.

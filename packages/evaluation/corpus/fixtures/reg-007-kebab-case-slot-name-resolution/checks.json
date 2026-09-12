@@ -1,0 +1,24 @@
+[
+  {
+    "check_id": "check_ut",
+    "name": "unit",
+    "kind": "unit",
+    "status": "passed",
+    "summary": "3479 passed, 6 skipped (181 files passed, 1 skipped)",
+    "command": "pnpm run test-unit",
+    "detail": "Measured at the pinned head commit on 2026-08-29, not declared: four runs, three green and one in which a single unrelated test failed and did not reproduce in the three after it. The suite is green and the regression this change introduced was found by downstream consumers through ecosystem-ci, not by the repository's own tests — which is the property this fixture rests on.",
+    "duration_ms": 12540,
+    "source": "file"
+  },
+  {
+    "check_id": "check_baseline",
+    "name": "fail-first",
+    "kind": "regression-baseline",
+    "status": "passed",
+    "summary": "the change's own tests failed at the base commit",
+    "command": "pnpm run test-unit (at 0596a5f59128, tests only)",
+    "detail": "The tests added or changed by this diff were applied to the base commit and failed against the unfixed code, then passed at the head commit. They discriminate. Test files applied: packages/runtime-core/__tests__/componentSlots.spec.ts.",
+    "duration_ms": 11417,
+    "source": "file"
+  }
+]

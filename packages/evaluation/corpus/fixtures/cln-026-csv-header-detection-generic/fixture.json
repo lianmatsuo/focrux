@@ -1,0 +1,30 @@
+{
+  "id": "cln-026-csv-header-detection-generic",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The correct sibling of req-007-csv-import-skips-header-detection, implemented the complete way: headers are recognised by normalisation, not by enumerating spellings, and a headerless file is detected rather than assumed.",
+    "url": [
+      "https://datatracker.ietf.org/doc/html/rfc4180"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. Every criterion is met and directly verified by a shipped test.",
+  "why_it_is_hard": "It is the boil-the-ocean case in fixture form: the shortcut (an enumerated list of header spellings) passes the same happy-path tests. A reviewer must distinguish complete handling from a lookalike.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-09-01",
+  "authored_before_reviewer": false,
+  "notes": "Authored rather than drawn from a merged commit, deliberately: the end-to-end loop needs a before/ tree to branch from, and no pinned fixture has one. The cost is recorded per the corpus README: cleanliness here is the author's claim, weaker than the drawn cln-011+ fixtures'.",
+  "runtime": {
+    "status": "runs",
+    "note": "17 passed (17) in 1 passed (1)"
+  }
+}

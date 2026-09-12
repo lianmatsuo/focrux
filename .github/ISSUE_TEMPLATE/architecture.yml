@@ -1,0 +1,28 @@
+name: Architecture decision
+about: Resolve a cross-cutting product or technical decision
+labels: ["type:architecture"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and evidence
+    validations:
+      required: true
+  - type: textarea
+    id: decision
+    attributes:
+      label: Proposed decision
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and trade-offs
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation or reversal trigger
+    validations:
+      required: true

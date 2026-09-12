@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_req005",
+  "version": 1,
+  "ticket_id": "ticket_req005",
+  "level": "P1",
+  "outcome": "Inviting a list of people reports what happened to each address.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Every address on the list is invited.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "both addresses on a two-address list are sent an invite"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "An address that fails is reported as failed and does not stop the rest of the list.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a list whose first address fails still invites the second and returns a failed result for the first"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/teams/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

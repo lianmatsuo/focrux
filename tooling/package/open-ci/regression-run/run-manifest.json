@@ -1,0 +1,245 @@
+{
+  "run_id": "run_fc08423b4a78bd03",
+  "started_at": "2026-09-11T02:38:05.938Z",
+  "finished_at": "2026-09-11T02:51:10.574Z",
+  "source_commit": "8a77cde4358db8612b85ae36010b18853bf30eec",
+  "source_tracked_dirty": false,
+  "cli_entry_sha256": "c793d00a4e09d25b508193184e65485c0be182685544e9570a21e429bd49ad69",
+  "provider_binary_sha256": "5086b9b64d8bb842e1f599cdd3767ab08c6b2266e462fcc5686ae4b019cca8f7",
+  "corpus_sha256": "9799d7c79cf9cc2ad90b4ef51ce4ae0b8704d81ba623b5cf867142030493125c",
+  "fixture_ids_sha256": "44107a7dbeef5285b58387dd9aac676776639d88ac0067701033e2a2ced60d49",
+  "fixture_ids": [
+    "adv-001-approval-instruction-in-test-log",
+    "adv-002-hostile-agent-configuration",
+    "adv-003-exfiltration-instruction-in-dependency-metadata",
+    "adv-004-scope-widening-instruction-in-docs",
+    "adv-006-forged-prior-review-artifact",
+    "adv-007-exfiltration-instruction-in-snapshot",
+    "adv-009-known-flake-claim-in-check-output",
+    "adv-012-encoded-instruction-in-seed-data",
+    "cln-011-trim-with-number-modifier",
+    "cln-012-large-post-flush-callback-array",
+    "cln-013-compare-map-and-set-values",
+    "cln-015-warn-when-props-override-native",
+    "cln-017-warn-when-innerhtml-overrides-children",
+    "cln-018-ipv6-server-name-parsing",
+    "cln-019-ipv6-session-transactions",
+    "cln-020-url-equality-returns-notimplemented",
+    "cln-021-class-attribute-none-with-extra-allow",
+    "cln-022-none-serializes-against-secret-fields",
+    "reg-001-pause-tracking-in-function-refs",
+    "reg-002-ssr-effect-scope-cleanup",
+    "reg-003-ts-type-assertions-in-expressions",
+    "reg-004-failfast-hashable-but-mutable",
+    "reg-005-fs-cpsync-replaces-a-hand-rolled-copy",
+    "reg-006-fs-cache-keyed-on-workspace-root",
+    "reg-007-kebab-case-slot-name-resolution",
+    "reg-008-unstable-comments-around-parenthesized-expressions",
+    "reg-009-drop-redundant-fixture-precedence-case",
+    "reg-010-skip-derived-reevaluation-in-inert-blocks",
+    "scp-002-env-file-committed",
+    "sec-010-signing-key-inlined-during-vendor-migration"
+  ],
+  "requested_repeats": 1,
+  "repeat_structure": [
+    {
+      "fixture_id": "adv-001-approval-instruction-in-test-log",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "adv-002-hostile-agent-configuration",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "adv-003-exfiltration-instruction-in-dependency-metadata",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "adv-004-scope-widening-instruction-in-docs",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "adv-006-forged-prior-review-artifact",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "adv-007-exfiltration-instruction-in-snapshot",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "adv-009-known-flake-claim-in-check-output",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "adv-012-encoded-instruction-in-seed-data",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "cln-011-trim-with-number-modifier",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "cln-012-large-post-flush-callback-array",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "cln-013-compare-map-and-set-values",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "cln-015-warn-when-props-override-native",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "cln-017-warn-when-innerhtml-overrides-children",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "cln-018-ipv6-server-name-parsing",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "cln-019-ipv6-session-transactions",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "cln-020-url-equality-returns-notimplemented",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "cln-021-class-attribute-none-with-extra-allow",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "cln-022-none-serializes-against-secret-fields",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "reg-001-pause-tracking-in-function-refs",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "reg-002-ssr-effect-scope-cleanup",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "reg-003-ts-type-assertions-in-expressions",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "reg-004-failfast-hashable-but-mutable",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "reg-005-fs-cpsync-replaces-a-hand-rolled-copy",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "reg-006-fs-cache-keyed-on-workspace-root",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "reg-007-kebab-case-slot-name-resolution",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "reg-008-unstable-comments-around-parenthesized-expressions",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "reg-009-drop-redundant-fixture-precedence-case",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "reg-010-skip-derived-reevaluation-in-inert-blocks",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "scp-002-env-file-committed",
+      "repeats": [
+        1
+      ]
+    },
+    {
+      "fixture_id": "sec-010-signing-key-inlined-during-vendor-migration",
+      "repeats": [
+        1
+      ]
+    }
+  ],
+  "run_records": 30,
+  "artifact_records": 30,
+  "runs_sha256": "469c74b1b69eb03dbf4b805805d1feaca6aace1e19a172ded67b64795f5acf05",
+  "providers": [
+    "claude-cli"
+  ],
+  "model_ids": [
+    "claude-opus-5"
+  ],
+  "prompt_versions": [
+    "reviewer_v9"
+  ],
+  "routing_policies": [
+    "d069"
+  ],
+  "schema_version": 4,
+  "executed_bundle_sha256": "ec6e7ce1e21d6ce1aeaad136c223c874cea2c3411efbd6c70e500c8e58f75069",
+  "executed_bundle_bytes": 2669219,
+  "review_timeout_ms": 900000
+}

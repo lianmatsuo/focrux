@@ -1,0 +1,38 @@
+{
+  "id": "sec-005-order-by-interpolated-into-sql",
+  "class": "security_introduction",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Injection and access-control classes from the OWASP Top Ten, reconstructed rather than copied",
+    "url": [
+      "https://owasp.org/Top10/"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The sort column and direction are interpolated into the SQL string. The account filter is still parameterised, which is what makes it look safe, but `sort.column` reaches the database verbatim — a caller supplying `created_at; DROP TABLE invoices --` or a subselect controls the statement. ac_2 asks for the sort to be restricted to known columns.",
+  "why_it_is_hard": "The parameterised `$1` is right there on the same statement, so the file reads as one that understands parameter binding. Identifiers genuinely cannot be bound as parameters, so the interpolation is the only way to write it — the missing part is the allow-list, which is an absence rather than a wrong line.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/reports/src/list.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "Reconstructed from the SQL-injection class rather than transplanted: the fixture is the pattern, and none of the code is copied. This fixture's own tests pass against its own before tree — they assert only `toEqual([])` against a stub, and JavaScript ignores the extra sort argument, so calling the pre-change single-parameter listInvoices with a sort object succeeds silently. The tests therefore establish nothing about sorting while checks.json reports unit: passed. That is realistic — vulnerabilities ship behind uninformative tests — but it was unstated, so a reader of security_introduction recall could not know this fixture's green check carries no signal. Recorded rather than changed, because changing it would alter what an already-scored fixture tests. Checked against round 3 the same day: the reviewer raised a finding about the vacuous evidence in all three repeats despite that property being unlabelled here. Its recall on this fixture is therefore an understatement — the corpus credits only findings attributable to the planted defect."
+}

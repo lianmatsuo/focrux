@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_sec001",
+  "version": 1,
+  "ticket_id": "ticket_sec001",
+  "level": "P2",
+  "outcome": "The browser client hosted at app.example.com can call the API directly instead of proxying through its own origin.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A request from https://app.example.com is allowed to send and receive credentials.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the app origin is echoed and credentials are allowed"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "No origin other than https://app.example.com is allowed to send credentials.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an unknown origin receives no credentialed CORS grant"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/gateway/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "None.",
+  "security_impact": "Changes who may read authenticated responses.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "d5a1f29",
+    "context_manifest_hash": "sha256:bb45fceb3b29cec12c9c882aeae6397163e503bb3ba32f9ba6fbc1affd1dc1df",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

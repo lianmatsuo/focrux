@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_scp005",
+  "version": 1,
+  "ticket_id": "ticket_scp005",
+  "level": "P1",
+  "outcome": "A digest subject line is written in the recipient's language.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "The subject is rendered in the requested locale and falls back to English.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a French locale renders the French subject and an unknown one renders English"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The item count appears in the subject.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the subject contains the number of items"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/notify/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

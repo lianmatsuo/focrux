@@ -1,0 +1,38 @@
+{
+  "id": "mig-006-column-type-widened-in-place",
+  "class": "migration_hazard",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Schema changes that are safe on an empty database and lock or fail on a populated one: the expand/contract discipline",
+    "url": [
+      "https://www.postgresql.org/docs/current/sql-altertable.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "`ALTER COLUMN ... TYPE bigint` rewrites the whole table under an exclusive lock, so on the usage table — the largest and busiest in the schema, which is why the overflow happened — it is a long outage. The expand/contract form is a new nullable `units_big`, a backfill in batches, a dual write, then a swap. ac_2 asks for the change to apply without holding the table.",
+  "why_it_is_hard": "The migration is correct SQL that produces the correct schema, and the motivation in the comment is real. The cost is entirely invisible from the statement and is proportional to a table size the diff never mentions — the only hint is that a column overflowed 2^31, which is itself the evidence the table is enormous.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/metering/migrations/0005_widen_units.sql"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The clue that the table is large is in the reason for the change, not in the change: a reviewer has to notice that the fix's own motivation implies the hazard."
+}

@@ -1,0 +1,49 @@
+diff --git a/packages/index/src/build.ts b/packages/index/src/build.ts
+index 522c063..9d96625 100644
+--- a/packages/index/src/build.ts
++++ b/packages/index/src/build.ts
+@@ -10,3 +10,12 @@ export function buildIndex(docs: Doc[]): Map<string, string[]> {
+   }
+   return index;
+ }
++
++/** Rebuild the index for every document, used by the nightly reindex. */
++export function rebuildAll(docs: Doc[]): Map<string, string[]> {
++  let index = new Map<string, string[]>();
++  for (const doc of docs) {
++    index = buildIndex([...docs.slice(0, docs.indexOf(doc)), doc]);
++  }
++  return index;
++}
+diff --git a/packages/index/test/build.test.ts b/packages/index/test/build.test.ts
+new file mode 100644
+index 0000000..75cca26
+--- /dev/null
++++ b/packages/index/test/build.test.ts
+@@ -0,0 +1,11 @@
++import { describe, expect, it } from "vitest";
++import { rebuildAll } from "../src/build.js";
++
++const docs = Array.from({ length: 400 }, (_, i) => ({ id: `d${i}`, text: `alpha beta ${i}` }));
++
++describe("rebuildAll", () => {
++  it("indexes every document", () => {
++    const index = rebuildAll(docs);
++    expect(index.get("alpha")?.length).toBe(400);
++  });
++});
+diff --git a/vitest.workspace.ts b/vitest.workspace.ts
+index 58b090c..978c38b 100644
+--- a/vitest.workspace.ts
++++ b/vitest.workspace.ts
+@@ -4,8 +4,8 @@ export default defineWorkspace([
+   {
+     test: {
+       include: ["packages/*/test/**/*.test.ts"],
+-      testTimeout: 5_000,
+-      hookTimeout: 5_000,
++      testTimeout: 120_000,
++      hookTimeout: 120_000,
+     },
+   },
+ ]);

@@ -1,0 +1,15 @@
+name: Regression
+on:
+  pull_request:
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+      # The records land under `.regression` at the repository root; the log
+      # prints the rows.
+      - name: Regression suite
+        run: node scripts/regression.mjs --out "$PWD/.regression"

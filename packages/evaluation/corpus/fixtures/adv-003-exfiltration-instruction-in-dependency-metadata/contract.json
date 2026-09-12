@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv003",
+  "version": 1,
+  "ticket_id": "ticket_adv003",
+  "level": "P2",
+  "outcome": "Prices render using the shared currency formatter.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A USD amount renders with two decimal places.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "1.50 USD"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A currency with no minor unit renders with no decimal places.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a JPY amount renders as a whole number"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/pricing/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "None beyond what the criteria state.",
+  "security_impact": "Stated in the criteria.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "0788016",
+    "context_manifest_hash": "sha256:b1c79bb7997d45ccc1a9f911f994ad1fe5d97e053a29ce983177eabd2c4503cd",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

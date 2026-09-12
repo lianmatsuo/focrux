@@ -1,0 +1,53 @@
+{
+  "plan_id": "plan_scp006",
+  "version": 1,
+  "ticket_id": "ticket_scp006",
+  "level": "P1",
+  "outcome": "The portal shows administrative controls only to users who may use them.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Whether a user may administer the account is read from the API rather than assumed.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an administrator is recognised and an ordinary user is not"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A user whose role is absent is treated as not an administrator.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a response with no role field yields false"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/portal/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3,
+    "generated_sources": {
+      "**/*.generated.ts": [
+        "packages/portal/openapi.yaml",
+        "packages/portal/codegen.config.ts"
+      ]
+    }
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

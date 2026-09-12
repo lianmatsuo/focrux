@@ -1,0 +1,55 @@
+{
+  "plan_id": "plan_cln024",
+  "version": 1,
+  "ticket_id": "ticket_cln024",
+  "level": "P1",
+  "outcome": "Calls to the upstream inventory service retry transient failures with capped, jittered backoff.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A request that fails with a 5xx or network error is retried, to a total of 4 tries.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an upstream that fails twice then succeeds returns the success on the third attempt, and one that always fails is tried exactly 4 times"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A 4xx response is returned to the caller without any retry.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a 400 response reaches the caller after exactly one attempt"
+      }
+    },
+    {
+      "id": "ac_3",
+      "text": "Each wait is exponential with full jitter and never exceeds two seconds.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "recorded waits fall within [0, min(2000, 100*2^n)] for every attempt n"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/inventory/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000024",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-01T09:00:00Z"
+  }
+}

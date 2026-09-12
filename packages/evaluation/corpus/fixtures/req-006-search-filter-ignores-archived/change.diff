@@ -1,0 +1,41 @@
+diff --git a/packages/search/src/query.ts b/packages/search/src/query.ts
+index 841bd1c..68adf4c 100644
+--- a/packages/search/src/query.ts
++++ b/packages/search/src/query.ts
+@@ -1,5 +1,11 @@
+ export type Doc = { id: string; title: string; archived: boolean; owner_id: string };
++export type Options = { includeArchived?: boolean; ownerId?: string };
+ 
+-export function search(docs: Doc[], term: string): Doc[] {
+-  return docs.filter((doc) => doc.title.toLowerCase().includes(term.toLowerCase()));
++export function search(docs: Doc[], term: string, options: Options = {}): Doc[] {
++  const needle = term.toLowerCase();
++  return docs.filter((doc) => {
++    if (!doc.title.toLowerCase().includes(needle)) return false;
++    if (options.ownerId && doc.owner_id !== options.ownerId) return false;
++    return true;
++  });
+ }
+diff --git a/packages/search/test/query.test.ts b/packages/search/test/query.test.ts
+new file mode 100644
+index 0000000..041b3c9
+--- /dev/null
++++ b/packages/search/test/query.test.ts
+@@ -0,0 +1,17 @@
++import { describe, expect, it } from "vitest";
++import { search } from "../src/query.js";
++
++const docs = [
++  { id: "1", title: "Quarterly plan", archived: false, owner_id: "u1" },
++  { id: "2", title: "Quarterly review", archived: true, owner_id: "u2" },
++];
++
++describe("search", () => {
++  it("matches on the title", () => {
++    expect(search(docs, "quarterly").map((d) => d.id)).toEqual(["1", "2"]);
++  });
++
++  it("filters by owner", () => {
++    expect(search(docs, "quarterly", { ownerId: "u1" }).map((d) => d.id)).toEqual(["1"]);
++  });
++});

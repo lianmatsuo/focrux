@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_ver005",
+  "version": 1,
+  "ticket_id": "ticket_ver005",
+  "level": "P1",
+  "outcome": "A CSV export is readable by a spreadsheet even when a field contains a delimiter.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An ordinary row is written under a header.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a single row exports as header plus row"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A field containing a comma, a quote or a line break is escaped so the row is not split.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a field containing a comma round-trips through a CSV parser as one field"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/exports/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

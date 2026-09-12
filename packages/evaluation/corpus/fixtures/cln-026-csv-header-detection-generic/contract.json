@@ -1,0 +1,55 @@
+{
+  "plan_id": "plan_cln026",
+  "version": 1,
+  "ticket_id": "ticket_cln026",
+  "level": "P1",
+  "outcome": "CSV contact imports find the email column whatever the header calls it, and cope with headerless files.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A header naming an email column in any common spelling, casing or punctuation is recognised.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "'Email', 'e-mail', 'E MAIL ADDRESS' and 'contact_email' all select the right column"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A file with no header row is detected and the first email-shaped column is used.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a headerless file whose second column holds addresses imports every row including the first"
+      }
+    },
+    {
+      "id": "ac_3",
+      "text": "Rows without a valid email are reported per row, not dropped silently.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the result lists each rejected row number with a reason while valid rows import"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/importer/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000026",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-01T09:00:00Z"
+  }
+}

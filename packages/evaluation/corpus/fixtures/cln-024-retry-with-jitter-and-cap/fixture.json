@@ -1,0 +1,30 @@
+{
+  "id": "cln-024-retry-with-jitter-and-cap",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "An ordinary correct change: bounded, jittered retries for a flaky upstream. The defective siblings are the req-* omissions; this one implements the whole pattern - cap, jitter, and no retry on caller errors.",
+    "url": [
+      "https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. Every criterion is met and directly verified by a shipped test.",
+  "why_it_is_hard": "Retry logic is where shortcut implementations cluster (retrying 4xx, unbounded loops, thundering-herd backoff). A reviewer that has learned to distrust retry changes blocks this complete one.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-09-01",
+  "authored_before_reviewer": false,
+  "notes": "Authored rather than drawn from a merged commit, deliberately: the end-to-end loop needs a before/ tree to branch from, and no pinned fixture has one. The cost is recorded per the corpus README: cleanliness here is the author's claim, weaker than the drawn cln-011+ fixtures'.",
+  "runtime": {
+    "status": "runs",
+    "note": "9 passed (9) in 1 passed (1)"
+  }
+}

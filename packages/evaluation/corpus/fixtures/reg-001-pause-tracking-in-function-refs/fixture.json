@@ -1,0 +1,59 @@
+{
+  "id": "reg-001-pause-tracking-in-function-refs",
+  "class": "unstated_regression",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "commit",
+    "reference": "vuejs/core#14985, reverted by #15094",
+    "url": [
+      "https://github.com/vuejs/core/commit/3ac052b6b1e9d3978e98cc30a1a89a9b9b51358b",
+      "https://github.com/vuejs/core/pull/15094"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "Wrapping the function-ref invocation in pauseTracking/resetTracking suppresses dependency collection inside function template refs. That is documented intentional behaviour, not a bug: a function ref may run on each render and its dependencies should be tracked, because reactive state can determine which ref receives the value. vuejs/core merged this and reverted it eleven weeks later, closing two issues it caused and citing a downstream regression in radix-vue. The revert is the ground truth; nothing about the defect was written here.",
+  "why_it_is_hard": "The change is five lines, has a test, is correct against its own stated intent, and reads as textbook defensive reactivity hygiene. What it breaks is not visible from the diff and not mentioned in the plan — it is a property of function refs documented in two issues from 2021. A reviewer has to know, or work out, that suppressing tracking here is a behaviour change rather than an optimisation.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/runtime-core/src/rendererTemplateRef.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "3587 passed | 6 skipped (3593) in 181 passed | 1 skipped (182)"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/vuejs/core",
+    "licence": "MIT",
+    "base_commit": "e450973eabc0038f398344b981acd8759c246c50",
+    "head_commit": "3ac052b6b1e9d3978e98cc30a1a89a9b9b51358b",
+    "subject": "fix(runtime-core): pause tracking when invoking function refs (#14985)",
+    "reference": "https://github.com/vuejs/core/commit/3ac052b6b1e9d3978e98cc30a1a89a9b9b51358b",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "run",
+      "test-unit"
+    ]
+  },
+  "notes": "The first fixture of the `unstated_regression` class. Its defect was found by users rather than by review, which is what makes it the hardest kind available and the one nobody would think to seed. Four more reverts are available in the same repository's recent history."
+}

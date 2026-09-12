@@ -1,0 +1,55 @@
+{
+  "id": "cln-021-class-attribute-none-with-extra-allow",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P2",
+  "source": {
+    "kind": "commit",
+    "reference": "pydantic/pydantic@d098ddce",
+    "url": [
+      "https://github.com/pydantic/pydantic/commit/d098ddce8c5ab0c53b89094a3a5e3822fa39da02"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "None. This is a real merged commit in a real repository, and its cleanliness is a fact about the world rather than a claim by its author.",
+  "why_it_is_hard": "The fix introduces a module-level sentinel to distinguish 'absent' from 'present and None', which is the correct move and also the one that looks like unnecessary machinery next to a `getattr(cls, name, None)` that reads fine. Judging it needs the reader to notice that the old code cannot tell the two apart.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "12399 passed"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/pydantic/pydantic",
+    "licence": "MIT",
+    "base_commit": "efec1bb51c7a95813d85f1ef5543b4225013d20e",
+    "head_commit": "d098ddce8c5ab0c53b89094a3a5e3822fa39da02",
+    "subject": "Treat a class attribute set to `None` as existing when assigning with `extra='allow'` (#13718)",
+    "reference": "https://github.com/pydantic/pydantic/commit/d098ddce8c5ab0c53b89094a3a5e3822fa39da02",
+    "setup_commands": [
+      [
+        "uv",
+        "sync",
+        "--frozen",
+        "--all-groups",
+        "--all-packages",
+        "--all-extras"
+      ]
+    ],
+    "verify_command": [
+      "uv",
+      "run",
+      "pytest",
+      "-q",
+      "--no-header"
+    ]
+  },
+  "notes": "Drawn from a merged commit. Adds a new import and a module-level constant for a three-line behaviour change, which is a plausible over-engineering finding that is not one."
+}

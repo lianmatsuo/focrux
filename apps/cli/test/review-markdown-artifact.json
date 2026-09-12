@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "review_id": "rev_e8869bdb5f3afbd4",
+  "resumed_from": null,
+  "created_at": "2026-09-04T10:00:00.000Z",
+  "target": {
+    "type": "changeset",
+    "id": "cs_3e43051ab686d9d0",
+    "base_commit": "a1b2c3d",
+    "head_commit": "735bb69e1894ed7512e25e93446d7c576bc4d22f",
+    "prior_commits": []
+  },
+  "plan_id": "plan_markdown",
+  "plan_version": 3,
+  "planned_risk": "P1",
+  "actual_risk": "P1",
+  "escalated": false,
+  "independence": {
+    "context_builder": "reviewer_v9",
+    "executor_narrative_visible": false,
+    "executor_transcript_visible": false,
+    "separate_process": true,
+    "model_family": "same",
+    "grounded_in": [
+      "plan.acceptance_criteria",
+      "diff",
+      "check_results",
+      "selected_files"
+    ]
+  },
+  "context_manifest": [
+    {
+      "id": "ctx_1_plan_contract",
+      "kind": "plan_contract",
+      "trust": "user",
+      "provenance": "plan plan_markdown version 3",
+      "selection_reason": "the approved contract the change is judged against",
+      "bytes": 992,
+      "sha256": "7f5f275fd51956c50f874c0f58a1b2ebac96b6658c32945860582d99c58a76c9"
+    },
+    {
+      "id": "ctx_2_check_result",
+      "kind": "check_result",
+      "trust": "user",
+      "provenance": "deterministic checks recorded for this change set",
+      "selection_reason": "authoritative over any model claim about what they measured",
+      "bytes": 477,
+      "sha256": "e0a62efb775fcf1b41d6a8368d17af0a4f19dd7efe474f086393ee495ceeb6b2"
+    },
+    {
+      "id": "ctx_3_diff",
+      "kind": "diff",
+      "trust": "repo",
+      "provenance": "a1b2c3d -> 735bb69e1894ed7512e25e93446d7c576bc4d22f",
+      "selection_reason": "the change under review",
+      "bytes": 265,
+      "sha256": "735bb69e1894ed7512e25e93446d7c576bc4d22f26a5f681be0858a20c00855e"
+    },
+    {
+      "id": "ctx_4_repo_tree",
+      "kind": "repo_tree",
+      "trust": "repo",
+      "provenance": "working tree at head",
+      "selection_reason": "so the reviewer can choose which files to open",
+      "bytes": 40,
+      "sha256": "30d44639a395792e249ee01bc565b55264fa5c320630d37ec779bd35b9140bce"
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "check_ut",
+      "name": "unit",
+      "kind": "unit",
+      "status": "passed",
+      "summary": "2 passed",
+      "command": "vitest run",
+      "detail": null,
+      "duration_ms": null,
+      "source": "file"
+    },
+    {
+      "check_id": "check_lint",
+      "name": "lint",
+      "kind": "lint",
+      "status": "failed",
+      "summary": "1 error",
+      "command": "eslint .",
+      "detail": "packages/search/src/query.ts: prefer const",
+      "duration_ms": null,
+      "source": "file"
+    },
+    {
+      "check_id": "check_scope",
+      "name": "scope",
+      "kind": "scope",
+      "status": "passed",
+      "summary": "0 outside paths_allowed",
+      "command": "1 files changed",
+      "detail": null,
+      "duration_ms": null,
+      "source": "computed"
+    },
+    {
+      "check_id": "check_agent_config",
+      "name": "agent-config",
+      "kind": "policy",
+      "status": "passed",
+      "summary": "0 agent-configuration paths",
+      "command": "ADR-0030",
+      "detail": null,
+      "duration_ms": null,
+      "source": "computed"
+    },
+    {
+      "check_id": "check_legibility",
+      "name": "change set is readable",
+      "kind": "lint",
+      "status": "passed",
+      "summary": "every changed file renders in the diff",
+      "command": "(computed from the change set)",
+      "detail": null,
+      "duration_ms": null,
+      "source": "computed"
+    }
+  ],
+  "overrides": [],
+  "coverage": [
+    {
+      "criterion_id": "ac_1",
+      "status": "met",
+      "verification_strength": "directly_verified",
+      "evidence": {
+        "type": "test_result",
+        "ref": "check_ut",
+        "assertion": "expect(hits).toHaveLength(25)",
+        "location": {
+          "file": "packages/search/test/query.test.ts",
+          "line": 7,
+          "symbol": null
+        }
+      },
+      "note": null,
+      "authored_in_response_to": null
+    },
+    {
+      "criterion_id": "ac_2",
+      "status": "not_met",
+      "verification_strength": "asserted_only",
+      "evidence": null,
+      "note": "No test reads the total back.",
+      "authored_in_response_to": null
+    }
+  ],
+  "findings": [
+    {
+      "key": "da18542554d755278fb95da30b5486061595fe4ea4c84e9388cb9f7a0c2bcc4c",
+      "rule_id": "check.lint",
+      "source": "deterministic",
+      "criterion_id": null,
+      "severity": "blocker",
+      "blocking": true,
+      "blocking_reason": "deterministic: a security, scope or check failure always blocks — no confidence term",
+      "routing": "blocks",
+      "row": "deterministic",
+      "closure": null,
+      "direction": null,
+      "caused_by_change": null,
+      "confidence": null,
+      "file": null,
+      "line": null,
+      "symbol": "lint",
+      "statement": "The lint check failed (1 error). Its last lines:\npackages/search/src/query.ts: prefer const",
+      "status": "open",
+      "outcome": "unknown",
+      "waiver": null
+    },
+    {
+      "key": "4754a376cd57f199d391d0fab4f918edb36779671b604cec70dae396b9abd9a0",
+      "rule_id": "criterion.not_met",
+      "source": "semantic",
+      "criterion_id": "ac_2",
+      "severity": "blocker",
+      "blocking": false,
+      "blocking_reason": "contract: an acceptance criterion the plan requires is not met, and the plan already states the behaviour, so it returns to the executor as work and the change set is reviewed again",
+      "routing": "remediable",
+      "row": "contract",
+      "closure": "executor",
+      "direction": null,
+      "caused_by_change": null,
+      "confidence": 0.62,
+      "file": null,
+      "line": null,
+      "symbol": null,
+      "statement": "ac_2 is not met: No test reads the total back.",
+      "status": "open",
+      "outcome": "unknown",
+      "waiver": null
+    },
+    {
+      "key": "c70a0b8d5c1c05165ae0118b46812c9456e5c5402f4104e8ba0d2447c04ba518",
+      "rule_id": "criterion.unverified",
+      "source": "semantic",
+      "criterion_id": "ac_2",
+      "severity": "major",
+      "blocking": false,
+      "blocking_reason": "semantic on a P1 change naming ac_2, negative and closable by the executor: returned as work rather than shown (D-081), then reviewed again",
+      "routing": "remediable",
+      "row": "semantic_ordinary",
+      "closure": "executor",
+      "direction": "negative",
+      "caused_by_change": null,
+      "confidence": 0.71,
+      "file": "packages/search/src/query.ts",
+      "line": 2,
+      "symbol": "total",
+      "statement": "The total is exported as a constant rather than counted, so nothing\nestablishes that it tracks the query.",
+      "status": "open",
+      "outcome": "unknown",
+      "waiver": null
+    },
+    {
+      "key": "e2bca21b1104ccf81f42893571a91d174abf20f1269efa7eb4b62b8fdb82521d",
+      "rule_id": "naming.exported_constant_case",
+      "source": "semantic",
+      "criterion_id": "ac_1",
+      "severity": "minor",
+      "blocking": false,
+      "blocking_reason": "ordinary semantic finding: advisory by default",
+      "routing": "advisory",
+      "row": "semantic_ordinary",
+      "closure": "executor",
+      "direction": "neutral",
+      "caused_by_change": null,
+      "confidence": 0.4,
+      "file": "packages/search/src/query.ts",
+      "line": null,
+      "symbol": null,
+      "statement": "`total` is exported in lower case beside `PAGE`.",
+      "status": "open",
+      "outcome": "unknown",
+      "waiver": null
+    }
+  ],
+  "scope_deviation": {
+    "files_outside_scope": [],
+    "files_in_prohibited_paths": [],
+    "files_exempt_as_generated": [],
+    "within_expansion_budget": true,
+    "expansion_budget_files": 3
+  },
+  "rejected_verdicts": [],
+  "decision": "changes_requested",
+  "routing_policy": "d069",
+  "remediation": null,
+  "confidence": 0.62,
+  "cost_micros": 43500,
+  "latency_ms": 0,
+  "model": {
+    "provider": "double",
+    "model_id": "scripted",
+    "prompt_version": "reviewer_v9",
+    "input_tokens": 4200,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 900,
+    "cost_basis": "provider_list_estimate"
+  },
+  "error": null
+}

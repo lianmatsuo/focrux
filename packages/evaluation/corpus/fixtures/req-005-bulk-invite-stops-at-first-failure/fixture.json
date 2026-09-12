@@ -1,0 +1,38 @@
+{
+  "id": "req-005-bulk-invite-stops-at-first-failure",
+  "class": "requirement_omission",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that satisfies the stated outcome for the case in front of it and drops a case the criterion names",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2353017"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "`inviteAll` calls `send` directly instead of going through `invite`, so it does not catch. The first address that fails throws out of the loop: everyone after it is never invited, and the caller gets an exception instead of the per-address results ac_2 asks for.",
+  "why_it_is_hard": "The single-invite function right above it does exactly the right thing, so the correct code is visible in the same file and was not reused. The test covers the happy path completely and honestly, and the omission is the absence of a second test rather than anything wrong in the first.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/teams/src/invite.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The pattern is 'the helper that handles the failure exists and the new caller bypasses it', which is the most common shape of this class in real code."
+}

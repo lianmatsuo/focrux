@@ -1,0 +1,24 @@
+[
+  {
+    "check_id": "check_ut",
+    "name": "unit",
+    "kind": "unit",
+    "status": "passed",
+    "summary": "29723 passed, 5 skipped (1505 suites), 12119 snapshots passed",
+    "command": "yarn test",
+    "detail": "Measured at the pinned head commit on 2026-08-29, not declared. The suite is green and the regression was found downstream: prettier reverted the next day because it broke `prettier-ignore`. The evidence was inside the diff — tests/format/js/ignore/__snapshots__ gained a semicolon on a prettier-ignored node and the snapshot was updated to accept it, which is how a green suite and a broken feature coexist here.",
+    "duration_ms": 312000,
+    "source": "file"
+  },
+  {
+    "check_id": "check_baseline",
+    "name": "fail-first",
+    "kind": "regression-baseline",
+    "status": "passed",
+    "summary": "the change's own tests failed at the base commit",
+    "command": "yarn test (at 75c46513c913, tests only)",
+    "detail": "The tests added or changed by this diff were applied to the base commit and failed against the unfixed code, then passed at the head commit. They discriminate. Test files applied: tests/config/format-test/failed-format-tests.js, tests/format/js/ignore/__snapshots__/format.test.js.snap, tests/format/js/sequence-expression/__snapshots__/format.test.js.snap, tests/format/js/sequence-expression/parenthesized-trailing-comment-unstable.js, tests/format/js/sequence-expression/parenthesized-trailing-comment.js, tests/format/markdown/markdown/__snapshots__/format.test.js.snap.",
+    "duration_ms": 80628,
+    "source": "file"
+  }
+]

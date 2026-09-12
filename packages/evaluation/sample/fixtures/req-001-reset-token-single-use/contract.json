@@ -1,0 +1,60 @@
+{
+  "plan_id": "plan_req001",
+  "version": 1,
+  "ticket_id": "ticket_req001",
+  "level": "P2",
+  "outcome": "A user who has forgotten their password can set a new one from a single-use emailed link.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A valid, unexpired reset token sets the user's new password.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "resetPassword with a fresh token changes the stored password hash"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A reset token cannot be used to set a password a second time.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a second resetPassword call with the same token is refused"
+      }
+    },
+    {
+      "id": "ac_3",
+      "text": "An expired or unknown token is refused with a reason.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "expired and unknown tokens return ok:false with a reason"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/accounts/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "No schema change. Existing reset tokens keep their current lifetime.",
+  "security_impact": "Touches the credential recovery path.",
+  "rollout": "Ships with the release; no flag.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "9817caa",
+    "context_manifest_hash": "sha256:1fc8e7399ac83ccabb04cf07aae3403186f95b2caa11ce6c0d1b6136cb2035d9",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

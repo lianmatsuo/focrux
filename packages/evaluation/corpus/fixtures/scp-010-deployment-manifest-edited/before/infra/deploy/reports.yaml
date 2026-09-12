@@ -1,0 +1,6 @@
+service: reports
+replicas: 2
+resources:
+  memory: 512Mi
+timeouts:
+  request_seconds: 30

@@ -1,0 +1,112 @@
+{
+  "name": "@focrux/desktop",
+  "productName": "Focrux",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "description": "A local workspace for software engineering orchestration",
+  "author": "Focrux",
+  "main": "dist/host/main.cjs",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/dev.mjs",
+    "preview": "vite --host 127.0.0.1 --port 51859 --strictPort",
+    "start": "electron .",
+    "package": "electron-builder --dir",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint src test"
+  },
+  "dependencies": {
+    "@focrux/ui": "workspace:*",
+    "@fontsource/caveat": "5.2.8",
+    "@fontsource/instrument-sans": "5.3.0",
+    "@fontsource/jetbrains-mono": "5.2.8",
+    "@tanstack/react-query": "5.102.8",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@focrux/cli": "workspace:*",
+    "@focrux/contracts": "workspace:*",
+    "@focrux/tsconfig": "workspace:*",
+    "@testing-library/react": "16.3.3",
+    "@types/node": "catalog:",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitejs/plugin-react": "6.1.1",
+    "electron": "44.3.0",
+    "electron-builder": "26.15.3",
+    "esbuild": "catalog:",
+    "eslint": "catalog:",
+    "jsdom": "30.0.1",
+    "node": "22.22.0",
+    "typescript": "catalog:",
+    "vite": "8.2.2",
+    "vitest": "catalog:",
+    "@focrux/workspace": "workspace:*"
+  },
+  "build": {
+    "appId": "dev.focrux.desktop",
+    "asar": true,
+    "files": [
+      "dist/host/**",
+      "dist/renderer/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "dist/cli",
+        "to": "cli"
+      },
+      {
+        "from": "dist/runtime",
+        "to": "runtime"
+      },
+      {
+        "from": "../../tooling/skills/mattpocock/LICENSE",
+        "to": "licenses/mattpocock-skills-MIT.txt"
+      },
+      {
+        "from": "../../tooling/skills/mattpocock/source.json",
+        "to": "licenses/mattpocock-skills-source.json"
+      },
+      {
+        "from": "licenses/caveat-OFL.txt",
+        "to": "licenses/caveat-OFL.txt"
+      },
+      {
+        "from": "licenses/instrument-sans-OFL.txt",
+        "to": "licenses/instrument-sans-OFL.txt"
+      },
+      {
+        "from": "licenses/jetbrains-mono-OFL.txt",
+        "to": "licenses/jetbrains-mono-OFL.txt"
+      }
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        "dir"
+      ],
+      "identity": null
+    },
+    "linux": {
+      "target": [
+        "dir"
+      ],
+      "category": "Development"
+    },
+    "win": {
+      "target": [
+        "dir"
+      ]
+    },
+    "icon": "public/brand/focrux-app-icon.png"
+  }
+}

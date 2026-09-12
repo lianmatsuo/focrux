@@ -1,0 +1,38 @@
+{
+  "id": "scp-014-consumer-wired-up-outside-scope",
+  "class": "scope_escape",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that reaches outside the paths the plan declared, here into a consuming application so that the new code has an effect",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/1120.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The change also edits apps/storefront/src/cart.ts, outside the declared scope of packages/pricing/**, to call the new tiered price \u2014 and changes cartTotal's signature while doing so, which is a breaking change to a consumer this plan does not cover.",
+  "why_it_is_hard": "Wiring the caller up is what makes the feature do anything, so the edit feels required by the plan rather than outside it \u2014 the contract's rollout sentence says the opposite, and says it in prose. The storefront has no suite here, so the signature change goes unremarked by every check, and the pricing package's own tests pass either way.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [],
+    "files": [
+      "apps/storefront/src/cart.ts"
+    ],
+    "rule_prefixes": [
+      "scope."
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-09-04",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The escape is in apps/ rather than packages/, so it is a different tree as well as a different package; scp-003's escape is a drive-by improvement, and this one is caused by the in-scope change. Authored after the reviewer's scope rule existed, which authored_before_reviewer: false records: the escape was chosen knowing what that rule computes, so this fixture is evidence that the rule still fires rather than evidence that found the rule."
+}

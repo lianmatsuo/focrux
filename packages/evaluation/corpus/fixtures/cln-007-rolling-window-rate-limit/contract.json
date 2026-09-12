@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_cln007",
+  "version": 1,
+  "ticket_id": "ticket_cln007",
+  "level": "P1",
+  "outcome": "An account cannot flood the API.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An account's first 100 requests in a minute are allowed.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "100 successive calls return true"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "No account exceeds 100 requests in any 60-second period.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "no 60-second span contains more than 100 allowed requests"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/gate/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "e52d7fb",
+    "context_manifest_hash": "sha256:79280d3be206c28e211b6ffe85d1becf4174397305394da23fb03e71584758b4",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

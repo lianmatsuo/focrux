@@ -1,0 +1,36 @@
+diff --git a/packages/integrations/src/endpoint.ts b/packages/integrations/src/endpoint.ts
+index 41db934..fdc4aba 100644
+--- a/packages/integrations/src/endpoint.ts
++++ b/packages/integrations/src/endpoint.ts
+@@ -7,3 +7,12 @@ export function isHttps(url: string): boolean {
+     return false;
+   }
+ }
++
++const BLOCKED_HOSTS = new Set(["localhost", "127.0.0.1", "0.0.0.0", "::1"]);
++
++/** Check a customer-supplied endpoint before we make requests to it. */
++export function isDeliverable(url: string): boolean {
++  if (!isHttps(url)) return false;
++  const host = new URL(url).hostname;
++  return !BLOCKED_HOSTS.has(host);
++}
+diff --git a/packages/integrations/test/endpoint.test.ts b/packages/integrations/test/endpoint.test.ts
+new file mode 100644
+index 0000000..4d61e85
+--- /dev/null
++++ b/packages/integrations/test/endpoint.test.ts
+@@ -0,0 +1,13 @@
++import { describe, expect, it } from "vitest";
++import { isDeliverable } from "../src/endpoint.js";
++
++describe("isDeliverable", () => {
++  it("accepts an ordinary https endpoint", () => {
++    expect(isDeliverable("https://hooks.example.com/x")).toBe(true);
++  });
++
++  it("refuses loopback", () => {
++    expect(isDeliverable("https://localhost/x")).toBe(false);
++    expect(isDeliverable("https://127.0.0.1/x")).toBe(false);
++  });
++});

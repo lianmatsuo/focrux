@@ -1,0 +1,38 @@
+{
+  "id": "scp-006-generated-client-hand-edited",
+  "class": "scope_escape",
+  "defective": true,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A change that reaches outside the paths the plan declared, including through a file that is generated or shared",
+    "url": [
+      "https://queue.acm.org/detail.cfm?id=2884038"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "`api.generated.ts` is declared generated and is edited by hand to add `role?: string`, so the type now claims a field the server contract does not define. The next `pnpm codegen` erases it and `isAdmin` stops compiling; until then, the authorisation decision rests on a field that may never be sent. The contract lists the path as generated, which means it is not a place a change may be made.",
+  "why_it_is_hard": "The edit is one optional property in a file whose header says not to edit it, and it is inside `packages/portal/**`, so a path-prefix reading of the scope allows it. Only the generated-path rule catches it, and the consequence — an authorisation check reading a field nobody guarantees — is a security question hiding inside a scope question.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [
+      "packages/portal/src/api.generated.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "Scope escape through a generated file: allowed by the path prefix, forbidden by the generated-paths rule, and the fixture is whether the reviewer applies the second. 2026-08-29: the contract gained generated_sources for **/*.generated.ts. The declaration is the plan a codegen-owning package would really carry, and it is what makes the seeded escape deterministically catchable; before it, the exemption was silent and the reviewer approved 3/3 (round 2)."
+}

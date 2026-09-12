@@ -1,0 +1,200 @@
+diff --git a/packages/importer/README.md b/packages/importer/README.md
+index 6a99d66..528fc2f 100644
+--- a/packages/importer/README.md
++++ b/packages/importer/README.md
+@@ -1,3 +1,4 @@
+ # importer
+ 
+-Imports contacts from CSV files.
++Imports contacts from CSV files. The email column is found by normalising the
++header rather than matching spellings, and headerless files are detected.
+diff --git a/packages/importer/src/import.ts b/packages/importer/src/import.ts
+index 98f9ea8..108274c 100644
+--- a/packages/importer/src/import.ts
++++ b/packages/importer/src/import.ts
+@@ -1,9 +1,98 @@
+-export interface ImportedRow {
+-  email: string;
++export interface ImportResult {
++  imported: string[];
++  rejected: Array<{ row: number; reason: string }>;
+ }
+ 
+-/** First cut: assumes column 0 is the email and every file has a header. */
+-export function importCsv(text: string): ImportedRow[] {
+-  const [, ...rows] = text.trim().split(/\r?\n/);
+-  return rows.map((row) => ({ email: row.split(",")[0] ?? "" }));
++const EMAIL_SHAPE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
++
++/**
++ * A header cell names an email column when, split into words, it contains
++ * "email" or "mail" as a word. Splitting covers separators and camelCase, so
++ * "E-Mail", "e mail address", "CONTACT_EMAIL", "EmailAddress" and "MailAddress"
++ * all reduce to the same test — normalisation, not enumeration — while
++ * "mailing_list" does not, because "mailing" is a different word.
++ */
++export function namesEmailColumn(cell: string): boolean {
++  const words = cell
++    .replace(/([a-z])([A-Z])/g, "$1 $2")
++    .toLowerCase()
++    .replace(/[^a-z]+/g, " ")
++    .trim()
++    .split(" ");
++  return words.some((word) => word === "email" || word === "mail");
++}
++
++/** RFC 4180 fields: quoted cells may hold commas, and "" inside quotes is a literal quote. */
++const splitRow = (row: string): string[] => {
++  const cells: string[] = [];
++  let cell = "";
++  let quoted = false;
++  for (let i = 0; i < row.length; i += 1) {
++    const ch = row[i];
++    if (quoted) {
++      if (ch === '"' && row[i + 1] === '"') {
++        cell += '"';
++        i += 1;
++      } else if (ch === '"') {
++        quoted = false;
++      } else {
++        cell += ch;
++      }
++    } else if (ch === '"' && cell.trim() === "") {
++      cell = "";
++      quoted = true;
++    } else if (ch === ",") {
++      cells.push(cell.trim());
++      cell = "";
++    } else {
++      cell += ch;
++    }
++  }
++  cells.push(cell.trim());
++  return cells;
++};
++
++interface NumberedRow {
++  cells: string[];
++  /** 1-based line number in the original file, blank lines included. */
++  line: number;
++}
++
++/**
++ * A row is a header when no cell in it is email-shaped and at least one names
++ * an email column. Headerless files are detected by scanning every row for an
++ * email-shaped column, not just the first — one malformed leading row must not
++ * reject the whole file.
++ */
++function findEmailColumn(rows: NumberedRow[]): { column: number; hasHeader: boolean } | null {
++  const first = rows[0];
++  if (!first) return null;
++  const named = first.cells.findIndex(namesEmailColumn);
++  if (named !== -1 && !first.cells.some((cell) => EMAIL_SHAPE.test(cell))) {
++    return { column: named, hasHeader: true };
++  }
++  for (const row of rows) {
++    const shaped = row.cells.findIndex((cell) => EMAIL_SHAPE.test(cell));
++    if (shaped !== -1) return { column: shaped, hasHeader: false };
++  }
++  return null;
++}
++
++export function importCsv(text: string): ImportResult {
++  const rows: NumberedRow[] = text
++    .split(/\r?\n/)
++    .map((row, index) => ({ cells: splitRow(row), line: index + 1, blank: row.trim().length === 0 }))
++    .filter((row) => !row.blank)
++    .map(({ cells, line }) => ({ cells, line }));
++  const found = findEmailColumn(rows);
++  if (!found) return { imported: [], rejected: [{ row: 1, reason: "no email column found" }] };
++
++  const dataRows = found.hasHeader ? rows.slice(1) : rows;
++  const result: ImportResult = { imported: [], rejected: [] };
++  for (const { cells, line } of dataRows) {
++    const email = cells[found.column] ?? "";
++    if (EMAIL_SHAPE.test(email)) result.imported.push(email.toLowerCase());
++    else result.rejected.push({ row: line, reason: `not an email address: "${email}"` });
++  }
++  return result;
+ }
+diff --git a/packages/importer/test/import.test.ts b/packages/importer/test/import.test.ts
+new file mode 100644
+index 0000000..3b86625
+--- /dev/null
++++ b/packages/importer/test/import.test.ts
+@@ -0,0 +1,75 @@
++import { describe, expect, it } from "vitest";
++import { importCsv, namesEmailColumn } from "../src/import.js";
++
++describe("header detection", () => {
++  it.each([
++    "Email",
++    "e-mail",
++    "E MAIL ADDRESS",
++    "contact_email",
++    "Work E-Mail",
++    "MAIL",
++    "EmailAddress",
++    "MailAddress",
++  ])("recognises %s as an email column", (header) => {
++    expect(namesEmailColumn(header)).toBe(true);
++  });
++
++  it("does not mistake unrelated columns for the email one", () => {
++    expect(namesEmailColumn("customer name")).toBe(false);
++    expect(namesEmailColumn("mailing_list_opt_out_reason_code")).toBe(false);
++    expect(namesEmailColumn("MailingList")).toBe(false);
++  });
++
++  it("selects the named column wherever it sits", () => {
++    const result = importCsv("name,E-Mail\nAda,ada@example.test\nBen,ben@example.test");
++    expect(result.imported).toEqual(["ada@example.test", "ben@example.test"]);
++  });
++});
++
++describe("headerless files", () => {
++  it("imports every row including the first", () => {
++    const result = importCsv("Ada,ada@example.test\nBen,ben@example.test");
++    expect(result.imported).toEqual(["ada@example.test", "ben@example.test"]);
++    expect(result.rejected).toEqual([]);
++  });
++
++  it("still finds the column when the first row's email cell is malformed", () => {
++    const result = importCsv("Ada,not-an-address\nBen,ben@example.test\nCy,cy@example.test");
++    expect(result.imported).toEqual(["ben@example.test", "cy@example.test"]);
++    expect(result.rejected).toEqual([{ row: 1, reason: 'not an email address: "not-an-address"' }]);
++  });
++});
++
++describe("per-row rejection", () => {
++  it("reports each bad row with its number and imports the rest", () => {
++    const result = importCsv("email\nada@example.test\nnot-an-address\nben@example.test");
++    expect(result.imported).toEqual(["ada@example.test", "ben@example.test"]);
++    expect(result.rejected).toEqual([{ row: 3, reason: 'not an email address: "not-an-address"' }]);
++  });
++
++  it("numbers rejected rows by their line in the file, blank lines included", () => {
++    const result = importCsv("email\nada@example.test\n\nnot-an-address\nben@example.test");
++    expect(result.imported).toEqual(["ada@example.test", "ben@example.test"]);
++    expect(result.rejected).toEqual([{ row: 4, reason: 'not an email address: "not-an-address"' }]);
++  });
++
++  it("reports a file with no findable email column instead of guessing", () => {
++    const result = importCsv("name,age\nAda,36");
++    expect(result.imported).toEqual([]);
++    expect(result.rejected[0]?.reason).toContain("no email column");
++  });
++});
++
++describe("quoted fields", () => {
++  it("keeps a quoted comma inside its cell instead of shifting columns", () => {
++    const result = importCsv('name,email\n"Doe, Jane",jane@example.test');
++    expect(result.imported).toEqual(["jane@example.test"]);
++    expect(result.rejected).toEqual([]);
++  });
++
++  it("reads an escaped quote as a literal quote", () => {
++    const result = importCsv('name,email\n"the ""boss""",boss@example.test');
++    expect(result.imported).toEqual(["boss@example.test"]);
++  });
++});

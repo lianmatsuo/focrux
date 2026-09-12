@@ -1,0 +1,51 @@
+{
+  "id": "cln-013-compare-map-and-set-values",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P2",
+  "source": {
+    "kind": "commit",
+    "reference": "vuejs/core#15328",
+    "url": [
+      "https://github.com/vuejs/core/commit/ef82a26775952a665545d3771788bd23b2efec91"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "None. This is a real merged commit in a real repository, and its cleanliness is a fact about the world rather than a claim by its author.",
+  "why_it_is_hard": "The new comparison is quadratic in the collection size and allocates a Uint8Array of match flags. Both are defensible for loose equality of small collections and both look like findings. The reviewer has to decide whether an O(n squared) comparison is a defect or the only correct answer for a structure with no ordering.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "3692 passed | 6 skipped (3698) in 182 passed | 1 skipped (183)"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/vuejs/core",
+    "licence": "MIT",
+    "base_commit": "6eaecc14d8151a7d258b80ce0519e5ecc17a2bef",
+    "head_commit": "ef82a26775952a665545d3771788bd23b2efec91",
+    "subject": "fix(shared): correctly compare Map and Set values (#15328)",
+    "reference": "https://github.com/vuejs/core/commit/ef82a26775952a665545d3771788bd23b2efec91",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "run",
+      "test-unit"
+    ]
+  },
+  "notes": "Drawn from a merged commit. P2 because it touches shared code that several packages depend on."
+}

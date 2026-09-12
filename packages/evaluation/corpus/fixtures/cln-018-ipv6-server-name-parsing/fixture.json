@@ -1,0 +1,54 @@
+{
+  "id": "cln-018-ipv6-server-name-parsing",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P1",
+  "source": {
+    "kind": "commit",
+    "reference": "pallets/flask@7203feab",
+    "url": [
+      "https://github.com/pallets/flask/commit/7203feabf723edae0286ae5dc64fec8ac4c91735"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "BSD-3-Clause",
+    "code_copied": false
+  },
+  "defect": "None. This is a real merged commit in a real repository, and its cleanliness is a fact about the world rather than a claim by its author.",
+  "why_it_is_hard": "The fix replaces a `partition(':')` with `urlsplit(f'//{server_name}')`, which is a much larger hammer than the bug seems to need, and it silently changes what happens to a malformed server name. Whether that is over-reach or the only correct way to split a host from a port is the judgement the fixture asks for.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "493 passed in 1.01s"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/pallets/flask",
+    "licence": "BSD-3-Clause",
+    "base_commit": "de8429ffda8cfb54db175529e2bae72a24e1fa7e",
+    "head_commit": "7203feabf723edae0286ae5dc64fec8ac4c91735",
+    "subject": "Fix IPv6 server name parsing",
+    "reference": "https://github.com/pallets/flask/commit/7203feabf723edae0286ae5dc64fec8ac4c91735",
+    "setup_commands": [
+      [
+        "uv",
+        "sync",
+        "--group",
+        "tests"
+      ]
+    ],
+    "verify_command": [
+      "uv",
+      "run",
+      "--group",
+      "tests",
+      "pytest",
+      "-q"
+    ]
+  },
+  "notes": "Drawn from a merged commit in a Python repository. The corpus's clean changes were otherwise all TypeScript from one repository, which measured 'changes that survived vuejs/core's review' rather than 'clean changes'."
+}

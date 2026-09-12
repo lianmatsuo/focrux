@@ -1,0 +1,38 @@
+{
+  "id": "sec-009-connection-string-in-error-response",
+  "class": "security_introduction",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Credential disclosure through error and diagnostic paths",
+    "url": [
+      "https://owasp.org/Top10/"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The mapped error serialises `cause` and `config` straight into a response body. Driver and HTTP-client errors carry the connection string, the request headers and the bearer token in exactly those fields, so a failing upstream returns the product's own credentials to whoever made the request. ac_2 asks for the detail to be safe to return to a caller.",
+  "why_it_is_hard": "The motivation is real and stated, the opaque path is preserved for unknown errors, and the test asserts the useful case works. Whether `cause` and `config` are safe depends on what the libraries beneath put there — which is not in the diff and not something the test could reveal, because the test constructs a bare object with neither field populated.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/gateway/src/errors.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "The test that covers the new path constructs an error with none of the dangerous fields set, so it passes and demonstrates nothing about the disclosure."
+}

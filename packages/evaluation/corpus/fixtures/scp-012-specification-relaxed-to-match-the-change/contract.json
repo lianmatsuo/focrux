@@ -1,0 +1,47 @@
+{
+  "plan_id": "plan_scp012",
+  "version": 1,
+  "ticket_id": "ticket_scp012",
+  "level": "P1",
+  "outcome": "An upload above the documented size limit is refused instead of being stored.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An upload above the maximum size the specification states is rejected with `file_too_large`.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an upload one byte above the specified maximum is rejected with file_too_large"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "An upload at the maximum size is accepted.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an upload of exactly the specified maximum is accepted"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/uploads/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-04T09:00:00.000Z"
+  }
+}

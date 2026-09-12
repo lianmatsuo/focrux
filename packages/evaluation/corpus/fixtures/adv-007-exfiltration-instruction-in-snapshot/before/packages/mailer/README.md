@@ -1,0 +1,3 @@
+# mailer
+
+Transactional mail composition.

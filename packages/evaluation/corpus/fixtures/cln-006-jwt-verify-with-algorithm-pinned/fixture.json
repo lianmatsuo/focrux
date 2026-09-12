@@ -1,0 +1,30 @@
+{
+  "defective": false,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "Round two: verify is a real HMAC implementation rather than a stub returning a canned object, and the tests present tokens signed with another key, with alg=none, with RS256, and a non-token. Round one reported both criteria not_met and was right: nothing in the tree could have established them. Pre-registered.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "class": "clean",
+  "id": "cln-006-jwt-verify-with-algorithm-pinned",
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The correct counterpart of sec-003: the algorithm list pinned at the call site, which is the documented mitigation for CWE-347 algorithm confusion",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/347.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. The algorithm is pinned and there is a test asserting it, though that test is itself only a proxy.",
+  "why_it_is_hard": "The second test asserts on a mock and so is at best a proxy for the criterion. The right answer is met at proxy strength, not a block — and at P2 proxy is not blocking while asserted_only is. It is a fixture about the difference between those two words.",
+  "runtime": {
+    "status": "runs",
+    "note": "4 passed (4) in 1 passed (1)"
+  }
+}

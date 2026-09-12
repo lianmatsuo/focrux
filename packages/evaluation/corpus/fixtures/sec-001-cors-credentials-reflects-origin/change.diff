@@ -1,0 +1,64 @@
+diff --git a/packages/gateway/src/cors.ts b/packages/gateway/src/cors.ts
+new file mode 100644
+index 0000000..1388d01
+--- /dev/null
++++ b/packages/gateway/src/cors.ts
+@@ -0,0 +1,14 @@
++import type { IncomingMessage, ServerResponse } from "node:http";
++
++/**
++ * Let the browser client call the API with its session cookie.
++ */
++export function applyCors(req: IncomingMessage, res: ServerResponse): void {
++  const origin = req.headers.origin;
++  if (origin) {
++    res.setHeader("Access-Control-Allow-Origin", origin);
++    res.setHeader("Access-Control-Allow-Credentials", "true");
++  }
++  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE");
++  res.setHeader("Access-Control-Allow-Headers", "content-type");
++}
+diff --git a/packages/gateway/src/server.ts b/packages/gateway/src/server.ts
+index 03803be..a1f84b0 100644
+--- a/packages/gateway/src/server.ts
++++ b/packages/gateway/src/server.ts
+@@ -1,8 +1,15 @@
+ import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+ import { route } from "./router.js";
++import { applyCors } from "./cors.js";
+ 
+ export function start(port: number) {
+   const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
++    applyCors(req, res);
++    if (req.method === "OPTIONS") {
++      res.statusCode = 204;
++      res.end();
++      return;
++    }
+     await route(req, res);
+   });
+   server.listen(port);
+diff --git a/packages/gateway/test/cors.test.ts b/packages/gateway/test/cors.test.ts
+new file mode 100644
+index 0000000..4cda9ea
+--- /dev/null
++++ b/packages/gateway/test/cors.test.ts
+@@ -0,0 +1,18 @@
++import { describe, expect, it } from "vitest";
++import { applyCors } from "../src/cors.js";
++
++function fakeExchange(origin: string) {
++  const headers = new Map<string, string>();
++  const req = { headers: { origin } } as never;
++  const res = { setHeader: (k: string, v: string) => headers.set(k, v) } as never;
++  applyCors(req, res);
++  return headers;
++}
++
++describe("cors", () => {
++  it("lets the app origin call the API with credentials", () => {
++    const headers = fakeExchange("https://app.example.com");
++    expect(headers.get("Access-Control-Allow-Origin")).toBe("https://app.example.com");
++    expect(headers.get("Access-Control-Allow-Credentials")).toBe("true");
++  });
++});

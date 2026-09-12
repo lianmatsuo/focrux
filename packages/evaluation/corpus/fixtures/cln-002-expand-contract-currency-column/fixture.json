@@ -1,0 +1,31 @@
+{
+  "id": "cln-002-expand-contract-currency-column",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "The safe counterpart of the mig-001 hazard: nullable column with a default, CONCURRENTLY index, backfill and NOT NULL deferred to later migrations",
+    "url": [
+      "https://retool.com/blog/running-safe-database-migrations-using-postgres",
+      "https://gitlab.com/gitlab-org/gitlab/issues/38060"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. The migration is expand/contract and takes no lock that blocks writes.",
+  "why_it_is_hard": "It is deliberately adjacent to mig-001. A reviewer that has learned 'a migration in the diff means block' fails here, and that failure is a false block on a correct change — the false-block rate the corpus holds a reviewer to caps at 25%.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "notes": "Round two: ac_3 restated. Round one asked for proof that the migration does not block writes, which no test in this tree can give, and the reviewer correctly returned cannot_determine 3/3. The criterion now names what the SQL must contain, which is checkable by reading it. Pre-registered before the round-two re-run.",
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "plan_id": "plan_cln010",
+  "version": 1,
+  "ticket_id": "ticket_cln010",
+  "level": "P1",
+  "outcome": "Whitespace in user-supplied names is normalised.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Runs of whitespace collapse to a single space.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "'  a   b  ' becomes 'a b'"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A string already single-spaced is unchanged.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "'a b' is returned unchanged"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/text/src/**",
+      "packages/text/test/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "ec944cc",
+    "context_manifest_hash": "sha256:9b8571110b7d45e37b6b85a648a338cc0591337dfec0a9eba5b719e3c6a3a2e9",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

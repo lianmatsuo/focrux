@@ -1,0 +1,40 @@
+{
+  "id": "reg-011-shared-formatter-breaks-untouched-caller-test",
+  "class": "unstated_regression",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A shared formatter changed for display breaks a caller that parses its output back; the caller's own test is in a package the diff does not touch and the recorded unit check did not run. The shape the measured twenty's ticket 12 took, where a remediation round broke a repository test in another package and the loop closed on it.",
+    "url": [
+      "https://martinfowler.com/bliki/ParallelChange.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a — no upstream code",
+    "code_copied": false
+  },
+  "defect": "formatMoney now inserts thousands separators. packages/invoices renders amounts into a column the reconciliation import parses back as a number, and its own test — untouched by the diff — asserts that `Number(lastToken)` equals 1234.56; with the separator the token is \"1,234.56\", Number() of it is NaN, and the import breaks. ac_2 says every caller keeps working and every package's tests pass; the recorded unit check ran only packages/format.",
+  "why_it_is_hard": "The diff is five lines, correct against its own stated intent, and its own test is green. The breakage is in a file the diff never touched, in another package, and the check the reviewer is shown says passed because it ran only the changed package. The reviewer has to follow the import out of the change to the caller, read that caller's test, and see that the recorded check's command did not cover it.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/invoices/src/lines.ts",
+      "packages/invoices/test/lines.test.ts"
+    ],
+    "rule_prefixes": [
+      "regression."
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-09-06",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "suite_fails",
+    "note": "2 failed | 1 passed (3) in 1 failed | 1 passed (2)"
+  },
+  "notes": "Authored rather than drawn from a merged commit, deliberately: the shape is an unattended remediation that broke a test in a package the diff did not touch, and no public merged commit with that shape and a runnable before/ tree was at hand. The cost is the one the corpus README records for the authored clean fixtures: the defect is the author's claim, not a repository's history, and the pinned kind remains the class's standard. Authored as the second of a pair of fixtures for defects a reviewer had been observed to miss. The recorded unit check is honest about what it ran — a check that passed proves only what it ran — so the reviewer is not misled by the checks block, only by not reading past the diff; the contract names no caller, so the reviewer has to find one. expected_detection written before any reviewer ran against it."
+}

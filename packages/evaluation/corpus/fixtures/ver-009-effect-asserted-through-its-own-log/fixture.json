@@ -1,0 +1,45 @@
+{
+  "id": "ver-009-effect-asserted-through-its-own-log",
+  "class": "verification_defect",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Tests that pass without exercising the behaviour they name",
+    "url": [
+      "https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The retry loop never waits, so three deliveries leave in the same tick and a struggling endpoint receives a burst rather than a backoff — ac_2 asks for spacing. The retry test asserts on a module-level log array the change itself introduced, rather than on how many times the sender was called, so it measures the logging and not the delivery; the array is also never reset between tests, so its count carries over.",
+  "why_it_is_hard": "Asserting through an observable the change added is the most defensible-looking version of this defect: the log exists, it is accurate, and reading it feels like reading the behaviour. What it cannot show is the timing the criterion is about, and the shared array means the assertion would pass even if the second test called the sender once.",
+  "expected_detection": {
+    "mode": "coverage",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/webhooks/test/deliver.test.ts"
+    ],
+    "rule_prefixes": [],
+    "statuses": [
+      "not_met"
+    ],
+    "strengths": [
+      "proxy",
+      "asserted_only"
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "Pairs with ver-001 and ver-002, where the proxy is a mock; here the proxy is real output that the change itself produced."
+}

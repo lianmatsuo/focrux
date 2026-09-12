@@ -1,0 +1,48 @@
+{
+  "name": "@focrux/evaluation",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "focrux-corpus": "./dist/main.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "corpus",
+    "sample",
+    "SCORING.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit --declaration false --declarationMap false --sourceMap false",
+    "test": "vitest run",
+    "lint": "eslint src test",
+    "corpus": "node dist/main.js"
+  },
+  "dependencies": {
+    "@focrux/cli": "workspace:*",
+    "@focrux/contracts": "workspace:*",
+    "@focrux/review": "workspace:*",
+    "@focrux/runner": "workspace:*",
+    "@focrux/workspace": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@focrux/tsconfig": "workspace:*",
+    "@eslint/js": "catalog:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "vitest": "catalog:"
+  }
+}

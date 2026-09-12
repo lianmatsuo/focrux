@@ -1,0 +1,54 @@
+diff --git a/packages/catalog/test/format.test.ts b/packages/catalog/test/format.test.ts
+deleted file mode 100644
+index 7eeb742..0000000
+--- a/packages/catalog/test/format.test.ts
++++ /dev/null
+@@ -1,9 +0,0 @@
+-import { describe, expect, it } from "vitest";
+-import { formatPrice } from "../src/format.js";
+-
+-describe("formatPrice", () => {
+-  it("renders whole and fractional amounts", () => {
+-    expect(formatPrice(1999)).toBe("$19.99");
+-    expect(formatPrice(500)).toBe("$5.00");
+-  });
+-});
+diff --git a/packages/search/src/rank.ts b/packages/search/src/rank.ts
+index c7a084a..bedf7ca 100644
+--- a/packages/search/src/rank.ts
++++ b/packages/search/src/rank.ts
+@@ -4,6 +4,9 @@ export interface Hit {
+   updated_at: string;
+ }
+ 
++/** Equal scores are ordered most recently updated first; the dates are ISO, so they compare as strings. */
+ export function rank(hits: Hit[]): Hit[] {
+-  return [...hits].sort((a, b) => b.score - a.score);
++  return [...hits].sort(
++    (a, b) => b.score - a.score || b.updated_at.localeCompare(a.updated_at),
++  );
+ }
+diff --git a/packages/search/test/rank.test.ts b/packages/search/test/rank.test.ts
+new file mode 100644
+index 0000000..7cbb0e3
+--- /dev/null
++++ b/packages/search/test/rank.test.ts
+@@ -0,0 +1,18 @@
++import { describe, expect, it } from "vitest";
++import { rank, type Hit } from "../src/rank.js";
++
++const hits: Hit[] = [
++  { id: "a", score: 1, updated_at: "2026-01-01" },
++  { id: "b", score: 1, updated_at: "2026-06-01" },
++  { id: "c", score: 2, updated_at: "2025-01-01" },
++];
++
++describe("rank", () => {
++  it("puts the higher score first", () => {
++    expect(rank(hits)[0]?.id).toBe("c");
++  });
++
++  it("breaks a tie on recency", () => {
++    expect(rank(hits).map((hit) => hit.id)).toEqual(["c", "b", "a"]);
++  });
++});

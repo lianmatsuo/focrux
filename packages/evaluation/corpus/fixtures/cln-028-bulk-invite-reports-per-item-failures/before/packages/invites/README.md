@@ -1,0 +1,3 @@
+# invites
+
+Sends workspace invitations.

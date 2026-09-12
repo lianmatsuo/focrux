@@ -1,0 +1,38 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "mig-002-drop-column-still-read-by-live-code",
+  "class": "migration_hazard",
+  "plan_level": "P2",
+  "source": {
+    "kind": "postmortem",
+    "reference": "Expand/contract violated by contracting in the same release as the reader change. Documented as the canonical zero-downtime failure in the Postgres migration literature",
+    "url": [
+      "https://retool.com/blog/running-safe-database-migrations-using-postgres",
+      "https://medium.com/@antoniodipinto/zero-downtime-schema-migrations-in-postgresql-c138017e7f90"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "0031 drops legacy_email in the same release that stops selecting it. Migrations run before the rollout completes, so the previous version — still serving — selects a column that no longer exists.",
+  "why_it_is_hard": "Both halves are correct on their own and the diff is internally consistent: nothing left in the repository reads the column. The hazard is the version still running, which is not in the diff at all. The deploy order is stated in the package's own README.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/accounts/migrations/0031_drop_legacy_email.sql"
+    ],
+    "rule_prefixes": []
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "no test runner output was recognised"
+  }
+}

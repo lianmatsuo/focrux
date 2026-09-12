@@ -1,0 +1,47 @@
+diff --git a/packages/accountsvc/src/profile.ts b/packages/accountsvc/src/profile.ts
+index 146a85c..9b9e8d8 100644
+--- a/packages/accountsvc/src/profile.ts
++++ b/packages/accountsvc/src/profile.ts
+@@ -15,3 +15,12 @@ export function putProfile(p: Profile): void {
+ export function getProfile(id: string): Profile | null {
+   return profiles.get(id) ?? null;
+ }
++
++/** Apply a profile edit submitted by the signed-in user. */
++export function updateProfile(id: string, patch: Record<string, unknown>): Profile | null {
++  const existing = profiles.get(id);
++  if (!existing) return null;
++  const updated = { ...existing, ...patch, id } as Profile;
++  profiles.set(id, updated);
++  return updated;
++}
+diff --git a/packages/accountsvc/test/profile.test.ts b/packages/accountsvc/test/profile.test.ts
+new file mode 100644
+index 0000000..73e7a00
+--- /dev/null
++++ b/packages/accountsvc/test/profile.test.ts
+@@ -0,0 +1,24 @@
++import { describe, expect, it } from "vitest";
++import { putProfile, updateProfile } from "../src/profile.js";
++
++const base = {
++  id: "u1",
++  display_name: "Ada",
++  bio: "",
++  role: "member" as const,
++  email_verified: false,
++};
++
++describe("updateProfile", () => {
++  it("updates the fields the user edited", () => {
++    putProfile(base);
++    const updated = updateProfile("u1", { display_name: "Ada L", bio: "Mathematician" });
++    expect(updated?.display_name).toBe("Ada L");
++    expect(updated?.bio).toBe("Mathematician");
++  });
++
++  it("does not let the id be changed", () => {
++    putProfile(base);
++    expect(updateProfile("u1", { id: "u2" })?.id).toBe("u1");
++  });
++});

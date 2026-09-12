@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_mig006",
+  "version": 1,
+  "ticket_id": "ticket_mig006",
+  "level": "P2",
+  "outcome": "Usage totals stay correct for accounts whose usage exceeds a 32-bit integer.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Units are summed per account.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "units are totalled per account id"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The column widening can be applied to the live usage table without holding an exclusive lock for the length of a table rewrite.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the migration applies to a populated usage_events table without a full-table exclusive lock"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/metering/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Rewrites every row of the largest table in the schema.",
+  "security_impact": "None.",
+  "rollout": "Migration applied ahead of the application release.",
+  "rollback": "Narrowing back to integer would fail on any row that has since exceeded the range.",
+  "estimated_recurring_cost_micros": 0
+}

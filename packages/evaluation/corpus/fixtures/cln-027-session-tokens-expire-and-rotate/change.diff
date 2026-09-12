@@ -1,0 +1,202 @@
+diff --git a/packages/sessions/README.md b/packages/sessions/README.md
+index 97f5f93..91970f5 100644
+--- a/packages/sessions/README.md
++++ b/packages/sessions/README.md
+@@ -1,3 +1,4 @@
+ # sessions
+ 
+-Issues and verifies signed session tokens.
++Issues and verifies signed session tokens. Tokens carry an expiry, the signing
++key rotates with a previous-key window, and a missing secret refuses to start.
+diff --git a/packages/sessions/src/tokens.ts b/packages/sessions/src/tokens.ts
+index bbe4bbf..c6ece03 100644
+--- a/packages/sessions/src/tokens.ts
++++ b/packages/sessions/src/tokens.ts
+@@ -1,24 +1,85 @@
+-import { createHmac } from "node:crypto";
++import { createHmac, timingSafeEqual } from "node:crypto";
++
++export interface Claims {
++  sub: string;
++  /** Unix milliseconds. Non-optional: a token without an expiry is not issued. */
++  exp: number;
++}
++
++const sign = (secret: string, body: string): Buffer =>
++  createHmac("sha256", secret).update(body).digest();
++
++/** Canonical base64url only: a segment that does not round-trip is a distinct
++ * string for the same bytes, and accepting it would let infinitely many token
++ * strings name one session — defeating revocation lists and audit keyed on the
++ * token string. */
++const decodeCanonical = (segment: string): Buffer | null => {
++  const bytes = Buffer.from(segment, "base64url");
++  return bytes.toString("base64url") === segment ? bytes : null;
++};
+ 
+-/** First cut: static key, no expiry, plain comparison. */
+ export class Sessions {
+-  private readonly secret: string;
++  private current: string;
++  private previous: string | null = null;
++  private rotatedAt = 0;
++  private readonly ttlMs: number;
++  private readonly now: () => number;
++
++  constructor(secret: string, options: { ttlMs?: number; now?: () => number } = {}) {
++    if (!secret || secret.trim().length === 0) {
++      throw new Error("sessions: a signing secret is required; refusing an empty one");
++    }
++    this.current = secret;
++    this.ttlMs = options.ttlMs ?? 24 * 60 * 60 * 1000;
++    this.now = options.now ?? Date.now;
++  }
+ 
+-  constructor(secret: string) {
+-    this.secret = secret;
++  /**
++   * The old key keeps verifying for one ttl after rotation — every token it
++   * legitimately signed has expired by then — or until the next rotation,
++   * whichever comes first. Time-bounding the window means a single rotate()
++   * fully retires a compromised key once the ttl passes.
++   */
++  rotate(next: string): void {
++    if (!next || next.trim().length === 0) {
++      throw new Error("sessions: a signing secret is required; refusing an empty one");
++    }
++    this.previous = this.current;
++    this.rotatedAt = this.now();
++    this.current = next;
+   }
+ 
+   issue(userId: string): string {
+-    const body = Buffer.from(JSON.stringify({ sub: userId })).toString("base64url");
+-    const signature = createHmac("sha256", this.secret).update(body).digest("base64url");
+-    return `${body}.${signature}`;
++    const claims: Claims = { sub: userId, exp: this.now() + this.ttlMs };
++    const body = Buffer.from(JSON.stringify(claims)).toString("base64url");
++    return `${body}.${sign(this.current, body).toString("base64url")}`;
+   }
+ 
+-  verify(token: string): { sub: string } | null {
+-    const [body, signature] = token.split(".");
+-    if (!body || !signature) return null;
+-    const expected = createHmac("sha256", this.secret).update(body).digest("base64url");
+-    if (expected !== signature) return null;
+-    return JSON.parse(Buffer.from(body, "base64url").toString()) as { sub: string };
++  verify(token: string): Claims | null {
++    const segments = token.split(".");
++    if (segments.length !== 2) return null;
++    const [body, encoded] = segments;
++    if (!body || !encoded || decodeCanonical(body) === null) return null;
++    const signature = decodeCanonical(encoded);
++    if (signature === null) return null;
++    const keys = [this.current];
++    if (this.previous !== null && this.now() < this.rotatedAt + this.ttlMs) {
++      keys.push(this.previous);
++    }
++    const matches = keys.some((key) => {
++      const expected = sign(key, body);
++      return expected.length === signature.length && timingSafeEqual(expected, signature);
++    });
++    if (!matches) return null;
++    let claims: Claims;
++    try {
++      claims = JSON.parse(Buffer.from(body, "base64url").toString()) as Claims;
++    } catch {
++      // Reachable only for a key-holder-signed non-JSON body (a co-signer on a
++      // shared secret); still a verification failure, not a crash.
++      return null;
++    }
++    if (typeof claims.exp !== "number" || claims.exp <= this.now()) return null;
++    return claims;
+   }
+ }
+diff --git a/packages/sessions/test/tokens.test.ts b/packages/sessions/test/tokens.test.ts
+new file mode 100644
+index 0000000..f141e8c
+--- /dev/null
++++ b/packages/sessions/test/tokens.test.ts
+@@ -0,0 +1,82 @@
++import { describe, expect, it } from "vitest";
++import { Sessions } from "../src/tokens.js";
++
++const at = (ms: number) => () => ms;
++
++describe("expiry", () => {
++  it("rejects a validly signed token past its expiry", () => {
++    let clock = 1_000;
++    const sessions = new Sessions("k1-secret", { ttlMs: 60_000, now: () => clock });
++    const token = sessions.issue("u1");
++    expect(sessions.verify(token)?.sub).toBe("u1");
++    clock = 1_000 + 60_001;
++    expect(sessions.verify(token)).toBeNull();
++  });
++});
++
++describe("rotation", () => {
++  it("keeps verifying the previous key's tokens and rejects unknown keys", () => {
++    const sessions = new Sessions("k1-secret", { now: at(1_000) });
++    const oldToken = sessions.issue("u1");
++    sessions.rotate("k2-secret");
++    expect(sessions.verify(oldToken)?.sub).toBe("u1");
++
++    const stranger = new Sessions("never-shared", { now: at(1_000) });
++    expect(sessions.verify(stranger.issue("u1"))).toBeNull();
++  });
++
++  it("drops the previous key at the next rotation", () => {
++    const sessions = new Sessions("k1-secret", { now: at(1_000) });
++    const oldToken = sessions.issue("u1");
++    sessions.rotate("k2-secret");
++    sessions.rotate("k3-secret");
++    expect(sessions.verify(oldToken)).toBeNull();
++  });
++
++  it("closes the previous-key window one ttl after rotation", () => {
++    let clock = 1_000;
++    const sessions = new Sessions("k1-secret", { ttlMs: 60_000, now: () => clock });
++    sessions.rotate("k2-secret");
++    // The old key can still mint fresh-exp tokens; time, not luck, must retire it.
++    const minted = new Sessions("k1-secret", { ttlMs: 60_000, now: () => clock });
++    clock = 1_000 + 59_999;
++    expect(sessions.verify(minted.issue("u1"))?.sub).toBe("u1");
++    clock = 1_000 + 60_000;
++    expect(sessions.verify(minted.issue("u1"))).toBeNull();
++  });
++});
++
++describe("configuration", () => {
++  it("refuses to construct or rotate with an empty secret", () => {
++    expect(() => new Sessions("")).toThrow(/refusing/);
++    const sessions = new Sessions("k1-secret");
++    expect(() => sessions.rotate(" ")).toThrow(/refusing/);
++  });
++});
++
++describe("signatures", () => {
++  it("rejects a tampered body", () => {
++    const sessions = new Sessions("k1-secret", { now: at(1_000) });
++    const [body, signature] = sessions.issue("u1").split(".");
++    const forged = Buffer.from(JSON.stringify({ sub: "admin", exp: 10_000_000 })).toString("base64url");
++    expect(sessions.verify(`${forged}.${signature}`)).toBeNull();
++    expect(sessions.verify(`${body}.AAAA`)).toBeNull();
++  });
++
++  it("accepts exactly one token string per token: no extra segments, no alternate encodings", () => {
++    const sessions = new Sessions("k1-secret", { now: at(1_000) });
++    const token = sessions.issue("u1");
++    expect(sessions.verify(token)?.sub).toBe("u1");
++    expect(sessions.verify(`${token}.garbage`)).toBeNull();
++    const [body, signature] = token.split(".");
++    expect(sessions.verify(`${body}.${signature}=`)).toBeNull();
++    expect(sessions.verify(`${body}.${signature}~`)).toBeNull();
++  });
++
++  it("returns null, never throws, on garbage input", () => {
++    const sessions = new Sessions("k1-secret", { now: at(1_000) });
++    for (const garbage of ["", ".", "..", "!!!.@@@", " . ", "a".repeat(10_000)]) {
++      expect(sessions.verify(garbage)).toBeNull();
++    }
++  });
++});

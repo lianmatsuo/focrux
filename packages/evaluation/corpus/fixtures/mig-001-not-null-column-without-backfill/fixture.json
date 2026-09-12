@@ -1,0 +1,39 @@
+{
+  "id": "mig-001-not-null-column-without-backfill",
+  "class": "migration_hazard",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "postmortem",
+    "reference": "ALTER TABLE ... ADD COLUMN NOT NULL and a non-concurrent CREATE INDEX taking ACCESS EXCLUSIVE / write locks on a populated table",
+    "url": [
+      "https://retool.com/blog/running-safe-database-migrations-using-postgres",
+      "https://gitlab.com/gitlab-org/gitlab/issues/38060",
+      "https://medium.com/doctolib-engineering/adding-a-not-null-constraint-on-pg-faster-with-minimal-locking-38b2c00c4d1c"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a — the defect is a SQL statement shape, not code",
+    "code_copied": false
+  },
+  "defect": "0007 adds a NOT NULL column with no default and no backfill, then builds an index without CONCURRENTLY. Against a populated users table the first statement fails outright and the second blocks writes for the duration.",
+  "why_it_is_hard": "Migrations in this repository run against a scratch database created empty for each test run, so both statements succeed instantly and the migration check is green. The hazard needs rows, which no check here has.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/accounts/migrations/0007_add_verified_at.sql"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "notes": "",
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  }
+}

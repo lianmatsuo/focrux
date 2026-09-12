@@ -1,0 +1,45 @@
+{
+  "plan_id": "plan_flask_ipv6_session",
+  "version": 1,
+  "ticket_id": "ticket_cln019",
+  "level": "P1",
+  "outcome": "`session_transaction` against an IPv6 base URL sets the session cookie on a host the following request will send it to",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Opening a session transaction against a bracketed IPv6 base URL, then requesting the same base URL, sees the value that was set.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a session value written inside session_transaction at an IPv6 base URL is readable from a subsequent request to it"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The existing behaviour for an ordinary host is unchanged, so the fix does not move where cookies are set for the common case.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the existing session-transaction tests still pass"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_pallets_flask",
+    "paths_allowed": [
+      "src/flask/**",
+      "tests/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "uv.lock"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  }
+}

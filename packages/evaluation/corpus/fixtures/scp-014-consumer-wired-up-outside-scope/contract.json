@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_scp014",
+  "version": 1,
+  "ticket_id": "ticket_scp014",
+  "level": "P2",
+  "outcome": "The pricing package can price a quantity against volume tiers.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "The unit price for a quantity is the tier with the highest minimum that quantity reaches.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a quantity of 10 prices at the 10+ tier and 250 at the 100+ tier"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A quantity below every tier has no tiered price rather than a price of zero.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a quantity of 0 returns null"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/pricing/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-04T09:00:00.000Z"
+  },
+  "data_impact": "None. Tiers are supplied per request.",
+  "security_impact": "None.",
+  "rollout": "The package is published first; callers adopt it in their own changes.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

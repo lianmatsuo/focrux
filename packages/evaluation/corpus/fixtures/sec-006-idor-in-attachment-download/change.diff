@@ -1,0 +1,35 @@
+diff --git a/packages/files/src/download.ts b/packages/files/src/download.ts
+index 0d3431a..900d344 100644
+--- a/packages/files/src/download.ts
++++ b/packages/files/src/download.ts
+@@ -8,3 +8,10 @@ export async function download(session: Session, attachmentId: string): Promise<
+   if (attachment.account_id !== session.account_id) return null;
+   return attachment.bytes;
+ }
++
++/** Download several attachments in one request, for the bulk-export screen. */
++export async function downloadMany(session: Session, ids: string[]): Promise<Buffer[]> {
++  void session;
++  const found = await Promise.all(ids.map((id) => attachmentById(id)));
++  return found.filter((a): a is NonNullable<typeof a> => a !== null).map((a) => a.bytes);
++}
+diff --git a/packages/files/test/download.test.ts b/packages/files/test/download.test.ts
+new file mode 100644
+index 0000000..157f09b
+--- /dev/null
++++ b/packages/files/test/download.test.ts
+@@ -0,0 +1,14 @@
++import { describe, expect, it } from "vitest";
++import { downloadMany } from "../src/download.js";
++import { putAttachment } from "../src/store.js";
++
++const session = { user_id: "u1", account_id: "acct_1" };
++
++describe("downloadMany", () => {
++  it("returns the attachments asked for", async () => {
++    await putAttachment({ id: "f1", account_id: "acct_1", bytes: Buffer.from("one") });
++    await putAttachment({ id: "f2", account_id: "acct_1", bytes: Buffer.from("two") });
++    const out = await downloadMany(session, ["f1", "f2"]);
++    expect(out.map((b) => b.toString())).toEqual(["one", "two"]);
++  });
++});

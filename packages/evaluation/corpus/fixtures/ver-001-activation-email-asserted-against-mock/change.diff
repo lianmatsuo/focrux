@@ -1,0 +1,42 @@
+diff --git a/packages/notifications/src/signup.ts b/packages/notifications/src/signup.ts
+index d3d5079..ba4c7ae 100644
+--- a/packages/notifications/src/signup.ts
++++ b/packages/notifications/src/signup.ts
+@@ -1,6 +1,12 @@
+ import { createUser } from "./users.js";
++import { sendEmail } from "./send.js";
+ 
+ export async function signup(email: string, password: string): Promise<{ id: string }> {
+   const user = await createUser(email, password);
++  await sendEmail({
++    to: email,
++    subject: "Activate your account",
++    body: `Welcome. Activate at https://app.example.com/activate/${user.activation_token}`,
++  });
+   return { id: user.id };
+ }
+diff --git a/packages/notifications/test/signup.test.ts b/packages/notifications/test/signup.test.ts
+new file mode 100644
+index 0000000..a2987fa
+--- /dev/null
++++ b/packages/notifications/test/signup.test.ts
+@@ -0,0 +1,19 @@
++import { describe, expect, it, vi } from "vitest";
++
++const sendEmail = vi.fn(async () => {});
++vi.mock("../src/send.js", () => ({ sendEmail }));
++
++const { signup } = await import("../src/signup.js");
++
++describe("signup", () => {
++  it("creates one user", async () => {
++    const { id } = await signup("new@example.com", "correct-horse");
++    expect(id).toMatch(/^user_/);
++  });
++
++  it("sends exactly one activation email", async () => {
++    sendEmail.mockClear();
++    await signup("other@example.com", "correct-horse");
++    expect(sendEmail).toHaveBeenCalledTimes(1);
++  });
++});

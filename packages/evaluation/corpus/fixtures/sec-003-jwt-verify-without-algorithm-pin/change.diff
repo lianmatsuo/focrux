@@ -1,0 +1,28 @@
+diff --git a/packages/session/src/session.ts b/packages/session/src/session.ts
+new file mode 100644
+index 0000000..c0d25ef
+--- /dev/null
++++ b/packages/session/src/session.ts
+@@ -0,0 +1,8 @@
++import { verify, type Claims } from "./jwt.js";
++
++const SECRET = process.env.SESSION_SECRET ?? "";
++
++/** Resolve the caller from their session token. */
++export function claimsFor(token: string): Claims {
++  return verify(token, SECRET);
++}
+diff --git a/packages/session/test/session.test.ts b/packages/session/test/session.test.ts
+new file mode 100644
+index 0000000..dbd1bff
+--- /dev/null
++++ b/packages/session/test/session.test.ts
+@@ -0,0 +1,8 @@
++import { describe, expect, it } from "vitest";
++import { claimsFor } from "../src/session.js";
++
++describe("session", () => {
++  it("resolves a caller from a valid token", () => {
++    expect(claimsFor("a.valid.token").sub).toBe("user_1");
++  });
++});

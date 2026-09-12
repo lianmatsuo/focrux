@@ -1,0 +1,51 @@
+{
+  "plan_id": "plan_vue_loose_equal",
+  "version": 1,
+  "ticket_id": "ticket_cln013",
+  "level": "P2",
+  "outcome": "Loose equality compares a Map or a Set by its contents rather than by identity",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Two Sets are loosely equal when every member of one loosely matches a distinct member of the other, whatever the insertion order; Sets of different size are not equal.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "looseEqual(new Set([{a:1},{b:2}]), new Set([{b:2},{a:1}])) is true and a Set of different size is false"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Two Maps are loosely equal when their entries loosely match pairwise, and a Map is never loosely equal to a Set.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "looseEqual over two Maps with matching entries is true, and looseEqual(new Map(), new Set()) is false"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vuejs_core",
+    "paths_allowed": [
+      "packages/shared/src/**",
+      "packages/shared/__tests__/**",
+      "packages/runtime-dom/__tests__/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "6eaecc14d8151a7d258b80ce0519e5ecc17a2bef",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:00:00.000Z"
+  },
+  "data_impact": "None. Loose equality is a pure comparison over values already in memory; nothing is read from or written to storage.",
+  "security_impact": "None directly. The comparison is quadratic in collection size and is reachable from v-model on a component, so an attacker-supplied collection of n members costs O(n squared) comparisons \u2014 bounded in practice by what a template binds, and unchanged in kind from the array comparison beside it.",
+  "rollout": "Ships with the package; no flag and no staged rollout. Loose equality has no persisted state to migrate.",
+  "rollback": "git revert. Before the change `looseEqual` fell through to an object comparison over own enumerable keys, which for two Maps is no keys at all \u2014 so two different Maps compared equal. A revert restores that.",
+  "estimated_recurring_cost_micros": 0
+}

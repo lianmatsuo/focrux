@@ -1,0 +1,70 @@
+diff --git a/packages/accounts/src/auth/password-reset.ts b/packages/accounts/src/auth/password-reset.ts
+new file mode 100644
+index 0000000..c107d56
+--- /dev/null
++++ b/packages/accounts/src/auth/password-reset.ts
+@@ -0,0 +1,14 @@
++import { findResetToken } from "./tokens.js";
++import { setPassword } from "./store.js";
++
++export type ResetOutcome = { ok: true } | { ok: false; reason: string };
++
++/** Complete a password reset started by `issueResetToken`. */
++export async function resetPassword(token: string, newPassword: string): Promise<ResetOutcome> {
++  const record = findResetToken(token);
++  if (!record) return { ok: false, reason: "unknown_token" };
++  if (record.expires_at <= Date.now()) return { ok: false, reason: "expired_token" };
++
++  await setPassword(record.user_id, newPassword);
++  return { ok: true };
++}
+diff --git a/packages/accounts/src/auth/routes.ts b/packages/accounts/src/auth/routes.ts
+index 74f4a87..3c7732d 100644
+--- a/packages/accounts/src/auth/routes.ts
++++ b/packages/accounts/src/auth/routes.ts
+@@ -1,7 +1,12 @@
+ import { issueResetToken } from "./tokens.js";
++import { resetPassword } from "./password-reset.js";
+ 
+ export async function postForgotPassword(email: string): Promise<{ sent: true }> {
+   const user_id = email === "a@example.com" ? "user_1" : "user_2";
+   issueResetToken(user_id, 15 * 60 * 1000);
+   return { sent: true };
+ }
++
++export async function postResetPassword(token: string, password: string) {
++  return resetPassword(token, password);
++}
+diff --git a/packages/accounts/test/password-reset.test.ts b/packages/accounts/test/password-reset.test.ts
+new file mode 100644
+index 0000000..a8bbd22
+--- /dev/null
++++ b/packages/accounts/test/password-reset.test.ts
+@@ -0,0 +1,27 @@
++import { describe, expect, it } from "vitest";
++import { issueResetToken } from "../src/auth/tokens.js";
++import { resetPassword } from "../src/auth/password-reset.js";
++import { getPasswordHash } from "../src/auth/store.js";
++
++describe("password reset", () => {
++  it("sets the new password for a valid token", async () => {
++    const { token } = issueResetToken("user_1", 60_000);
++    expect(await resetPassword(token, "correct-horse")).toEqual({ ok: true });
++    expect(await getPasswordHash("user_1")).toBe("hash:correct-horse");
++  });
++
++  it("rejects an expired token", async () => {
++    const { token } = issueResetToken("user_2", -1);
++    expect(await resetPassword(token, "anything")).toEqual({
++      ok: false,
++      reason: "expired_token",
++    });
++  });
++
++  it("rejects an unknown token", async () => {
++    expect(await resetPassword("not-a-token", "anything")).toEqual({
++      ok: false,
++      reason: "unknown_token",
++    });
++  });
++});

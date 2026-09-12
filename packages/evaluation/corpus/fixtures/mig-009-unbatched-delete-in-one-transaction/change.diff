@@ -1,0 +1,38 @@
+diff --git a/packages/retention/migrations/0032_purge_old_sessions.sql b/packages/retention/migrations/0032_purge_old_sessions.sql
+new file mode 100644
+index 0000000..56720a0
+--- /dev/null
++++ b/packages/retention/migrations/0032_purge_old_sessions.sql
+@@ -0,0 +1,2 @@
++-- Retention is 30 days, not 90. Remove everything older in one pass.
++DELETE FROM sessions WHERE created_at < now() - interval '30 days';
+diff --git a/packages/retention/src/policy.ts b/packages/retention/src/policy.ts
+index 291b1e7..07d33e8 100644
+--- a/packages/retention/src/policy.ts
++++ b/packages/retention/src/policy.ts
+@@ -1,4 +1,4 @@
+-export const SESSION_RETENTION_DAYS = 90;
++export const SESSION_RETENTION_DAYS = 30;
+ 
+ export function isExpired(createdAt: Date, now: Date): boolean {
+   return now.getTime() - createdAt.getTime() > SESSION_RETENTION_DAYS * 86_400_000;
+diff --git a/packages/retention/test/policy.test.ts b/packages/retention/test/policy.test.ts
+new file mode 100644
+index 0000000..e8b1b82
+--- /dev/null
++++ b/packages/retention/test/policy.test.ts
+@@ -0,0 +1,14 @@
++import { describe, expect, it } from "vitest";
++import { isExpired, SESSION_RETENTION_DAYS } from "../src/policy.js";
++
++describe("retention", () => {
++  it("is thirty days", () => {
++    expect(SESSION_RETENTION_DAYS).toBe(30);
++  });
++
++  it("expires a session older than the window", () => {
++    const now = new Date("2026-06-01T00:00:00Z");
++    const old = new Date("2026-04-01T00:00:00Z");
++    expect(isExpired(old, now)).toBe(true);
++  });
++});

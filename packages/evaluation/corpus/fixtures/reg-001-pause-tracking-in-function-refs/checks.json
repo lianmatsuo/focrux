@@ -1,0 +1,24 @@
+[
+  {
+    "check_id": "check_ut",
+    "name": "unit",
+    "kind": "unit",
+    "status": "passed",
+    "summary": "3587 passed, 6 skipped (181 files passed, 1 skipped)",
+    "command": "pnpm run test-unit",
+    "detail": "Measured at the pinned head commit on 2026-08-27, not declared. The suite passes: the regression this change introduced was found by users after release, not by the repository's own tests.",
+    "duration_ms": 15700,
+    "source": "file"
+  },
+  {
+    "check_id": "check_baseline",
+    "name": "fail-first",
+    "kind": "regression-baseline",
+    "status": "passed",
+    "summary": "the change's own tests failed at the base commit",
+    "command": "pnpm run test-unit (at e450973eabc0, tests only)",
+    "detail": "The tests added or changed by this diff were applied to the base commit and failed against the unfixed code, then passed at the head commit. They discriminate. Test files applied: packages/runtime-core/__tests__/rendererTemplateRef.spec.ts.",
+    "duration_ms": 14465,
+    "source": "file"
+  }
+]

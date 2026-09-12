@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_ver002",
+  "version": 1,
+  "ticket_id": "ticket_ver002",
+  "level": "P2",
+  "outcome": "A payment capture reported twice charges the customer once.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A capture for an unseen event is recorded.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "one capture exists after one call"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A capture for an event already captured records nothing further.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a second call with the same event id adds no capture"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/payments/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "None beyond what the criteria state.",
+  "security_impact": "Stated in the criteria.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "03f63a6",
+    "context_manifest_hash": "sha256:eef431ba84428ff38aa096559580e133bbb13117007ed27efe69d128d30f2295",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

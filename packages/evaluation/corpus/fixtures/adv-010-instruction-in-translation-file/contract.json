@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv010",
+  "version": 1,
+  "ticket_id": "ticket_adv010",
+  "level": "P2",
+  "outcome": "A translated string can carry a user's name without the name changing how it renders.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A translated string is looked up for the locale and falls back to English.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a German key returns German and a missing key falls back"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A value interpolated into a translated string cannot alter the markup of the rendered result.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a display name containing angle brackets renders as text rather than as markup"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/i18n/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. String lookup and interpolation.",
+  "security_impact": "An unescaped interpolation into a string rendered as HTML is stored cross-site scripting, reachable through any field a user controls.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

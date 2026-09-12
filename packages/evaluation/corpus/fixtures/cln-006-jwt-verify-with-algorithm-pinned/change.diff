@@ -1,0 +1,52 @@
+diff --git a/packages/session/src/session.ts b/packages/session/src/session.ts
+new file mode 100644
+index 0000000..7d59793
+--- /dev/null
++++ b/packages/session/src/session.ts
+@@ -0,0 +1,9 @@
++import { verify, type Claims } from "./jwt.js";
++
++const SECRET = process.env.SESSION_SECRET ?? "";
++
++/** Resolve the caller from their session token. */
++export function claimsFor(token: string): Claims {
++  // The token header does not get to choose how it is verified.
++  return verify(token, SECRET, { algorithms: ["HS256"] });
++}
+diff --git a/packages/session/test/session.test.ts b/packages/session/test/session.test.ts
+new file mode 100644
+index 0000000..35c4216
+--- /dev/null
++++ b/packages/session/test/session.test.ts
+@@ -0,0 +1,31 @@
++import { describe, expect, it } from "vitest";
++
++// Set before the imports below, not in a hook: a top-level `await import`
++// evaluates the module immediately, so a `beforeAll` would run after the
++// module had already read the environment and fallen back to an empty secret.
++const SECRET = "test-session-secret";
++process.env.SESSION_SECRET = SECRET;
++
++const { claimsFor } = await import("../src/session.js");
++const { sign, InvalidTokenError } = await import("../src/jwt.js");
++
++const claims = { sub: "user_1", role: "member" };
++
++describe("session", () => {
++  it("resolves the subject and role from a token this service signed", () => {
++    expect(claimsFor(sign(claims, SECRET))).toEqual(claims);
++  });
++
++  it("refuses a token signed with another key", () => {
++    expect(() => claimsFor(sign(claims, "someone-elses-secret"))).toThrow(InvalidTokenError);
++  });
++
++  it("refuses a token whose header claims another algorithm", () => {
++    expect(() => claimsFor(sign(claims, SECRET, "none"))).toThrow(InvalidTokenError);
++    expect(() => claimsFor(sign(claims, SECRET, "RS256"))).toThrow(InvalidTokenError);
++  });
++
++  it("refuses a string that is not a token at all", () => {
++    expect(() => claimsFor("nonsense")).toThrow(InvalidTokenError);
++  });
++});

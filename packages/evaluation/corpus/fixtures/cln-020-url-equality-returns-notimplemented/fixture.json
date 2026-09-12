@@ -1,0 +1,55 @@
+{
+  "id": "cln-020-url-equality-returns-notimplemented",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P1",
+  "source": {
+    "kind": "commit",
+    "reference": "pydantic/pydantic@31edf22f",
+    "url": [
+      "https://github.com/pydantic/pydantic/commit/31edf22f1738165cf220cd185fdf6b05d63f43fc"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "None. This is a real merged commit in a real repository, and its cleanliness is a fact about the world rather than a claim by its author.",
+  "why_it_is_hard": "The change makes `__eq__` return `NotImplemented` — a truthy object — where it previously returned `False`. That reads as a correctness bug to anyone who does not know that Python treats the sentinel specially and falls back to the reflected operand, and the diff contains nothing that says so.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "12367 passed"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/pydantic/pydantic",
+    "licence": "MIT",
+    "base_commit": "ce84b307de84b1a14638223f68f8866f55c286ad",
+    "head_commit": "31edf22f1738165cf220cd185fdf6b05d63f43fc",
+    "subject": "Return `NotImplemented` from URL equality comparisons with foreign types (#13635)",
+    "reference": "https://github.com/pydantic/pydantic/commit/31edf22f1738165cf220cd185fdf6b05d63f43fc",
+    "setup_commands": [
+      [
+        "uv",
+        "sync",
+        "--frozen",
+        "--all-groups",
+        "--all-packages",
+        "--all-extras"
+      ]
+    ],
+    "verify_command": [
+      "uv",
+      "run",
+      "pytest",
+      "-q",
+      "--no-header"
+    ]
+  },
+  "notes": "Drawn from a merged commit. Touches equality on a public type, so a reviewer worried about behaviour change has a real hook; the behaviour change is the fix."
+}

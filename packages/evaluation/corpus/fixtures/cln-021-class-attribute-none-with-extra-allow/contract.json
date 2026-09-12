@@ -1,0 +1,50 @@
+{
+  "plan_id": "plan_pydantic_attr_sentinel",
+  "version": 1,
+  "ticket_id": "ticket_cln021",
+  "level": "P2",
+  "outcome": "Assigning to a name whose class attribute is `None` on a model with `extra='allow'` sets the attribute rather than being treated as an unknown extra",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Assigning to a name that exists on the class with the value `None` sets that attribute, on a model configured with `extra='allow'`.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "assigning to a class attribute declared as None on an extra='allow' model updates the attribute and does not land in the extras"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A name that does not exist on the class at all is still collected as an extra, so the fix does not close the `extra='allow'` path.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "assigning an genuinely unknown name on an extra='allow' model still stores it as an extra"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_pydantic",
+    "paths_allowed": [
+      "pydantic/**",
+      "tests/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "uv.lock"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "efec1bb51c7a95813d85f1ef5543b4225013d20e",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. Attribute assignment on an in-memory model instance.",
+  "security_impact": "None. The change narrows which assignments are treated as unknown extras; it grants no new access.",
+  "rollout": "Ships with the package. No flag.",
+  "rollback": "git revert. Before the change, a class attribute whose value was None was indistinguishable from one that did not exist.",
+  "estimated_recurring_cost_micros": 0
+}

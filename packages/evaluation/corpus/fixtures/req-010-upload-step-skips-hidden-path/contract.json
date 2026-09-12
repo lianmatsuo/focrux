@@ -1,0 +1,51 @@
+{
+  "plan_id": "plan_req010",
+  "version": 1,
+  "ticket_id": "ticket_req010",
+  "level": "P2",
+  "outcome": "The regression run's records are kept as a workflow artifact, so a contributor whose row moved reads the review that moved it on the run page instead of re-running the suite.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "After the regression step, the fresh result directory `.regression` — its summary and every review file beside it — is uploaded as the `regression-run` artifact of that workflow run, on every run that produced records, including one whose suite failed.",
+      "expected_verification": {
+        "kind": "artifact",
+        "assertion": "the run page carries a regression-run artifact holding summary.json and review-001.json"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The README says where the records are found.",
+      "expected_verification": {
+        "kind": "artifact",
+        "assertion": "README.md names the regression-run artifact and where it is found"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      ".github/workflows/**",
+      "README.md"
+    ],
+    "paths_prohibited": [
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-09-06T02:00:00.000Z"
+  },
+  "data_impact": "None. The artifact holds the run's own records, which the log already prints.",
+  "security_impact": "The records go on the run page as an artifact, readable by anyone who can read the repository's workflow runs; they hold nothing the log does not.",
+  "rollout": "Ships with the workflow; takes effect on the next pull request run.",
+  "rollback": "git revert removes the upload step; the log keeps printing the rows.",
+  "estimated_recurring_cost_micros": 0
+}

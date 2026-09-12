@@ -1,0 +1,45 @@
+{
+  "id": "ver-006-expected-error-swallowed-by-catch",
+  "class": "verification_defect",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Tests that pass without exercising the behaviour they name: the vacuous-assertion patterns catalogued in test-quality literature and observed in agent-authored suites",
+    "url": [
+      "https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "The limit is applied to a caller-declared byte count rather than to what was actually read, so an upload that declares 1 KB and streams 900 MB is admitted — ac_2 asks for the limit to hold. The test that names the rejection cannot fail: if nothing throws, the catch never runs and the test passes with no assertion executed.",
+  "why_it_is_hard": "The try/catch reads as defensive rather than vacuous, and the comment gives it a plausible motive. It also passes for the right reason today, so the check output is honest; what it does not establish is that removing the limit would fail anything.",
+  "expected_detection": {
+    "mode": "coverage",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/upload/test/limit.test.ts"
+    ],
+    "rule_prefixes": [],
+    "statuses": [
+      "not_met"
+    ],
+    "strengths": [
+      "proxy",
+      "asserted_only"
+    ]
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "P2, so a verification defect blocks by policy — the pair with ver-005, which is the same shape at P1 where it does not."
+}

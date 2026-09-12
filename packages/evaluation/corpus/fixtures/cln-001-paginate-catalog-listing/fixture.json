@@ -1,0 +1,30 @@
+{
+  "id": "cln-001-paginate-catalog-listing",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "An ordinary correct change. Clean fixtures exist so the false-block rate is measurable; without them a reviewer that blocks everything scores perfect recall.",
+    "url": [
+      "https://retool.com/blog/running-safe-database-migrations-using-postgres"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "None. Every criterion is met and directly verified by a shipped test.",
+  "why_it_is_hard": "It is adjacent to scp-001, which is the same pagination feature with a scope escape attached. A reviewer that has learned to distrust pagination changes blocks this one.",
+  "expected_detection": {
+    "mode": "clean"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "notes": "",
+  "runtime": {
+    "status": "runs",
+    "note": "5 passed (5) in 1 passed (1)"
+  }
+}

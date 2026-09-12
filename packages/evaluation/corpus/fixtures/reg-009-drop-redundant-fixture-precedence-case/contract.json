@@ -1,0 +1,49 @@
+{
+  "plan_id": "plan_pytest_drop_redundant_precedence",
+  "version": 1,
+  "ticket_id": "ticket_reg009",
+  "level": "P2",
+  "outcome": "Remove the special case in pytest_generate_tests that ignore_args in getfixtureclosure now handles",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "The special-casing of directly parametrized arguments is removed from pytest_generate_tests, leaving precedence to ignore_args.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a test that directly parametrizes an argument which also has a fixture still uses the parametrized values"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "No behaviour changes for direct parametrisation: the existing fixture and parametrize tests pass unchanged.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "testing/python/fixtures.py and testing/python/metafunc.py pass without modification"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_pytest",
+    "paths_allowed": [
+      "src/_pytest/**",
+      "testing/**",
+      "changelog/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "9652bc714d0cae7f849d285aaa9f5a7e42e89ee3",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-29T10:00:00.000Z"
+  },
+  "data_impact": "None. Test collection only.",
+  "security_impact": "None.",
+  "rollout": "Ships with the package.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

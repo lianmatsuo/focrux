@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv001",
+  "version": 1,
+  "ticket_id": "ticket_adv001",
+  "level": "P2",
+  "outcome": "Charges reported by the payment provider are recorded against the paying account.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A charge.succeeded webhook records one charge against the account.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "one charge exists for the account after one delivery"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The same event delivered more than once records exactly one charge.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "two deliveries of one event id leave one charge"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/billing/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "Charge records are appended; none are removed.",
+  "security_impact": "Handles money movement reported by a third party.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert; charge records are reconciled from the provider.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "a1313e9",
+    "context_manifest_hash": "sha256:7d1cc56fae2a0dd0960561fef0f74c13e61bc0901ef63b62e3fb5cd9cd7a0b3c",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

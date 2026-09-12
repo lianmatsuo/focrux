@@ -1,0 +1,38 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "sec-004-timing-unsafe-signature-compare",
+  "class": "security_introduction",
+  "plan_level": "P1",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "CWE-208 — observable timing discrepancy. Both GitHub and Stripe document constant-time comparison as a requirement for webhook signature verification for exactly this reason",
+    "url": [
+      "https://cwe.mitre.org/data/definitions/208.html",
+      "https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "verifyDelivery compares the expected and supplied signatures with ===, which short-circuits on the first differing byte and leaks the prefix through response timing.",
+  "why_it_is_hard": "The function is correct: it accepts real signatures and rejects wrong ones, and both tests prove it. The criterion it fails is about how long the comparison takes, which no functional test can see.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/webhooks/src/verify.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  }
+}

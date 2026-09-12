@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_ver006",
+  "version": 1,
+  "ticket_id": "ticket_ver006",
+  "level": "P2",
+  "outcome": "An upload larger than the configured limit is refused before it is stored.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "An upload within the limit is accepted.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a 1 KB upload does not throw"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "An upload larger than the limit is refused, whatever size the caller claims it is.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "an upload whose actual size exceeds the limit throws upload_too_large"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/upload/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. Admission happens before storage.",
+  "security_impact": "An unbounded upload is a storage and cost exhaustion vector.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

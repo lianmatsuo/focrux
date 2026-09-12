@@ -1,0 +1,91 @@
+{
+  "id": "reg-009-drop-redundant-fixture-precedence-case",
+  "class": "unstated_regression",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "commit",
+    "reference": "pytest-dev/pytest d56b1af525, reverted by 3a85b5ead0",
+    "url": [
+      "https://github.com/pytest-dev/pytest/commit/d56b1af5252ceb8578d6751a6b2006e79defbb08",
+      "https://github.com/pytest-dev/pytest/commit/3a85b5ead0"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "Fourteen lines are deleted from `pytest_generate_tests` on the argument that `ignore_args` in `getfixtureclosure()` already handles fixture-versus-parametrize precedence. That argument is correct for direct parametrisation and wrong for indirect, where the fixture is still wanted. pytest merged it and reverted it: 'Seems this is still needed for the indirect case.' Nobody here decided what the defect would be.",
+  "why_it_is_hard": "It is a pure deletion in one file with a commit message that reasons its way to the deletion, names the commit that introduced the special case, and names the mechanism that supersedes it. Every claim in that reasoning is true. The hole is a case the reasoning does not mention and the suite does not cover — a reviewer has to ask what `indirect=True` does to the argument, which requires knowing pytest's fixture resolution rather than reading the diff.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [
+      "src/_pytest/fixtures.py"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-29",
+  "authored_before_reviewer": false,
+  "notes": "Candidate 7 in corpus/REVERT-CANDIDATES.md. The cleanest specimen of the class in the set: the change is a deletion justified by an argument, the argument holds in the case it considers, and the revert names the case it did not. Setup note: Tags must be fetched before install: setuptools_scm derives the version from them, and without them pyproject's own minversion check rejects the build. The second pip line is the optional test dependencies the suite imports but does not declare.",
+  "pinned_repository": {
+    "url": "https://github.com/pytest-dev/pytest",
+    "licence": "MIT",
+    "base_commit": "9652bc714d0cae7f849d285aaa9f5a7e42e89ee3",
+    "head_commit": "d56b1af5252ceb8578d6751a6b2006e79defbb08",
+    "subject": "fixtures: remove no longer needed special case in pytest_generate_tests",
+    "reference": "https://github.com/pytest-dev/pytest/commit/d56b1af5252ceb8578d6751a6b2006e79defbb08",
+    "setup_commands": [
+      [
+        "git",
+        "fetch",
+        "--tags",
+        "--quiet",
+        "origin"
+      ],
+      [
+        "python3",
+        "-m",
+        "venv",
+        ".venv"
+      ],
+      [
+        ".venv/bin/pip",
+        "install",
+        "-e",
+        ".",
+        "--quiet"
+      ],
+      [
+        ".venv/bin/pip",
+        "install",
+        "--quiet",
+        "attrs",
+        "anyio",
+        "hypothesis",
+        "numpy",
+        "pygments",
+        "pytest-xdist",
+        "requests",
+        "setuptools",
+        "xmlschema"
+      ]
+    ],
+    "verify_command": [
+      ".venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "--no-header",
+      "-n",
+      "8"
+    ]
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "3950 passed, 98 skipped, 12 xfailed, 1 xpassed in 21.83s"
+  }
+}

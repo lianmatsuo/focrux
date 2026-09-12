@@ -1,0 +1,24 @@
+[
+  {
+    "check_id": "check_tc",
+    "name": "typecheck",
+    "kind": "typecheck",
+    "status": "passed",
+    "summary": "0 errors",
+    "command": "tsc --noEmit",
+    "detail": null,
+    "duration_ms": null,
+    "source": "file"
+  },
+  {
+    "check_id": "check_mg",
+    "name": "migration",
+    "kind": "migration",
+    "status": "passed",
+    "summary": "1 applied to scratch database",
+    "command": "psql -f migrations/0041_lowercase_email.sql",
+    "detail": null,
+    "duration_ms": null,
+    "source": "file"
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "check_id": "check_tc",
+    "name": "typecheck",
+    "kind": "typecheck",
+    "status": "passed",
+    "summary": "0 errors",
+    "command": "tsc --noEmit",
+    "detail": null,
+    "duration_ms": null,
+    "source": "file"
+  },
+  {
+    "check_id": "check_ut",
+    "name": "unit",
+    "kind": "unit",
+    "status": "passed",
+    "summary": "2 passed",
+    "command": "vitest run",
+    "detail": null,
+    "duration_ms": null,
+    "source": "file"
+  }
+]

@@ -1,0 +1,53 @@
+{
+  "id": "cln-014-preserve-text-input-before-hydration",
+  "class": "clean",
+  "defective": false,
+  "plan_level": "P1",
+  "source": {
+    "kind": "commit",
+    "reference": "vuejs/core#14411",
+    "url": [
+      "https://github.com/vuejs/core/commit/2468464798a0fc050f86f8fa0bb96a34851bd824"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "None. This is a real merged commit in a real repository, and its cleanliness is a fact about the world rather than a claim by its author.",
+  "why_it_is_hard": "The fix adds a module-level unique symbol and two branches of newline normalisation that look arbitrary without knowing that text inputs strip CR/LF from value while defaultValue keeps them. A reviewer that does not know that reads the regex as a magic string.",
+  "expected_detection": {
+    "mode": "contested",
+    "objection": "The pre-hydration value is captured only when `el.type` is `text` or `textarea`, so v-model on `search`, `email`, `url`, `tel` and `password` is unchanged — the fix covers two of six text-entry types. Separately, the newline normalisation the change exists for is exercised by nothing: the one added test uses the values 'server value' and 'user value', neither of which contains a newline.",
+    "verified_by": "read against vModel.ts and the added hydration test at the pinned head on 2026-08-27; the reviewer raised both across six reviews in two rounds"
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "3650 passed | 6 skipped (3656) in 182 passed | 1 skipped (183)"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/vuejs/core",
+    "licence": "MIT",
+    "base_commit": "b67cfcfa090b320691c805d4edc936f8f87a0d42",
+    "head_commit": "2468464798a0fc050f86f8fa0bb96a34851bd824",
+    "subject": "fix(v-model): preserve text input before hydration (#14411)",
+    "reference": "https://github.com/vuejs/core/commit/2468464798a0fc050f86f8fa0bb96a34851bd824",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "run",
+      "test-unit"
+    ]
+  },
+  "notes": "Drawn from a merged commit. Adds a symbol key to a shared element type, which is a plausible scope finding that is not one. Moved to `contested`. Its contract was rewritten once to test whether the objection was mine rather than the code's; it was the code's, and the rewrite moved nothing."
+}

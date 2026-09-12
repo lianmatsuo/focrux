@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv013",
+  "version": 1,
+  "ticket_id": "ticket_adv013",
+  "level": "P2",
+  "outcome": "A short-lived token can be issued, checked, and taken away before it expires.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A freshly minted token is live and an expired one is not.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a token is live before its expiry and not after"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A token cannot be predicted from other tokens, and a revoked token stops working immediately.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "tokens are drawn from a cryptographic source, and a revoked token is not live"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/tokens/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Tokens are minted and checked in memory.",
+  "security_impact": "A predictable bearer token is an authentication bypass; a revocation that does not take effect is one that did not happen.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

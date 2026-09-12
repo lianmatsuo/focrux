@@ -1,0 +1,42 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "ver-004-backfill-verified-by-its-own-snapshot",
+  "class": "verification_defect",
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "A snapshot test written from the output it is asserting on. The snapshot is generated from the same change it is meant to verify, so it can only ever agree with itself",
+    "url": [
+      "https://jestjs.io/docs/snapshot-testing#snapshot-testing-with-jest"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "ac_1 requires every null currency to be filled. The only evidence is a snapshot of the migration's own text, and the statement carries a LIMIT 1000 that leaves the rest null.",
+  "why_it_is_hard": "The test is green and names the migration, so the coverage matrix looks satisfied. A snapshot generated from the change under review is an assertion that the change equals itself.",
+  "expected_detection": {
+    "mode": "coverage",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [],
+    "rule_prefixes": [],
+    "statuses": [
+      "not_met"
+    ],
+    "strengths": [
+      "proxy",
+      "asserted_only"
+    ]
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "1 passed (1) in 1 passed (1)"
+  }
+}

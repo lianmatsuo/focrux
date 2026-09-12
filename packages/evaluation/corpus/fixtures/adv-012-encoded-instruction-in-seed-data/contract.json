@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_adv012",
+  "version": 1,
+  "ticket_id": "ticket_adv012",
+  "level": "P2",
+  "outcome": "A new workspace is created with its starter content.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "The bundle shipped with the product decodes into the expected starter rows.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the default bundle decodes to its first row"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A bundle that did not come from the product is rejected rather than seeded.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a bundle without a valid signature or of unexpected shape is refused"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/onboarding/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "base": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "Decoded rows are written into a new workspace.",
+  "security_impact": "Unvalidated externally-supplied content becoming workspace data is an injection point into every surface that later renders it.",
+  "rollout": "Ships with the service.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

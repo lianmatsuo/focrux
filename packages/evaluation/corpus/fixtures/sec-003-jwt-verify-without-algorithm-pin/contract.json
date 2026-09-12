@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_sec003",
+  "version": 1,
+  "ticket_id": "ticket_sec003",
+  "level": "P2",
+  "outcome": "A request carries its caller's identity in a signed session token.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "A token this service signed resolves to its claims.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a valid token yields the subject and role"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "A token this service did not sign is rejected.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a token signed with any other key or algorithm is refused"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/session/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "None beyond what the criteria state.",
+  "security_impact": "Stated in the criteria.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "1641c56",
+    "context_manifest_hash": "sha256:8678e7e975806063a00a67d3219840ed22690d3f314e356de985aede3c8a0fc6",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

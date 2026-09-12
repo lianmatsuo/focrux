@@ -1,0 +1,38 @@
+{
+  "defective": true,
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "notes": "",
+  "id": "mig-003-whole-table-backfill-in-one-transaction",
+  "class": "migration_hazard",
+  "plan_level": "P2",
+  "source": {
+    "kind": "postmortem",
+    "reference": "A single UPDATE over a large table holds row locks for its whole duration and generates one enormous WAL burst, stalling replicas. Documented in the GitLab batched-background-migration guidance and the Postgres migration literature",
+    "url": [
+      "https://gitlab.com/gitlab-org/gitlab/issues/38060",
+      "https://retool.com/blog/running-safe-database-migrations-using-postgres"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "0041 rewrites every row of users in one transaction, holding row locks for the duration and producing a WAL burst proportional to the table.",
+  "why_it_is_hard": "The statement is correct SQL and does exactly what the first criterion asks. It runs instantly against the empty scratch database the migration check uses, and the criterion it violates is about a table with rows in it.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/accounts/migrations/0041_lowercase_email.sql"
+    ],
+    "rule_prefixes": []
+  },
+  "runtime": {
+    "status": "runs",
+    "note": "no test runner output was recognised"
+  }
+}

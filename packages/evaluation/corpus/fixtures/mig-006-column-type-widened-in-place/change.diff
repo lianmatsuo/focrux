@@ -1,0 +1,47 @@
+diff --git a/packages/metering/migrations/0005_widen_units.sql b/packages/metering/migrations/0005_widen_units.sql
+new file mode 100644
+index 0000000..92f8085
+--- /dev/null
++++ b/packages/metering/migrations/0005_widen_units.sql
+@@ -0,0 +1,2 @@
++-- Units overflowed a 32-bit integer for the largest accounts.
++ALTER TABLE usage_events ALTER COLUMN units TYPE bigint;
+diff --git a/packages/metering/src/usage.ts b/packages/metering/src/usage.ts
+index 4b3d80a..b7fca3a 100644
+--- a/packages/metering/src/usage.ts
++++ b/packages/metering/src/usage.ts
+@@ -3,3 +3,12 @@ export type UsageEvent = { account_id: string; units: number };
+ export function totalUnits(events: UsageEvent[]): number {
+   return events.reduce((sum, event) => sum + event.units, 0);
+ }
++
++/** Units are counted per account, and the largest accounts exceed 2^31. */
++export function totalUnitsByAccount(events: UsageEvent[]): Map<string, number> {
++  const totals = new Map<string, number>();
++  for (const event of events) {
++    totals.set(event.account_id, (totals.get(event.account_id) ?? 0) + event.units);
++  }
++  return totals;
++}
+diff --git a/packages/metering/test/usage.test.ts b/packages/metering/test/usage.test.ts
+new file mode 100644
+index 0000000..445ad1b
+--- /dev/null
++++ b/packages/metering/test/usage.test.ts
+@@ -0,0 +1,16 @@
++import { describe, expect, it } from "vitest";
++import { totalUnits, totalUnitsByAccount } from "../src/usage.js";
++
++describe("usage", () => {
++  it("sums units", () => {
++    expect(totalUnits([{ account_id: "a", units: 3 }, { account_id: "a", units: 4 }])).toBe(7);
++  });
++
++  it("sums per account", () => {
++    const totals = totalUnitsByAccount([
++      { account_id: "a", units: 3 },
++      { account_id: "b", units: 4 },
++    ]);
++    expect(totals.get("a")).toBe(3);
++  });
++});

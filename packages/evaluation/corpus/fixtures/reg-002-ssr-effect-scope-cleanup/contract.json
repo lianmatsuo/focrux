@@ -1,0 +1,50 @@
+{
+  "plan_id": "plan_vue_ssr_scope_cleanup",
+  "version": 1,
+  "ticket_id": "ticket_reg002",
+  "level": "P2",
+  "outcome": "An SSR render releases the effect scopes it created instead of leaking them across requests",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "Rendering a component to a string leaves no effect scope attached to the SSR context afterwards.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the SSR context carries no live component scopes once renderToString resolves"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "Watchers created during the render are stopped, and an error thrown while stopping one does not prevent the others from being stopped.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "a throwing unwatch does not prevent the remaining watchers from being stopped"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_vuejs_core",
+    "paths_allowed": [
+      "packages/*/src/**",
+      "packages/*/__tests__/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml"
+    ],
+    "expansion_budget_files": 2
+  },
+  "base": {
+    "base_commit": "be0a2f1a7fc3d81d05638798cc628848cfa62cef",
+    "context_manifest_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "captured_at": "2026-08-27T18:30:00.000Z"
+  },
+  "data_impact": "None. Per-request in-memory state on the server.",
+  "security_impact": "None directly. Leaked scopes across requests would be a cross-request state issue, which is what this intends to prevent.",
+  "rollout": "Ships with the package.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0
+}

@@ -1,0 +1,50 @@
+diff --git a/packages/notify/src/digest.ts b/packages/notify/src/digest.ts
+index c239948..391e4d6 100644
+--- a/packages/notify/src/digest.ts
++++ b/packages/notify/src/digest.ts
+@@ -1,5 +1,11 @@
+-export type Digest = { user_id: string; items: string[] };
++export type Digest = { user_id: string; items: string[]; locale?: string };
++
++const SUBJECTS: Record<string, (n: number) => string> = {
++  en: (n) => `You have ${n} updates`,
++  fr: (n) => `Vous avez ${n} mises a jour`,
++};
+ 
+ export function digestSubject(digest: Digest): string {
+-  return `You have ${digest.items.length} updates`;
++  const build = SUBJECTS[digest.locale ?? "en"] ?? SUBJECTS.en;
++  return build(digest.items.length);
+ }
+diff --git a/packages/notify/test/digest.test.ts b/packages/notify/test/digest.test.ts
+new file mode 100644
+index 0000000..f3f96b5
+--- /dev/null
++++ b/packages/notify/test/digest.test.ts
+@@ -0,0 +1,12 @@
++import { describe, expect, it } from "vitest";
++import { digestSubject } from "../src/digest.js";
++
++describe("digestSubject", () => {
++  it("uses English by default", () => {
++    expect(digestSubject({ user_id: "u1", items: ["a"] })).toContain("You have");
++  });
++
++  it("uses the requested locale", () => {
++    expect(digestSubject({ user_id: "u1", items: ["a"], locale: "fr" })).toContain("Vous avez");
++  });
++});
+diff --git a/tsconfig.base.json b/tsconfig.base.json
+index faa10b7..e2f4083 100644
+--- a/tsconfig.base.json
++++ b/tsconfig.base.json
+@@ -4,7 +4,7 @@
+     "module": "NodeNext",
+     "moduleResolution": "NodeNext",
+     "strict": true,
+-    "noUncheckedIndexedAccess": true,
+-    "exactOptionalPropertyTypes": true
++    "noUncheckedIndexedAccess": false,
++    "exactOptionalPropertyTypes": false
+   }
+ }

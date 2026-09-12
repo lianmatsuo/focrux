@@ -1,0 +1,60 @@
+{
+  "id": "reg-002-ssr-effect-scope-cleanup",
+  "class": "unstated_regression",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "commit",
+    "reference": "core@862f11ee",
+    "url": [
+      "https://github.com/vuejs/core/commit/862f11ee017d51cb9573a8c0642055b3b17cace8",
+      "https://github.com/vuejs/core/pull/14674",
+      "https://github.com/vuejs/core/issues/14669"
+    ],
+    "derivation": "transplanted",
+    "upstream_licence": "MIT",
+    "code_copied": false
+  },
+  "defect": "Stopping every component effect scope after an SSR render also runs the scopes' disposal hooks, so `onScopeDispose` fires during server rendering. It should never fire there: there is no reactivity to clean up on the server, and a composable that releases a resource in that hook releases it mid-render. vuejs/core reverted this in #14674, closing issue #14669 (\"onScopeDispose is triggered on SSR\"). The revert is the ground truth; nothing about the defect was written here.",
+  "why_it_is_hard": "The change is careful in every visible way — it collects scopes, stops them in a `finally`, aggregates the first error rather than swallowing it, and adds eighty lines of tests. What it gets wrong is that stopping a scope is not a neutral act: it runs user code. Nothing in the diff says so, and the reviewer has to know what `scope.stop()` invokes.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_1"
+    ],
+    "files": [
+      "packages/server-renderer/src/render.ts"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": false,
+  "runtime": {
+    "status": "runs",
+    "note": "3519 passed | 6 skipped (3525) in 181 passed | 1 skipped (182)"
+  },
+  "pinned_repository": {
+    "url": "https://github.com/vuejs/core",
+    "licence": "MIT",
+    "base_commit": "be0a2f1a7fc3d81d05638798cc628848cfa62cef",
+    "head_commit": "862f11ee017d51cb9573a8c0642055b3b17cace8",
+    "subject": "fix(server-renderer): cleanup component effect scopes after SSR render (#14548)",
+    "reference": "https://github.com/vuejs/core/commit/862f11ee017d51cb9573a8c0642055b3b17cace8",
+    "setup_commands": [
+      [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ]
+    ],
+    "verify_command": [
+      "pnpm",
+      "run",
+      "test-unit"
+    ]
+  },
+  "notes": "The regression was found by a user after release, not by the repository's tests, which pass."
+}

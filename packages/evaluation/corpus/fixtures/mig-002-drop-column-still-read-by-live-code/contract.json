@@ -1,0 +1,52 @@
+{
+  "plan_id": "plan_mig002",
+  "version": 1,
+  "ticket_id": "ticket_mig002",
+  "level": "P2",
+  "outcome": "The unused legacy_email column is removed.",
+  "acceptance_criteria": [
+    {
+      "id": "ac_1",
+      "text": "No application code reads legacy_email.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "no query selects the column"
+      }
+    },
+    {
+      "id": "ac_2",
+      "text": "The release causes no error in the version already serving traffic while the rollout completes.",
+      "expected_verification": {
+        "kind": "test",
+        "assertion": "the previously deployed version continues to serve every request during the rollout"
+      }
+    }
+  ],
+  "scope": {
+    "repository_id": "repo_fixture",
+    "paths_allowed": [
+      "packages/accounts/**"
+    ],
+    "paths_prohibited": [
+      ".github/**",
+      "infra/**",
+      "**/*.pem",
+      "**/.env*"
+    ],
+    "generated_paths": [
+      "pnpm-lock.yaml",
+      "**/*.generated.ts"
+    ],
+    "expansion_budget_files": 3
+  },
+  "data_impact": "None beyond what the criteria state.",
+  "security_impact": "Stated in the criteria.",
+  "rollout": "Ships with the release.",
+  "rollback": "git revert.",
+  "estimated_recurring_cost_micros": 0,
+  "base": {
+    "base_commit": "1759978",
+    "context_manifest_hash": "sha256:2731016e71a7fcfdbf4a942f6f703f7def2463ef2f6a6e001bd9d620f9b57d07",
+    "captured_at": "2026-08-27T09:00:00Z"
+  }
+}

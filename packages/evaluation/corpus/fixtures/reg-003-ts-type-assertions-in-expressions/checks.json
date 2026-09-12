@@ -1,0 +1,24 @@
+[
+  {
+    "check_id": "check_ut",
+    "name": "unit",
+    "kind": "unit",
+    "status": "passed",
+    "summary": "3427 passed, 6 skipped (180 files passed, 1 skipped)",
+    "command": "pnpm run test-unit",
+    "detail": "Measured at the pinned head commit on 2026-08-27, not declared. The suite passes: the regression this change introduced was found by users after release, not by the repository's own tests.",
+    "duration_ms": 13000,
+    "source": "file"
+  },
+  {
+    "check_id": "check_baseline",
+    "name": "fail-first",
+    "kind": "regression-baseline",
+    "status": "passed",
+    "summary": "the change's own tests failed at the base commit",
+    "command": "pnpm run test-unit (at 75d44c718981, tests only)",
+    "detail": "The tests added or changed by this diff were applied to the base commit and failed against the unfixed code, then passed at the head commit. They discriminate. Test files applied: packages/compiler-core/__tests__/transforms/__snapshots__/transformExpressions.spec.ts.snap, packages/compiler-core/__tests__/transforms/transformExpressions.spec.ts.",
+    "duration_ms": 13020,
+    "source": "file"
+  }
+]

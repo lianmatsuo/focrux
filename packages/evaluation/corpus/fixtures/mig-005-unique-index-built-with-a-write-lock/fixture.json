@@ -1,0 +1,38 @@
+{
+  "id": "mig-005-unique-index-built-with-a-write-lock",
+  "class": "migration_hazard",
+  "defective": true,
+  "plan_level": "P2",
+  "source": {
+    "kind": "documented_pattern",
+    "reference": "Schema changes that are safe on an empty database and lock or fail on a populated one: the expand/contract discipline",
+    "url": [
+      "https://www.postgresql.org/docs/current/sql-altertable.html"
+    ],
+    "derivation": "reconstructed",
+    "upstream_licence": "n/a",
+    "code_copied": false
+  },
+  "defect": "`CREATE UNIQUE INDEX` without `CONCURRENTLY` takes a lock that blocks writes to `skus` for the whole build, which on a populated catalogue is an outage rather than a migration. The index is also plain `(code)` while the application compares codes case-insensitively, so it does not enforce the uniqueness the code assumes and the migration will fail outright if two rows differ only in case. ac_2 asks for the change to apply to a populated table.",
+  "why_it_is_hard": "The migration is one line and reads exactly like the documentation's own example. The second half — that the index does not match the comparison the application performs — is only visible by reading the TypeScript beside it, and the two halves point in opposite directions: one says the migration is too strict to apply, the other that it is too loose to enforce.",
+  "expected_detection": {
+    "mode": "blocking",
+    "criterion_ids": [
+      "ac_2"
+    ],
+    "files": [
+      "packages/catalog/migrations/0012_unique_sku_code.sql"
+    ],
+    "rule_prefixes": []
+  },
+  "forbidden_strings": [],
+  "must_not_approve": false,
+  "authored_on": "2026-08-27",
+  "authored_before_reviewer": true,
+  "runtime": {
+    "status": "runs",
+    "note": "2 passed (2) in 1 passed (1)"
+  },
+  "pinned_repository": null,
+  "notes": "Carries two independent hazards in one line, so a reviewer can find one and still leave the other."
+}

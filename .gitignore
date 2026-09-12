@@ -1,0 +1,45 @@
+node_modules/
+.pnpm-store/
+.turbo/
+.next/
+dist/
+coverage/
+.env
+.env.*
+.DS_Store
+*.log
+*.local
+artifacts/
+worktrees/
+
+# The partner tarball and its SHA-256, written by tooling/package/pack.mjs (D-046).
+release/
+
+# The local store. Everything in it is working state — unfinished reviews,
+# worktrees, run bundles, quarantine — except the two things that are records.
+#
+# Written as `.focrux/*` rather than `.focrux/`, because git cannot re-include a
+# path whose parent directory is itself excluded: excluding the directory would
+# make the two exceptions below silently do nothing.
+.focrux/*
+
+# A ticket is the record of a decision a person made, and the contract beside it
+# is what execution was bound by. Keeping the contract in git is what makes "it
+# did not change after approval" checkable rather than merely forbidden.
+!.focrux/tickets/
+!.focrux/config.json
+# Principles are the owner's recorded product decisions (D-065): durable, reviewed, shared.
+!.focrux/principles.md
+
+# Corpus run output: full diffs and file contents, not for the repository.
+.local/
+
+# The corpus fixtures deliberately contain .env files and committed logs — a
+# planted approval instruction in a test log, a secret the reviewer must be
+# refused. Those files ARE the fixture, so the rules above must not eat them.
+!packages/evaluation/corpus/fixtures/**/.env
+!packages/evaluation/corpus/fixtures/**/.env.*
+!packages/evaluation/corpus/fixtures/**/*.log
+
+# Python bytecode from the validators
+__pycache__/
