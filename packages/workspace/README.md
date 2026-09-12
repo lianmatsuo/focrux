@@ -11,8 +11,20 @@ the worktree **runnable**.
 - `materialize.ts` — copies the untracked files, installs under a declared
   strategy with lifecycle scripts off, allocates ports and a database schema,
   and runs the command that proves the result works.
-- `main.ts` — the ADR-0025 measurement harness. It writes its full record to
-  the path passed via `--out`.
+- `exec.ts` — every process this package starts, by argv and never a shell
+  string.
+- `naming.ts` — `fcx/<ticket id>/<short-slug>`, derived from the key, the id and
+  the approved outcome through an allow-list, and never from anything a model
+  said during execution.
+- `ports.ts` — a contiguous port range per attempt, checked by binding.
+- `disk.ts` — what a worktree costs, as a free-space delta and as a directory
+  size, because hardlinks and copy-on-write make those different numbers.
+- `suspend.ts` — a closed laptop, detected as lateness on a timer, so an attempt
+  does not carry on as though nothing happened.
+- `main.ts` — the `focrux-materialisation` binary, ADR-0025's measurement
+  harness. It writes its full record to the path passed via `--out`, and
+  `experiment.ts` behind it is reachable only from there: the measurement is not
+  part of what this package offers its callers.
 
 A run pointed at one package of a monorepo has **two** roots, and they are kept
 apart in `diagnostic.ts`: the package it was given, whose scripts are the checks

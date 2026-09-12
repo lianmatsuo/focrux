@@ -28,8 +28,12 @@ export const CORPUS_CACHE_DIR = ".local/corpus-cache";
  */
 export const CORPUS_CACHE_PIN = "corpus-pin.json";
 
-/** What fixes a cache that is absent or behind, named as the fix on the line. */
-export const CORPUS_SYNC_COMMAND = "focrux-corpus --sync";
+/**
+ * What fixes a cache that is absent or behind, named as the fix on the line:
+ * the `@focrux/evaluation` binary's `prepare`, which clones the repositories the
+ * pinned fixtures name, at the commits they pin, into the cache.
+ */
+export const CORPUS_PREPARE_COMMAND = "focrux-corpus prepare";
 
 /**
  * The recorded regression score, first match wins: this repository's own copy,
@@ -144,7 +148,7 @@ export function readCorpusCache(checkout: string): CorpusCacheReport {
     cached_commit: cached,
     scored_commit: scored,
     fixtures,
-    fix: state === "present" ? null : CORPUS_SYNC_COMMAND,
+    fix: state === "present" ? null : CORPUS_PREPARE_COMMAND,
   };
 }
 
@@ -161,7 +165,7 @@ function fixtureCount(fixtures: number): string {
  * out what does.
  */
 export function renderCorpusCache(report: CorpusCacheReport): string {
-  const fix = `; sync it with: ${CORPUS_SYNC_COMMAND}`;
+  const fix = `; fill it with: ${CORPUS_PREPARE_COMMAND}`;
   switch (report.state) {
     case "absent":
       return `CORPUS    warning  ${CORPUS_CACHE_DIR} absent: no fixtures to review against${fix}`;

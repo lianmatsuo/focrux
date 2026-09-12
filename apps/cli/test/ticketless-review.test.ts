@@ -825,8 +825,8 @@ describe("ac_4: a real public pull request, pinned by commit", () => {
 }, SPAWN_TEST_TIMEOUT_MS);
 
 /**
- * The ticketless review is an open command, and the open build refuses a module
- * from the closed planning package (checked at assembly by
+ * The open tree refuses a module from the closed planning package (checked at
+ * assembly by
  * `tooling/package/assemble-open.mjs`, whose allowlist covers the admission
  * side and not this one). The reading of untrusted text it needs lives in
  * `@focrux/contracts` for that reason, and the assertion is here rather than

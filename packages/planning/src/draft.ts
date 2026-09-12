@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { issueAuthoredAttempts, type AuthoredAttempt } from "@focrux/contracts";
 import {
   READ_FILE_TOOL,
   SUBMIT_REVIEW_TOOL,
@@ -11,7 +12,6 @@ import {
   type ReadOutcome,
   type ReviewModel,
 } from "@focrux/review";
-import { issueAuthoredAttempts, type AuthoredAttempt } from "./authored.js";
 import { delimit } from "./delimit.js";
 import { DraftRejectedError, PlanningError } from "./errors.js";
 import { repositoryTree } from "./tree.js";
@@ -228,7 +228,7 @@ export interface DraftResult {
   /**
    * What the issue text tried to do to the drafter, found by reading the body
    * rather than by asking the model. Reported to the person who approves; the
-   * draft is never edited on its account (see `authored.ts`).
+   * draft is never edited on its account (`issueAuthoredAttempts`).
    */
   issue_authored_attempts: AuthoredAttempt[];
   /**

@@ -4,6 +4,7 @@ import { join, resolve } from "node:path";
 import { z } from "zod";
 import { StoredAdmissionSchema } from "./admission.js";
 import {
+  AuthoredAttemptSchema,
   D073_CHANGES_REQUESTED,
   PlanContractSchema,
   StoredTicketSchema,
@@ -16,7 +17,7 @@ import {
   type Ticket,
   type TicketState,
 } from "@focrux/contracts";
-import { AuthoredAttemptSchema, ContractDraftSchema, DraftModelRecordSchema } from "@focrux/planning";
+import { ContractDraftSchema, DraftModelRecordSchema } from "@focrux/planning";
 import { AttemptsRecordError, lastAttemptBranch, readAttemptsRecord } from "@focrux/runner";
 import { branchName, recordedBranch } from "@focrux/workspace";
 import { listLocalRuns, type LocalRunRecord } from "./local-run.js";

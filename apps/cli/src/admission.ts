@@ -12,7 +12,7 @@ import { z } from "zod";
  * `admit` is allowed to write.
  *
  * Its own module, importing nothing of ours: `tickets.js` parses it and
- * `inspect-core.js` renders it.
+ * `inspect.js` renders it.
  */
 export const StoredAdmissionSchema = z.looseObject({
   elapsed_ms: z.number().int().min(0).nullable().optional(),

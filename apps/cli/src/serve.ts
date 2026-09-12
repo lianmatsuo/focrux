@@ -29,7 +29,7 @@ import { startEndpoint, type RunningEndpoint } from "./endpoint.js";
 import { gitEnv, run } from "@focrux/workspace";
 import { parseAdmitArgs, runAdmitCommand, type DraftProvider } from "./admit.js";
 import { UsageError } from "./args.js";
-import { effectiveLimits, readRepoConfig, requireBase, resolveBase } from "./execute-core.js";
+import { effectiveLimits, readRepoConfig, requireBase, resolveBase } from "./execute.js";
 import type { Streams } from "./streams.js";
 import { derivedBranch, isStranded, runSyncCommand } from "./sync.js";
 import { listTickets, readContract, readTicket, storeDir, writeTicket } from "./tickets.js";

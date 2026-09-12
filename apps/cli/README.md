@@ -417,7 +417,7 @@ regression suite scores the reviewer against and is cloned rather than checked i
 there is no directory or it holds no fixtures; otherwise the commit the cache records in its own
 `corpus-pin.json` and the number of fixture directories it holds; `behind` where that commit and
 the one `.github/regression-score.json` was measured against are different, naming both. Absent and behind name
-`focrux-corpus --sync` as the fix. A cache that records no commit is not evidence of divergence and
+`focrux-corpus prepare` as the fix. A cache that records no commit is not evidence of divergence and
 is not reported as behind — it is reported as present, saying it records none. `--json` emits the
 same reading under `corpus_cache`, with `state`, `cached_commit`, `scored_commit`, `fixtures` and
 `fix`. It is a warning in every state: the corpus is what scores the reviewer, not what runs an

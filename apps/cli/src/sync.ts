@@ -51,8 +51,7 @@ import {
   writeLocalRunRecord,
   type LocalRunRecord,
 } from "./local-run.js";
-import { readAttemptsFile } from "./execute.js";
-import { readRepoConfig } from "./execute-core.js";
+import { readAttemptsFile, readRepoConfig } from "./execute.js";
 import {
   latestAttemptBranch,
   listTickets,

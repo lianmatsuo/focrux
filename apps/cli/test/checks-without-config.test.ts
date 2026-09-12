@@ -9,7 +9,7 @@ import {
   proposedChecks,
   runExecuteCommand,
   type ExecuteOptions,
-} from "../src/execute-core.js";
+} from "../src/execute.js";
 import { storeDir } from "../src/store.js";
 
 /**

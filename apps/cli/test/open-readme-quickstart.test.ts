@@ -15,8 +15,7 @@ import { dirname, join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { preflight, type PreflightRequest } from "@focrux/runner";
 import { parseReviewArgs } from "../src/args.js";
-import { OPEN_COMMAND_NAMES } from "../src/command-names.js";
-import { parseExecuteArgs, runDoctorCommand } from "../src/execute-core.js";
+import { FULL_COMMAND_SET, parseExecuteArgs, runDoctorCommand } from "../src/execute.js";
 import { buildCli, REPO_ROOT, removeStagedBundles, spawnBuilt } from "./open-build.js";
 
 /**
@@ -177,9 +176,9 @@ function checkAgainstTheCli(step: Step): void {
   const command = rest[0] ?? "";
   const named = (why: string): Error =>
     new Error(`quick-start step ${step.position} — \`${step.text}\` — ${why}`);
-  if (!OPEN_COMMAND_NAMES.includes(command as (typeof OPEN_COMMAND_NAMES)[number])) {
+  if (!FULL_COMMAND_SET.includes(command as (typeof FULL_COMMAND_SET)[number])) {
     throw named(
-      `names \`${command}\`, which this build does not dispatch (it has: ${OPEN_COMMAND_NAMES.join(", ")})`,
+      `names \`${command}\`, which \`focrux\` does not dispatch (it has: ${FULL_COMMAND_SET.join(", ")})`,
     );
   }
   const parse = PARSERS[command];
@@ -675,7 +674,6 @@ describe("the prerequisites the quick start states before its first command", ()
       cwd: repo,
       preflight: (request: PreflightRequest) =>
         preflight({ ...request, minNodeMajor: Number(process.versions.node.split(".")[0]) + 1 }),
-      commands: OPEN_COMMAND_NAMES,
     });
     // eslint-disable-next-line no-control-regex
     const shown = out.join("").replace(/\u001b\[[0-9;]*m/g, "");
