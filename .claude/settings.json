@@ -1,0 +1,15 @@
+{
+  "attribution": {
+    "commit": "Assisted-by: LLM",
+    "pr": ""
+  },
+  "permissions": {
+    "deny": [
+      "Edit(/packages/review/test/blocking.test.ts)",
+      "Edit(/packages/review/test/remediation.test.ts)",
+      "Edit(/packages/review/test/decision-order.test.ts)",
+      "Edit(/packages/runner/test/security.test.ts)",
+      "Edit(/packages/evaluation/sample/**)"
+    ]
+  }
+}
