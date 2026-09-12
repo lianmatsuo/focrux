@@ -80,7 +80,8 @@ or agent, and they apply to a contributor exactly as they apply to a maintainer.
 ## Working with a coding agent
 
 Most pull requests here are written by the maintainer's own agent sessions, and
-yours may be too. Two things follow from the certificate above:
+yours may be too. Two things follow from the certificate above
+([D-NEW-commit-convention](docs/11-open-decisions.md)):
 
 - The `Signed-off-by` line is yours. Only a person can certify the Developer
   Certificate of Origin, so an agent never adds it; you review what it wrote,

@@ -81,7 +81,7 @@ jobs:
           FOCRUX_PYTHON: python
         run: node scripts/check.mjs validators
 
-  # A required check: a pull request that edits a file that judges a change —
+  # A check on every pull request: one that edits a file that judges a change —
   # the reviewer's blocking, remediation and decision-order tests, the
   # runner's security test, and the sample fixtures the reviewer is scored
   # on — fails here, naming the file and the rule it
@@ -112,10 +112,10 @@ jobs:
       # The two commits named in the pull request's own event payload — never
       # a branch name, and never anything read out of its title, body or diff.
       - name: protected-paths
-        run: |
-          node scripts/check.mjs protected-paths \
-            --base "${{ github.event.pull_request.base.sha }}" \
-            --head "${{ github.event.pull_request.head.sha }}"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/check.mjs protected-paths --base "$BASE_SHA" --head "$HEAD_SHA"
 
   # The reviewer's regression suite, against the public corpus pinned in
   # `.github/corpus-pin.json` — so a pull request that touches the reviewer

@@ -10,7 +10,7 @@
     "`publish` is false. A pull request is opened with --publish, deliberately: the flag that",
     "reaches an external repository is typed each time.",
     "",
-    "Only `.focrux/config.json` and `.focrux/principles.md` are committed. Ticket records,",
+    "`.focrux/config.json` is committed, and `.focrux/principles.md` once a person records one. Ticket records,",
     "worktrees, bundles, quarantine and review state are working state and are ignored (D-076).",
     "",
     "`limits` sets what bounds an attempt here: 45 minutes of wall clock and $15 of spend, over the",

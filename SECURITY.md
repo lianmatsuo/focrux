@@ -20,8 +20,9 @@ it shows any of these holding less than [docs/08](docs/08-security-autonomy-and-
   skills — reaches the executor or the reviewer ([ADR-0030](docs/adr/0030-neutralise-repository-supplied-agent-configuration.md));
 - a credential or a materialized secret reaches a model call, a run bundle, a
   pull request or a log;
-- the queue's loopback endpoint is reachable by the executor, or a token holder
-  can do more through it than draft, edit an unapproved contract, sync, pause or resume;
+- the executor is given the queue endpoint's token or address, or a token holder
+  can do more through the endpoint than draft, edit an unapproved contract, sync,
+  pause or resume ([D-109](docs/11-open-decisions.md));
 - the reviewer's verdict can be moved by anything other than the plan, the
   change set, the check results and the files it selects itself.
 

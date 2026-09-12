@@ -9,11 +9,6 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
-
-// A CI runner renders this app several times slower than a laptop, and the
-// library's default one-second `findBy` timeout reads as a missing button
-// there. Five seconds is what the explicit waits in this file already allow.
-configure({ asyncUtilTimeout: 5000 });
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { App, type Route, type TaskView } from "../src/renderer/shell/App.js";
@@ -22,6 +17,11 @@ import { runnerProgress } from "../src/renderer/presentation.js";
 import { HomePage } from "../src/renderer/tasks/HomePage.js";
 import { TaskPage } from "../src/renderer/tasks/TaskPage.js";
 import { previewBridge } from "../src/renderer/preview.js";
+
+// A CI runner renders this app several times slower than a laptop, and the
+// library's default one-second `findBy` timeout reads as a missing button
+// there. Five seconds is what the explicit waits in this file already allow.
+configure({ asyncUtilTimeout: 5000 });
 
 let client: QueryClient;
 let decisionDetail: Detail;

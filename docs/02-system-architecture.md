@@ -36,7 +36,7 @@ One entry point, `focrux`, dispatches every command through one shell: help, ver
 | `escapes` | Of what merged, how much was undone or reworked afterwards |
 | `principle` | Records a person's answer to a question no established practice settled ([D-065](11-open-decisions.md)) |
 
-`tooling/package` bundles this one binary, every command included, into the design-partner tarball and the open-source tree ([D-075](11-open-decisions.md)).
+`tooling/package` bundles this one binary, every command included, into the design-partner tarball ([D-075](11-open-decisions.md)).
 
 ## The runner
 

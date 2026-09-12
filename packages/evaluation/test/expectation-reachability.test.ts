@@ -136,7 +136,7 @@ describe("the guard catches the defect it exists for", () => {
    * injects appears in `src/language-js/print/ignored.js`, which is not.
    */
   // Read from the pre-loaded corpus, which is empty when the corpus is absent, so
-  // this block collects as skipped rather than failing at import in the open tree.
+  // this block collects as skipped rather than failing at import without a corpus.
   const reg008 = corpus.find((entry) =>
     entry.fixture.id.startsWith("reg-008-"),
   );

@@ -61,13 +61,12 @@ function expectSkipped(report: Report, suites: readonly string[], reason: string
 }
 
 /**
- * The open tree carries this harness without the fixture corpus, so every suite
- * whose subject *is* the corpus has to skip there rather than fail. Absence is
- * a fact about the tree, not a defect in it.
+ * A checkout without the fixture corpus still carries this harness, so every
+ * suite whose subject *is* the corpus has to skip there rather than fail.
+ * Absence is a fact about a tree, not a defect in it.
  *
  * The run is a real one: vitest, on the real suites, with the corpus directory
- * pointed somewhere that does not exist — the same condition a reader of the
- * open tree has, without deleting anything here. What it asserts is the whole
+ * pointed somewhere that does not exist, without deleting anything here. What it asserts is the whole
  * of the property: nothing failed, and every one of those files contributed at
  * least one skipped test, so a suite that quietly stopped collecting tests
  * would not pass for a skip.
