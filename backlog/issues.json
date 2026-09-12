@@ -490,11 +490,33 @@
         "The drafter, under a new prompt version, returns one contract with nodes and suggested edges, has no upper limit on criteria, and refuses a cycle.",
         "No-Gos are read from the spec's No-Gos heading, not drafted by the model.",
         "inspect and --json show nodes, edges and a size estimate from S to XL derived by fixed thresholds from nodes, criteria, and files and packages in scope.",
-        "focrux edit applies graph edits — add, split, merge and delete nodes; change a criterion or a node's paths; add or remove an edge — to an unapproved plan, validating each, recording its author, and undoing the last on request.",
+        "focrux edit applies graph edits — add, split, merge and delete nodes; change a criterion or a node's paths; add or remove an edge — to an unapproved plan, validating each, recording its author, and undoing any edit on request under D-100's rule, naming the later edit that blocks one.",
         "docs/04 documents the node and approach fields, and the root README no longer promises two to four criteria."
       ],
       "depends_on": [],
       "notes": "Decided in D-100, D-103 and D-104; extends ADR-0016."
+    },
+    {
+      "id": "SCP-353",
+      "title": "Make the documents agree about the gate and about what CI runs",
+      "milestone": "The loop",
+      "labels": [
+        "type:feature",
+        "priority:p2",
+        "area:planning",
+        "status:done"
+      ],
+      "outcome": "AGENTS.md, CONTRIBUTING.md, docs/07, ADR-0007 and docs/evaluation/regression-suite.md describe one gate and one truth about GitHub Actions, and a contributor can produce the regression summary a reviewing run asks for.",
+      "acceptance_criteria": [
+        "One list of what the gate runs, in one file, cited by the others; today AGENTS.md, CONTRIBUTING.md and build.yml each name a different set, and the protected-paths check appears in none of them.",
+        "No document asserts that a workflow runs while Actions are off; each says what a person runs instead.",
+        "The regression section names where the corpus comes from, so its commands can be followed without guessing --corpus, which silently scores against the working tree.",
+        "The section says the unstated_regression row comes from <out>/report.md's recall-by-class table, not from the delta table, which carries metrics only.",
+        "A contributor following the section end to end produces the summary AGENTS.md requires in a pull-request body, proven by one dry run."
+      ],
+      "depends_on": [],
+      "notes": "Found by the D-073 reviews of #678, which split this out. The contradictions predate that change.",
+      "state": "done"
     },
     {
       "id": "SCP-334",
@@ -508,6 +530,7 @@
       "outcome": "Create sits first in the rail and opens planning mode for one piece of work in a chosen repository, with the current drafting steps in its Spec pane; the header button goes and Home's empty state keeps its own.",
       "acceptance_criteria": [
         "The rail reads Create, Home, Archive, Settings; ⌘1 to ⌘4 follow that order, ⌘N still creates, and rebinding still refuses a conflict.",
+        "Create opens a small repository picker with any open drafts listed first, and Enter resumes the top one.",
         "Planning mode shows its child icons under Create only while planning; leaving returns to Home, and the draft survives a restart as a contract editing session.",
         "Home's header has no Create button; its empty state still offers one.",
         "The phone boards are unchanged.",
@@ -554,6 +577,7 @@
         "After the first draft the plan changes only by edits; Start over from the spec re-drafts the same Ticket after confirmation and never admits another, and the test fails first.",
         "Admission records the spec's path and content hash.",
         "An executor write under specs/ is refused as a prohibited path.",
+        "Start over from the spec drops the graph edits and the paths they added, and keeps spec edits, explorer marks and No-Gos.",
         "Supporting files may sit beside spec.md; only spec.md is drafted from."
       ],
       "depends_on": [
@@ -591,12 +615,12 @@
         "priority:p1",
         "area:planning"
       ],
-      "outcome": "focrux interview runs a person's own Claude Code session through the Claude Agent SDK, oriented with the bundled grilling and domain-modelling skills and streaming JSON; it reads anything, runs read-only commands, writes only the spec's folder, CONTEXT.md and the ADR folder, and turns anything else into a permission request.",
+      "outcome": "focrux interview runs a person's own Claude Code session through the Claude Agent SDK, oriented with the bundled grilling and domain-modelling skills and streaming JSON; it reads anything, runs read-only commands, writes only the spec's folder, CONTEXT.md and the ADR folder, and refuses anything else.",
       "acceptance_criteria": [
         "A write outside the spec's folder, CONTEXT.md or the ADR folder is refused by the executor's guard; the test fails first.",
         "A generate request makes the session bring spec.md up to date with the conversation, and report that it has, before any drafting starts.",
         "After the first draft, the session changes the plan only through the interview's edit tool, each change validated and recorded with the interview as its author, and updates the spec to match; a direct write to the ticket store is refused.",
-        "A command outside the read-only set emits a permission request and waits for the answer.",
+        "A command outside the read-only set is refused and reported as refused, never put to the person, and the test fails first.",
         "The session has no way to approve, publish or merge.",
         "Resuming with the same session continues the conversation.",
         "Missing spec and ADR folders are created on first write.",
@@ -616,10 +640,10 @@
         "priority:p2",
         "area:planning"
       ],
-      "outcome": "The same interview runs through codex app-server behind the same session interface, with the same write rules, permission requests and resume.",
+      "outcome": "The same interview runs through codex app-server behind the same session interface, with the same write rules, refusals and resume.",
       "acceptance_criteria": [
         "The interview's contract tests pass against both transports.",
-        "Command and file-change approvals follow the interview's rules; anything else becomes a permission request.",
+        "Command and file-change requests follow the interview's rules; anything else is refused, and the transport's own approval question never reaches the person.",
         "Resume uses the thread's own resume."
       ],
       "depends_on": [
@@ -636,13 +660,14 @@
         "priority:p1",
         "area:product"
       ],
-      "outcome": "The interview chat stays docked beside every planning pane from the first question to approval — messages, tool calls as cards, permission requests as cards the person answers. Generate plan makes the first draft; after that, what the person asks for is applied to the plan and the spec as edits, each shown as a before-and-after card with Undo. The provider and model default to the drafting choice, and the conversation is kept with the draft.",
+      "outcome": "The interview chat stays docked beside every planning pane from the first question to approval — messages, tool calls as cards, and a refusal where the session may not act. Generate plan makes the first draft; after that, what the person asks for is applied to the plan and the spec as edits, each shown as a before-and-after card with Undo. The provider and model default to the drafting choice, and the conversation is kept with the draft.",
       "acceptance_criteria": [
         "The chat stays visible and usable while the Spec, Explorer, Graph or Impact pane is open.",
         "The host relays focrux interview's events to the renderer and answers back on the same session; renderer requests still carry repository ids, not paths.",
-        "A permission card's answer reaches the session and its outcome appears in the chat.",
+        "The session never asks for permission: a command it may not run and a write it may not make are each refused and shown as refused, in a test.",
+        "The plan's history opens as a drawer over the current pane, so the chat stays visible, and each entry is labelled you or interview.",
         "Leaving planning mode, and restarting the app, restore the conversation.",
-        "An edit from the chat changes only what it names, hand edits elsewhere survive, and Undo restores the plan as it was before that edit."
+        "An edit from the chat changes only what it names, hand edits elsewhere survive, and Undo restores the plan as it stood before that edit, under D-100's rule."
       ],
       "depends_on": [
         "SCP-311",
@@ -707,6 +732,7 @@
         "Approving from the Graph pane produces the contract the runner reads, on the fixed approve binding.",
         "Edits from the Graph pane and from the chat share one edit path and one history, each recorded with its author and undoable; Start over from the spec replaces the plan only after confirmation.",
         "The size estimate updates as the graph changes.",
+        "The graph view pans: dragging the empty canvas or scrolling moves it, so a large graph works with the node panel open.",
         "Selecting a node shows its generated page, read-only, beside its criteria and paths.",
         "The graph library works under the desktop's content-security policy, which allows no workers."
       ],
@@ -749,7 +775,7 @@
       "outcome": "The explorer lists the repository's tracked files and previews one read-only; the person marks paths allowed or prohibited in the draft's scope, or prohibits a path in the repository's standing list.",
       "acceptance_criteria": [
         "New host requests take a repository id and a repository-relative path, pass safePath and the reviewer's never-read list, and refuse anything else.",
-        "Marks change the draft's canonical scope; the always option writes the standing list in .focrux/config.json.",
+        "Marks change the draft's canonical scope; the always option is a checkbox with no confirmation, writes the standing list in .focrux/config.json, is recorded in the draft's history and can be undone, and the standing list shows which draft added it.",
         "The preview is read-only and size-capped.",
         "The host's stated rule about renderer requests is amended where it is written."
       ],
@@ -949,11 +975,12 @@
         "area:review",
         "area:evaluation"
       ],
-      "outcome": "A Ticket with an execution graph is reviewed once per node, on that node's criteria and the part of the diff inside its paths, and once over the whole change for the outcome and anything that crosses nodes, with the gate combining them.",
+      "outcome": "A Ticket with an execution graph is reviewed once per node, on that node's criteria and the part of the diff inside its paths, and once over the whole change for the outcome, anything that crosses nodes, and any path allowed in the explorer that no node names, with the gate combining them.",
       "acceptance_criteria": [
         "The pull request carries a regression-suite run with the unstated_regression row first.",
         "New graph-shaped fixtures exercise per-node review, including a planted defect that crosses nodes.",
         "A node's review receives that node's check results, and a node whose checks failed is reviewed with them.",
+        "The overall review covers a path allowed in the explorer that no node names, in a test.",
         "A Ticket without a graph is reviewed exactly as before."
       ],
       "depends_on": [

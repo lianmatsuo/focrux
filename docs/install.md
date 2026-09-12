@@ -92,8 +92,8 @@ Focrux where you would already let a coding agent run commands.
 The clone-and-run path above builds from [`scripts/setup-local.mjs`](../scripts/setup-local.mjs).
 The standalone archive is the CLI alone: [`tooling/package/pack.mjs`](../tooling/package/pack.mjs)
 builds it (`pnpm release:pack`), and
-[`.github/workflows/release.yml`](../.github/workflows/release.yml) packs, verifies and drafts it
-onto a release on a signed tag, with a published SHA-256 and a build-provenance attestation once
+[`.github/workflows/release.yml`](../.github/workflows/release.yml) is the release written for
+GitHub Actions: on a signed tag it packs, verifies and drafts it onto a release, with a published SHA-256 and a build-provenance attestation once
 the repository is public. Nothing auto-updates: a newer version is a new archive
 ([D-046](11-open-decisions.md)). Capturing the baseline first is
 [D-038](11-open-decisions.md); the destinations above are [D-012](11-open-decisions.md)'s, and

@@ -98,7 +98,7 @@ This is the one home for the decisions that govern Focrux. Every other document 
 ### D-100 — Large work is one ticket with an execution graph
 
 - Owner: Founder
-- Decision: a plan may group its acceptance criteria into nodes, each naming the paths expected to satisfy them. Node criteria and paths are contract; the order between nodes is approach, along with the spec's No-Gos. The drafter proposes the first graph. After that the plan changes only by edits, made by hand or asked for in the interview, through one validated edit path that records its author. The person approves once. Any ticket may carry a graph, there is no epic kind, and the drafter does not cap the number of criteria.
+- Decision: a plan may group its acceptance criteria into nodes, each naming the paths expected to satisfy them. Node criteria and paths are contract; the order between nodes is approach, along with the spec's No-Gos. The drafter proposes the first graph. After that the plan changes only by edits, made by hand or asked for in the interview, through one validated edit path that records its author. Any edit can be undone unless a later edit changed the same node, edge or spec section. The person approves once. Any ticket may carry a graph, there is no epic kind, and the drafter does not cap the number of criteria.
 - Why: approving several sibling contracts one at a time is the slicing a graph removes, and one ticket keeps one approval and one pull request.
 - Changes if: people split graph tickets by hand to get them reviewed or merged.
 - ADR: [ADR-0037](adr/0037-execution-graph.md).
@@ -114,7 +114,7 @@ This is the one home for the decisions that govern Focrux. Every other document 
 ### D-102 — The interview is the person's own session
 
 - Owner: Founder
-- Decision: the interview is the person's own Claude Code or Codex session, run by `focrux interview` and shown as a chat in planning mode. Its Generate plan action brings the spec up to date and runs the drafter, admitting one ticket. After that it changes the plan only through the validated edit path, each edit shown to the person and undoable. It may read anything and run read-only commands, may write only the spec folder, `CONTEXT.md` and the ADR folder, and cannot approve, publish or merge. Claude runs through the Claude Agent SDK and Codex through `codex app-server`. Paseo's design is followed in Focrux's own code; none of Paseo's code is copied.
+- Decision: the interview is the person's own Claude Code or Codex session, run by `focrux interview` and shown as a chat in planning mode. Its Generate plan action brings the spec up to date and runs the drafter, admitting one ticket. After that it changes the plan only through the validated edit path, each edit shown to the person and undoable as D-100 says. It may read anything and run read-only commands, may write only the spec folder, `CONTEXT.md` and the ADR folder, and cannot approve, publish or merge. Anything outside that is refused rather than asked: there are no permission prompts. It proposes no path marks, which are the person's own. Claude runs through the Claude Agent SDK and Codex through `codex app-server`. Paseo's design is followed in Focrux's own code; none of Paseo's code is copied.
 - Why: a person's own session gets the same trust model the endpoint gives it (D-109).
 - Decided, not built.
 
@@ -128,7 +128,7 @@ This is the one home for the decisions that govern Focrux. Every other document 
 ### D-104 — Sizes, not forecasts
 
 - Owner: Founder
-- Decision: a plan shows a size, S to XL, derived by fixed thresholds from its nodes, its criteria, and the files and packages in scope, with the counts beside it. Runs show usage as each provider reports it: tokens always, dollars where given. Nothing forecasts cost or time.
+- Decision: a plan shows a size, S to XL, derived by fixed thresholds from its nodes, its criteria, and the files and packages in scope, with the counts beside it. S is 1 node, at most 4 criteria, 10 files and 1 package, the size of a ticket before graphs; M at most 3 nodes, 10 criteria, 25 files and 2 packages; L at most 6, 20, 50 and 3; XL beyond. A plan takes the largest size any of its counts reaches. Runs show usage as each provider reports it: tokens always, dollars where given. Nothing forecasts cost or time.
 - Why: a description of the graph forecasts nothing, and nothing measures a forecast (D-097).
 - Decided, not built.
 
@@ -247,7 +247,7 @@ This is the one home for the decisions that govern Focrux. Every other document 
 ### D-107 — A graph is reviewed per node and once overall
 
 - Owner: Founder
-- Decision: a ticket with an execution graph is reviewed once per node (that node's criteria, and the part of the diff inside its paths) and once over the whole change, for the outcome and anything that crosses nodes. The pinned checks also run once per node, narrowed to that node's paths as a failed check's rerun is narrowed to the files that own it, and each node's results reach that node's review. It changes the reviewer, so it carries a regression-suite run and adds graph-shaped fixtures to the corpus. No-Gos brief the executor; nothing checks them yet.
+- Decision: a ticket with an execution graph is reviewed once per node (that node's criteria, and the part of the diff inside its paths) and once over the whole change, for the outcome, anything that crosses nodes, and any path allowed in the explorer that no node names. The pinned checks also run once per node, narrowed to that node's paths as a failed check's rerun is narrowed to the files that own it, and each node's results reach that node's review. It changes the reviewer, so it carries a regression-suite run and adds graph-shaped fixtures to the corpus. No-Gos brief the executor; nothing checks them yet.
 - Why: each review stays near the size of change the reviewer is measured on, and a node that fails its own checks is found before the whole change is.
 - Decided, not built.
 
@@ -529,6 +529,12 @@ This is the one home for the decisions that govern Focrux. Every other document 
 - Why: a green validator says an entry is well formed, never that it is right.
 - Changes if: validator-criteria tickets land entries that turn out wrong on substance.
 
+### D-113 — The repository carries everything an agent needs
+
+- Owner: Founder
+- Decision: whatever a person or an agent must know to work here is in this repository: decisions in this register, architecture in the ADRs, terms in `CONTEXT.md`, open work in the backlog, and the way of working, the environment and its traps in `AGENTS.md`. A session's own memory, a chat or a bundle beside the repository is a cache and never a source, so anything a session learns that a later one would need is written here in the same change. A handoff is a pointer to this repository. A session that cannot find what it needs here records the gap as a defect instead of working from a private note.
+- Why: in the founder's words, the repository is the source of truth and must hold everything needed. Knowledge kept in one machine's session memory is invisible to every other person, agent and account, and a decision nobody can read is not a decision.
+
 ### D-110 — Identifiers are numbered at merge
 
 - Owner: Founder
@@ -545,4 +551,4 @@ This is the one home for the decisions that govern Focrux. Every other document 
 
 - Owner: Founder
 - Decision: the repository says nothing about trademarks or patents beyond Apache-2.0's own terms, which grant no trademark rights and carry a patent licence. The Focrux name, logo and artwork are not licensed under Apache-2.0; all rights in them are reserved, and `NOTICE` names the files.
-- Why: the founder's choice on 2026-09-11, before the public release. The artwork is the co-founder's; reserving it keeps the brand out of forks while the code stays Apache-2.0.
+- Why: the founder's choice. The artwork is the co-founder's; reserving it keeps the brand out of forks while the code stays Apache-2.0.

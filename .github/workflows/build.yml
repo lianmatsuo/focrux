@@ -1,10 +1,10 @@
 name: Build
 
-# The repository's one gate, and the same file runs it wherever this tree is
-# checked out: the product code built, typechecked, tested and linted; the
-# documentation and backlog validators; the corpus checked for shape; and the
-# two checks CI can make that the test suite cannot — the protected paths and
-# the reviewer's regression score.
+# The gate, written for GitHub Actions. The one list of what it runs is under
+# "Before you finish" in AGENTS.md; a check added there is added here in the
+# same change, and the other way round. Actions are off while the account's
+# billing is unresolved, so a person runs that list and says so in the pull
+# request; this file is what runs when they are on again.
 
 on:
   pull_request:
@@ -98,6 +98,15 @@ jobs:
       - name: Diagrams — renderings match their Graphviz sources
         run: python scripts/validate_diagrams.py
 
+      # Authored fixtures carry their trees; the diff beside them is what those
+      # trees produce. `core.abbrev=7` because git otherwise abbreviates index
+      # hashes to eight characters here and every fixture reads as mismatched.
+      - name: Fixture diffs — each authored fixture's diff is what its trees produce
+        env:
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: core.abbrev
+          GIT_CONFIG_VALUE_0: "7"
+        run: python scripts/validate_fixture_diffs.py
 
       - name: Issue templates and workflows parse as YAML
         run: |
@@ -151,7 +160,11 @@ jobs:
 
   # The reviewer's regression suite, against the public corpus pinned in
   # `.github/corpus-pin.json` — so a pull request that touches the reviewer
-  # cannot silently point the suite at a corpus commit nobody chose.
+  # cannot silently point the suite at a corpus commit nobody chose. The live
+  # run fires for any change under `packages/review/`, a wider net than the
+  # obligation D-010 places on the prompt, the blocking matrix and the default
+  # model or provider, because a path filter cannot see which change moved the
+  # default model.
   #
   # Two steps, and the difference between them is money. The dry run always
   # runs, reaches no provider and costs nothing: it resolves the suite's thirty

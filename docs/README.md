@@ -42,5 +42,7 @@ Each diagram has a Graphviz `.dot` source beside its `.svg` and `.png`.
 | `scripts/validate_diagrams.py` | A rendering that no longer matches its source |
 | `scripts/validate_fixture_diffs.py` | A corpus fixture whose diff is not what its own trees produce |
 | `pnpm exec turbo run typecheck test lint` | The product code |
+| `node packages/evaluation/dist/main.js` | A corpus fixture that is not well formed, or an expectation naming something that does not exist |
+| `node .github/scripts/protected-paths.mjs` | A pull request that edits a file a change is judged against |
 
-None of them checks meaning. Two documents can each pass and still disagree; only reading catches that.
+The gate that runs them is under "Before you finish" in [`AGENTS.md`](../AGENTS.md). None of them checks meaning. Two documents can each pass and still disagree; only reading catches that.

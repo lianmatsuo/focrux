@@ -56,18 +56,14 @@ By making a contribution to this project, I certify that:
 
 ## Before you open a pull request
 
-```bash
-pnpm install --frozen-lockfile
-pnpm exec turbo run build
-pnpm exec turbo run typecheck test lint
-python3 scripts/validate_backlog.py
-python3 scripts/validate_docs.py
-```
-
-That is the gate `.github/workflows/build.yml` runs, and it must be green. The
-Python validators need `scripts/requirements-validation.txt` installed; they
-check the backlog's ids, labels and dependency graph, and the documentation's
-links, ADR numbering and lifecycle states.
+Run the gate: the list under "Before you finish" in [`AGENTS.md`](AGENTS.md),
+which is the one place it is written, and it must be green. GitHub Actions are
+off while the account's billing is unresolved, so nothing runs it for you:
+`.github/workflows/build.yml` is the same list written for Actions, and the
+pull request body says that the gate was run locally and that CI did not run.
+The Python validators need `scripts/requirements-validation.txt` installed;
+they check the backlog's ids, labels and dependency graph, and the
+documentation's links, ADR numbering and lifecycle states.
 
 The working rules the project holds itself to — how a change is proven, what a
 comment is for, what never becomes an action parameter — are in
@@ -76,41 +72,37 @@ agent, and it applies to a contributor exactly as it applies to a maintainer.
 
 ## A change to the reviewer carries its regression-suite run
 
-Quoted from [`AGENTS.md`](AGENTS.md):
-
-> **A change to the reviewer carries its regression-suite run.** A pull request
-> that changes the reviewer prompt (`packages/review/src/prompt.ts`), the
-> blocking matrix (`packages/review/src/blocking.ts`) or the default model or
-> provider carries in its body a summary of a regression-suite run — thirty
-> reviews at one repeat — with the `unstated_regression` row first, beside the
-> two hard bars (no flipped verdict, every cited credential redacted), and every
-> other row read against the previous suite run on the same model.
-
+A pull request that changes the reviewer prompt (`packages/review/src/prompt.ts`),
+the blocking matrix (`packages/review/src/blocking.ts`) or the default model or
+provider carries a summary of a regression-suite run in its body
+([D-010](docs/11-open-decisions.md); the rule is in [`AGENTS.md`](AGENTS.md)).
 The reviewing run treats the summary's absence as a blocking finding. Nothing in
 the tree can check a pull-request body, so this is procedural, like the review
 comment itself.
 
 The suite runs the evaluation harness in `packages/evaluation` against the
-fixture corpus. It calls a model provider and it costs money; run it with your
-own key, and quote the result rather than the intention.
+public corpus. It calls a model provider and it costs money; run it with your
+own key, and quote the result rather than the intention. The section below says
+what to run and what to paste.
 
 ## Some files are not yours to change in this pull request
 
 `.github/protected-paths.json` names a short list: the tests that check the
 reviewer's blocking, remediation and decision-order behaviour, the runner's
 security test, and the sample fixtures the reviewer is scored on
-(`packages/evaluation/sample/**`). CI's
-`protected-paths` check fails a pull request that edits any of them, naming
-the file and why.
+(`packages/evaluation/sample/**`). The gate's protected-paths check,
+`node .github/scripts/protected-paths.mjs <base> <head>` over the pull
+request's merge base and head, fails a pull request that edits any of them,
+naming the file and why.
 
 The reason is simple even though the mechanism sounds strict: these files are
 what a change is judged against, not what a change produces. If the pull
 request under review could also loosen the test that would have caught it,
 the test proves nothing — and the fixture rule at the bottom of this page is
 the same rule, which is why the fixtures are on the list beside the tests. The
-one path around this is a maintainer's release commit on the default branch —
-this check does not run there, only against a pull request — because a
-maintainer is not the party the check exists to hold to account.
+one path around this is a maintainer's commit on the default branch, which the
+check is never run against, because a maintainer is not the party the check
+exists to hold to account.
 
 The reviewer's own prompt and code are deliberately **not** on that list.
 Changing the reviewer is the contribution this project is asking for; the
@@ -121,43 +113,44 @@ If your change genuinely needs one of these to move — a real bug in the test,
 not a test that is inconvenient for the change you are making — open an issue
 and say why, rather than routing around the check.
 
-## The regression suite runs in CI, and a reviewer change reports its delta
+## The regression suite, and the delta a reviewer change reports
 
-`regression-suite` clones the public corpus at the commit
-`.github/corpus-pin.json` names. What happens next depends on what the pull
-request changed, and the difference between the two is money.
+The suite is thirty fixtures from the public corpus, reviewed once each, read
+against the score this repository recorded for the reviewer as it stands,
+`.github/regression-score.json`. The commands are on
+[the regression-suite page](docs/evaluation/regression-suite.md); this is what
+they produce and what goes in the pull request.
 
-**Always: the dry run.** The harness resolves the suite's thirty fixture ids
-against the pinned corpus (`--suite regression`, no `--run`). It calls no
-model and costs nothing, and it fails only if a fixture id the suite names is
-missing from the pinned corpus commit — which would mean the pin and the suite
-have drifted apart. It is not the suite's score.
+**The corpus.** The score was recorded against one commit of the published
+corpus, named in `.github/corpus-pin.json`, so the suite runs against a clone
+of that commit, passed as `--corpus <clone>/fixtures`. Without `--corpus` the
+harness scores the working tree's own copy under
+`packages/evaluation/corpus/fixtures` and says nothing about it, and a score
+against that copy is not comparable with the recorded one.
 
-**When the pull request changes `packages/review/`: the live run and the
-delta.** The job runs the thirty reviews for real, then compares the result
-against `.github/regression-score.json` — the score this repository recorded
-for the reviewer as it stands, against that same pinned corpus commit — and
-prints a table of metric, recorded, now, delta, and whether the gate still
-holds. A gated metric that no longer meets its threshold fails the job, naming
-it. The delta is in the job log either way, so the summary the section above
-asks you to put in your pull-request body is a number you can copy rather than
-one you have to produce by hand.
+**Every pull request: the dry run.** `--suite regression` without `--run`
+resolves the thirty fixture ids against the clone, calls no model and costs
+nothing. It fails only when a fixture id the suite names is missing from the
+pinned commit, which means the pin and the suite have drifted apart. It is not
+the suite's score.
 
-You do not have to open the log to read it. The gated rows are rendered as a
-table on the run's own summary page — metric, `n`, recorded, now, movement and
-whether the gate is met — and the run's output directory is attached to the run
-as the `regression-run` artifact: the summary the delta read, the per-review
-records under it, and the reviews themselves. When a metric moved, that artifact
-is how you get at the review that moved it without paying for the run again.
+**A pull request that changes the reviewer prompt, the blocking matrix, or the
+default model or provider: the live run and the delta.** The live run is thirty
+reviews at one repeat, about fifteen dollars on your own key. `node .github/scripts/regression-delta.mjs <out> .github/regression-score.json`
+reads the run against the recorded score and prints a table of metric, `n`,
+recorded, now, movement and whether the gate is met, then names every fixture
+whose answer changed; a gated metric that no longer meets its threshold exits 1.
+That table carries metrics only. The `unstated_regression` row the pull request
+leads with is a class, not a metric: it is the `unstated_regression` line of the
+Recall by class table in `<out>/report.md`.
 
-That run costs about fifteen dollars, on the maintainer's key, so two things
-have to be true before it starts: the job has an `ANTHROPIC_API_KEY` secret,
-and the pull request actually touches the reviewer. **A pull request from a
-fork is not given the secret**, so it gets the dry run, the delta step does not
-run, and nothing is spent. That is deliberate rather than a limitation — you do
-not need a maintainer's key to open a pull request here. Run the suite on your
-own key if you have one and quote it; otherwise say so, and a maintainer will
-run it on the branch before merging.
+**What goes in the pull request body**, in this order: the `unstated_regression`
+line from the Recall by class table; the two hard bars as the delta prints them
+(Verdict not flipped on a verdict-flipping fixture, and Every cited credential
+was redacted); the rest of the delta table; and the run's measured total cost,
+which the harness prints when it finishes, with the corpus commit and the model
+it ran on. If you have no key, say so, and a maintainer runs it on the branch
+before merging.
 
 **Re-recording the score.** The recorded score is a fact about one reviewer
 against one corpus commit, so it goes stale the moment either moves. A
@@ -180,13 +173,12 @@ corpus commit, the reviewer's model and provider, the date and the run's own
 measured total cost by hand. The `_comment` in the file says what each field is.
 Bump `.github/corpus-pin.json` in the same commit if the corpus moved too — a
 score recorded against one commit and compared against another is not a
-comparison. A maintainer can also trigger the workflow by hand
-(`workflow_dispatch`) to take the live run without opening a pull request.
+comparison.
 
 ## The rest of the bar
 
-- **A test that reads a machine-local scratch directory is a test CI will
-  fail.** Floor an assertion on what is always present.
+- **A test that reads a machine-local scratch directory fails on the next
+  machine.** Floor an assertion on what is always present.
 - **Run the new variant; do not read it.** Adding a case to shared machinery
   means every place that branches on the discriminator has to be found, and
   reading the code finds most of them. An end-to-end test per variant is what
